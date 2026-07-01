@@ -7,11 +7,14 @@ import { Star, ShoppingCart, Heart, Check } from "lucide-react";
 import { formatPrice } from "@/utils/formatPrice";
 import { imageSrc } from "@/utils/imageSrc";
 import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/hooks/useWishlist";
 
 export default function ProductCard({ product }) {
   const { addItem } = useCart();
+  const { wishlistIds, toggleWishlist } = useWishlist();
   const [added, setAdded] = useState(false);
-  const [wished, setWished] = useState(false);
+
+  const wished = wishlistIds.has(product.id);
 
   const price = product.salePrice ?? product.price;
   const hasDiscount = product.salePrice != null;
@@ -56,10 +59,10 @@ export default function ProductCard({ product }) {
           )}
         </div>
 
-        {/* Wishlist */}
+        {/* Wishlist Button */}
         <button
           type="button"
-          onClick={() => setWished((w) => !w)}
+          onClick={() => toggleWishlist(product.id)}
           aria-label="Add to wishlist"
           className="absolute right-2.5 top-2.5 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-navy shadow-sm backdrop-blur transition-colors hover:text-royal"
         >

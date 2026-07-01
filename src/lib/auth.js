@@ -6,6 +6,9 @@ import bcrypt from "bcryptjs";
 
 export async function getAuthOptions() {
   const { prisma } = await import("@/lib/prisma");
+    
+  console.log("CLIENT_ID:", process.env.GOOGLE_CLIENT_ID);
+console.log("CLIENT_SECRET:", process.env.GOOGLE_CLIENT_SECRET);
 
   return {
     adapter: PrismaAdapter(prisma),
@@ -13,7 +16,8 @@ export async function getAuthOptions() {
     pages: {
       signIn: "/login",
     },
-    providers: [
+     
+providers: [
       GoogleProvider({
         clientId: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,

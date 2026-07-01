@@ -3,10 +3,11 @@
 // Returns the Razorpay order id + amount + public key for the checkout widget.
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
+import { getAuthOptions } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 import { getRazorpay } from "@/lib/razorpay";
 
 export async function POST() {
-  const { getAuthOptions } = await import("@/lib/auth");
   const authOptions = await getAuthOptions();
   const session = await getServerSession(authOptions);
   const userId = session?.user?.id;
@@ -20,7 +21,6 @@ export async function POST() {
     );
   }
 
-  const { prisma } = await import("@/lib/prisma");
   const cartItems = await prisma.cartItem.findMany({
     where: { userId },
     include: { product: true },
@@ -34,19 +34,34 @@ export async function POST() {
     0
   );
   const shipping = subtotal > 999 ? 0 : 49;
-  const total = subtotal + shipping; // in INR (integer rupees)
+  const total = subtotal + shipping;
 
-  // Razorpay works in the smallest currency unit (paise) → ×100.
-  const order = await razorpay.orders.create({
+  const pendingOrder = await prisma.order.create({
+    data: {
+      userId,
+      total,
+      address: {},
+      paymentMethod: "ONLINE",
+      status: "PENDING",
+    },
+  });
+
+  const razorpayOrder = await razorpay.orders.create({
     amount: total * 100,
     currency: "INR",
-    receipt: `rcpt_${userId.slice(-8)}_${total}`,
+    receipt: pendingOrder.id,
+  });
+
+  await prisma.order.update({
+    where: { id: pendingOrder.id },
+    data: { razorpayOrderId: razorpayOrder.id },
   });
 
   return NextResponse.json({
-    orderId: order.id,
-    amount: order.amount,
-    currency: order.currency,
+    orderId: razorpayOrder.id,
+    amount: razorpayOrder.amount,
+    currency: razorpayOrder.currency,
     keyId: process.env.RAZORPAY_KEY_ID,
+    dbOrderId: pendingOrder.id,
   });
 }

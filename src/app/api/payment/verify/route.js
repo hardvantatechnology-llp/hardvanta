@@ -1,13 +1,13 @@
 // POST /api/payment/verify
-// Verifies the Razorpay signature, then creates the order in our DB and
-// clears the cart — only if the payment is genuine.
+// Verifies the Razorpay signature, then completes the pending order.
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { getServerSession } from "next-auth";
+import { getAuthOptions } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 import { sendOrderConfirmationEmail } from "@/lib/email";
 
 export async function POST(request) {
-  const { getAuthOptions } = await import("@/lib/auth");
   const authOptions = await getAuthOptions();
   const session = await getServerSession(authOptions);
   const userId = session?.user?.id;
@@ -18,10 +18,9 @@ export async function POST(request) {
     razorpay_payment_id,
     razorpay_signature,
     address,
+    dbOrderId,
   } = await request.json();
 
-  // Recreate the signature with our secret and compare — proves the payment
-  // really came from Razorpay and wasn't forged by the client.
   const expected = crypto
     .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
     .update(`${razorpay_order_id}|${razorpay_payment_id}`)
@@ -34,53 +33,66 @@ export async function POST(request) {
     );
   }
 
-  const { prisma } = await import("@/lib/prisma");
-  const cartItems = await prisma.cartItem.findMany({
-    where: { userId },
-    include: { product: true },
-  });
-  if (cartItems.length === 0) {
-    return NextResponse.json({ error: "Cart is empty." }, { status: 400 });
+  let order = null;
+  if (dbOrderId) {
+    order = await prisma.order.findUnique({
+      where: { id: dbOrderId },
+      include: { items: true },
+    });
   }
 
-  const total = cartItems.reduce(
-    (sum, it) => sum + (it.product.salePrice ?? it.product.price) * it.quantity,
-    0
-  );
+  if (!order) {
+    order = await prisma.order.findFirst({
+      where: { userId, razorpayOrderId: razorpay_order_id },
+      include: { items: true },
+    });
+  }
 
-  const order = await prisma.$transaction(async (tx) => {
-    const created = await tx.order.create({
+  if (!order || order.userId !== userId) {
+    return NextResponse.json({ error: "Order not found." }, { status: 404 });
+  }
+
+  if (order.status !== "PENDING") {
+    return NextResponse.json({ error: "Order already processed." }, { status: 400 });
+  }
+
+  const invoiceNumber = `INV-${new Date().getFullYear()}-${order.id.slice(-8).toUpperCase()}`;
+
+  const completedOrder = await prisma.$transaction(async (tx) => {
+    const updated = await tx.order.update({
+      where: { id: order.id },
       data: {
-        userId,
-        total,
-        address: address ?? {},
         status: "PROCESSING",
         paymentMethod: "ONLINE",
         paymentId: razorpay_payment_id,
         razorpayOrderId: razorpay_order_id,
-        items: {
-          create: cartItems.map((it) => ({
-            productId: it.productId,
-            name: it.product.name,
-            quantity: it.quantity,
-            price: it.product.salePrice ?? it.product.price,
-          })),
-        },
+        razorpaySignature,
+        invoiceNumber,
+        address: address ?? order.address ?? {},
       },
       include: { items: true },
     });
+
+    await Promise.all(
+      updated.items.map((item) =>
+        tx.product.update({
+          where: { id: item.productId },
+          data: { stock: { decrement: item.quantity } },
+        })
+      )
+    );
+
     await tx.cartItem.deleteMany({ where: { userId } });
-    return created;
+    return updated;
   });
 
-  // Send confirmation email (best-effort — never block the order on email).
   if (session.user?.email) {
     try {
-      await sendOrderConfirmationEmail(session.user.email, order);
+      await sendOrderConfirmationEmail(session.user.email, completedOrder);
     } catch (err) {
       console.error("[payment] confirmation email failed:", err?.message || err);
     }
   }
 
-  return NextResponse.json({ order }, { status: 201 });
+  return NextResponse.json({ order: completedOrder }, { status: 201 });
 }

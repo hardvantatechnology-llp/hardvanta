@@ -1,17 +1,17 @@
 // Razorpay server client singleton.
 import Razorpay from "razorpay";
 
-let instance = null;
+const keyId = process.env.RAZORPAY_KEY_ID;
+const keySecret = process.env.RAZORPAY_KEY_SECRET;
+
+export const razorpay =
+  keyId && keySecret
+    ? new Razorpay({
+        key_id: keyId,
+        key_secret: keySecret,
+      })
+    : null;
 
 export function getRazorpay() {
-  if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
-    return null; // Not configured yet — callers should handle this.
-  }
-  if (!instance) {
-    instance = new Razorpay({
-      key_id: process.env.RAZORPAY_KEY_ID,
-      key_secret: process.env.RAZORPAY_KEY_SECRET,
-    });
-  }
-  return instance;
+  return razorpay;
 }
