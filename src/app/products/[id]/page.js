@@ -27,7 +27,11 @@ export default async function ProductDetailPage({ params }) {
   const product = await getProductById(params.id);
   if (!product) notFound();
 
-  const related = await getRelatedProducts(product.category, product.id, 4);
+  const related = await getRelatedProducts(
+  product.category.slug,
+  product.id,
+  4
+);
   const price = product.salePrice ?? product.price;
   const hasDiscount = product.salePrice != null;
   const discountPct = hasDiscount
@@ -37,8 +41,8 @@ export default async function ProductDetailPage({ params }) {
   const img = imageSrc(product.image);
 
   const specs = [
-    ["Brand", product.brand],
-    ["Category", product.category],
+    ["Brand", product.brand?.name],
+    ["Category", product.category?.name],
     ["SKU", product.id.slice(-8).toUpperCase()],
     ["Availability", product.stock > 0 ? `In stock (${product.stock})` : "Out of stock"],
   ];
@@ -51,9 +55,12 @@ export default async function ProductDetailPage({ params }) {
         <ChevronRight size={14} />
         <Link href="/products" className="hover:text-royal">Products</Link>
         <ChevronRight size={14} />
-        <Link href={`/products?category=${product.category}`} className="capitalize hover:text-royal">
-          {product.category.replace(/-/g, " ")}
-        </Link>
+        <Link
+  href={`/products?category=${product.category?.slug}`}
+  className="capitalize hover:text-royal"
+>
+  {product.category?.name}
+</Link>
       </nav>
 
       <div className="grid gap-10 lg:grid-cols-2">
@@ -85,7 +92,7 @@ export default async function ProductDetailPage({ params }) {
         {/* Buy box */}
         <div>
           <span className="text-xs font-semibold uppercase tracking-wide text-royal">
-            {product.brand}
+            {product.brand?.name}
           </span>
           <h1 className="mt-1 text-2xl font-bold text-navy sm:text-3xl">
             {product.name}

@@ -9,6 +9,10 @@ export async function GET(request, { params }) {
   const { prisma } = await import("@/lib/prisma");
   const product = await prisma.product.findFirst({
     where: { OR: [{ id }, { slug: id }] },
+    include: {
+      category: true,
+      brand: true,
+    },
   });
   if (!product) {
     return NextResponse.json({ error: "Product not found." }, { status: 404 });
@@ -22,24 +26,80 @@ export async function PUT(request, { params }) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
   const body = await request.json();
-  const data = {};
-  for (const key of ["name", "description", "category", "brand", "image"]) {
-    if (body[key] !== undefined) data[key] = body[key];
-  }
-  if (body.price !== undefined) data.price = parseInt(body.price, 10);
-  if (body.salePrice !== undefined)
-    data.salePrice = body.salePrice ? parseInt(body.salePrice, 10) : null;
-  if (body.stock !== undefined) data.stock = parseInt(body.stock, 10);
-  if (body.featured !== undefined) data.featured = Boolean(body.featured);
-
   const { prisma } = await import("@/lib/prisma");
-  const product = await prisma.product
-    .update({ where: { id: params.id }, data })
-    .catch(() => null);
-  if (!product) {
+  const data = {};
+
+  if (body.name !== undefined) data.name = body.name;
+
+  if (body.sku !== undefined) {
+    const existingSku = await prisma.product.findFirst({
+      where: {
+        sku: body.sku,
+        NOT: {
+          id: params.id,
+        },
+      },
+    });
+
+    if (existingSku) {
+      return NextResponse.json(
+        { error: "SKU already exists" },
+        { status: 400 }
+      );
+    }
+
+    data.sku = body.sku;
+  }
+
+  if (body.description !== undefined)
+    data.description = body.description;
+
+  if (body.image !== undefined)
+    data.image = body.image;
+
+  if (body.price !== undefined)
+    data.price = Number(body.price);
+
+  if (body.salePrice !== undefined)
+    data.salePrice =
+      body.salePrice !== null &&
+      body.salePrice !== undefined &&
+      body.salePrice !== ""
+        ? Number(body.salePrice)
+        : null;
+
+  if (body.stock !== undefined)
+    data.stock = Number(body.stock);
+
+  if (body.featured !== undefined)
+    data.featured = Boolean(body.featured);
+
+  if (body.categoryId) {
+    data.category = {
+      connect: {
+        id: body.categoryId,
+      },
+    };
+  }
+
+  if (body.brandId) {
+    data.brand = {
+      connect: {
+        id: body.brandId,
+      },
+    };
+  }
+
+  try {
+    const product = await prisma.product.update({
+      where: { id: params.id },
+      data,
+    });
+    return NextResponse.json({ product });
+  } catch (err) {
+    console.error(err);
     return NextResponse.json({ error: "Product not found." }, { status: 404 });
   }
-  return NextResponse.json({ product });
 }
 
 // DELETE /api/products/[id] — delete a product (admin only).
@@ -48,11 +108,11 @@ export async function DELETE(request, { params }) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
   const { prisma } = await import("@/lib/prisma");
-  const deleted = await prisma.product
-    .delete({ where: { id: params.id } })
-    .catch(() => null);
-  if (!deleted) {
+  try {
+    await prisma.product.delete({ where: { id: params.id } });
+    return NextResponse.json({ ok: true });
+  } catch (err) {
+    console.error(err);
     return NextResponse.json({ error: "Product not found." }, { status: 404 });
   }
-  return NextResponse.json({ ok: true });
 }

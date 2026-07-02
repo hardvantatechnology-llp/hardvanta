@@ -1,14 +1,9 @@
-// Seeds the DB from the existing mock data in src/lib/data.js.
-// Run with: npm run seed  (after `npx prisma db push`)
+// prisma/seed.mjs
+
 import { PrismaClient } from "@prisma/client";
 import { categories, products } from "../src/lib/data.js";
 
-const prisma = new PrismaClient({
-  adapter: {
-    provider: "sqlite",
-    url: process.env.DATABASE_URL,
-  },
-});
+const prisma = new PrismaClient();
 
 function slugify(str) {
   return str
@@ -19,47 +14,140 @@ function slugify(str) {
 }
 
 async function main() {
-  console.log("Seeding categories...");
+  console.log("🌱 Seeding Categories...");
+
   for (const c of categories) {
     await prisma.category.upsert({
       where: { slug: c.slug },
-      create: c,
-      update: { name: c.name, icon: c.icon },
+      update: {
+        name: c.name,
+        icon: c.icon,
+        image: c.image ?? null,
+        description: c.description ?? null,
+      },
+      create: {
+        name: c.name,
+        slug: c.slug,
+        icon: c.icon,
+        image: c.image ?? null,
+        description: c.description ?? null,
+      },
     });
   }
 
-  console.log("Seeding products...");
-  const seenSlugs = new Set();
-  for (const p of products) {
-    let slug = slugify(p.name);
-    while (seenSlugs.has(slug)) slug = `${slug}-x`;
-    seenSlugs.add(slug);
+  console.log("🌱 Seeding Brands...");
 
-    const data = {
-      slug,
-      name: p.name,
-      description: p.description,
-      price: p.price,
-      salePrice: p.salePrice ?? null,
-      stock: p.stock,
-      category: p.category,
-      brand: p.brand,
-      image: p.image,
-      rating: p.rating,
-      reviewCount: p.reviewCount,
-      featured: p.featured,
-    };
+  const uniqueBrands = [...new Set(products.map((p) => p.brand))];
+
+  for (const brand of uniqueBrands) {
+    await prisma.brand.upsert({
+      where: {
+        slug: slugify(brand),
+      },
+      update: {
+        name: brand,
+      },
+      create: {
+        name: brand,
+        slug: slugify(brand),
+      },
+    });
+  }
+
+  console.log("🌱 Seeding Products...");
+
+  for (const p of products) {
+    const slug = slugify(p.name);
 
     await prisma.product.upsert({
-      where: { slug },
-      create: data,
-      update: data,
+      where: {
+        slug,
+      },
+
+      update: {
+        name: p.name,
+        description: p.description,
+        shortDescription: p.description.substring(0, 100),
+        sku: `SKU-${slug}`,
+        price: p.price,
+        salePrice: p.salePrice ?? null,
+        stock: p.stock,
+        image: p.image,
+        rating: p.rating,
+        reviewCount: p.reviewCount,
+        featured: p.featured,
+        active: true,
+
+        category: {
+          connect: {
+            slug: p.category,
+          },
+        },
+
+        brand: {
+          connect: {
+            slug: slugify(p.brand),
+          },
+        },
+      },
+
+      create: {
+        name: p.name,
+        slug,
+        description: p.description,
+        shortDescription: p.description.substring(0, 100),
+        sku: `SKU-${slug}`,
+        price: p.price,
+        salePrice: p.salePrice ?? null,
+        stock: p.stock,
+        image: p.image,
+        rating: p.rating,
+        reviewCount: p.reviewCount,
+        featured: p.featured,
+        active: true,
+
+        category: {
+          connect: {
+            slug: p.category,
+          },
+        },
+
+        brand: {
+          connect: {
+            slug: slugify(p.brand),
+          },
+        },
+      },
+    });
+
+    // Inventory
+    await prisma.inventory.upsert({
+      where: {
+        productId: (
+          await prisma.product.findUnique({
+            where: { slug },
+          })
+        ).id,
+      },
+
+      update: {
+        quantity: p.stock,
+      },
+
+      create: {
+        quantity: p.stock,
+        lowStockAlert: 5,
+
+        product: {
+          connect: {
+            slug,
+          },
+        },
+      },
     });
   }
 
-  console.log(
-    `Done — ${categories.length} categories, ${products.length} products.`
-  );
+  console.log("✅ Database Seeded Successfully");
 }
 
 main()
@@ -67,4 +155,6 @@ main()
     console.error(e);
     process.exit(1);
   })
-  .finally(() => prisma.$disconnect());
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

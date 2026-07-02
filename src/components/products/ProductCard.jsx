@@ -72,7 +72,7 @@ export default function ProductCard({ product }) {
 
       <div className="flex flex-1 flex-col p-3.5 sm:p-4">
         <span className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-silver-dark">
-          {product.brand}
+          {product.brand?.name}
         </span>
         <Link href={`/products/${product.id}`}>
           <h3 className="line-clamp-2 min-h-[2.5rem] text-sm font-semibold text-navy transition-colors hover:text-royal">

@@ -8,23 +8,31 @@ import Button from "@/components/ui/Button";
 import { imageSrc } from "@/utils/imageSrc";
 
 const NEW_CATEGORY = "__new__";
+const NEW_BRAND = "__new__";
 
 export default function ProductForm({ product }) {
   const router = useRouter();
   const isEdit = Boolean(product);
 
-  const [form, setForm] = useState({
-    name: product?.name || "",
-    description: product?.description || "",
-    price: product?.price ?? "",
-    salePrice: product?.salePrice ?? "",
-    stock: product?.stock ?? 0,
-    category: product?.category || "",
-    brand: product?.brand || "",
-    image: product?.image || "",
-    featured: product?.featured || false,
-  });
+ const [form, setForm] = useState({
+  name: product?.name || "",
+  sku: product?.sku || "",
+  description: product?.description || "",
+  price: product?.price ?? "",
+  salePrice: product?.salePrice ?? "",
+  stock: product?.stock ?? 0,
+
+  // Prisma Relation IDs
+  categoryId: product?.category?.id ?? "",
+  brandId: product?.brand?.id ?? "",
+
+  image: product?.image || "",
+  featured: product?.featured || false,
+});
+
   const [categories, setCategories] = useState([]);
+  const [brands, setBrands] = useState([]);
+  const [newBrand, setNewBrand] = useState("");
   const [newCategory, setNewCategory] = useState("");
   const [error, setError] = useState("");
   const [uploadMsg, setUploadMsg] = useState("");
@@ -33,23 +41,37 @@ export default function ProductForm({ product }) {
 
   // Load existing categories from the database.
   useEffect(() => {
-    fetch("/api/categories")
-      .then((r) => r.json())
-      .then((data) => {
-        const list = data.categories || [];
-        setCategories(list);
-        // Default the select to the first existing category when adding new.
-        setForm((f) =>
-          f.category || list.length === 0
-            ? f
-            : { ...f, category: list[0].slug }
-        );
-      })
-      .catch(() => {});
-  }, []);
+  async function loadData() {
+    try {
+      const [catRes, brandRes] = await Promise.all([
+        fetch("/api/categories"),
+        fetch("/api/brands"),
+      ]);
 
-  const creatingCategory = form.category === NEW_CATEGORY;
+      const catData = await catRes.json();
+      const brandData = await brandRes.json();
 
+      const cats = catData.categories || [];
+      const brands = brandData.brands || [];
+
+      setCategories(cats);
+      setBrands(brands);
+
+      setForm((f) => ({
+        ...f,
+        categoryId: f.categoryId || cats[0]?.id || "",
+        brandId: f.brandId || brands[0]?.id || "",
+      }));
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  loadData();
+}, []);
+
+  const creatingCategory = form.categoryId === NEW_CATEGORY;
+  const creatingBrand = form.brandId === NEW_BRAND;
   function set(key, value) {
     setForm((f) => ({ ...f, [key]: value }));
   }
@@ -94,7 +116,8 @@ export default function ProductForm({ product }) {
     setLoading(true);
 
     try {
-      let category = form.category;
+      let categoryId = form.categoryId;
+      let brandId = form.brandId;
 
       // If the admin is creating a new category, save it first and use its slug.
       if (creatingCategory) {
@@ -115,25 +138,73 @@ export default function ProductForm({ product }) {
           setLoading(false);
           return;
         }
-        category = catData.category.slug;
+        categoryId = catData.category.id;
+      }
+
+      if (creatingBrand) {
+        if (!newBrand.trim()) {
+          setError("Please enter brand name.");
+          setLoading(false);
+          return;
+        }
+
+        const res = await fetch("/api/brands", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: newBrand,
+          }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          setError(data.error || "Could not create brand.");
+          setLoading(false);
+          return;
+        }
+
+        brandId = data.brand.id;
       }
 
       const url = isEdit ? `/api/products/${product.id}` : "/api/products";
       const method = isEdit ? "PUT" : "POST";
       const res = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, category }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: form.name,
+          sku: form.sku,
+          description: form.description,
+          price: Number(form.price),
+          salePrice: form.salePrice
+            ? Number(form.salePrice)
+            : null,
+          stock: Number(form.stock),
+          image: form.image,
+          featured: form.featured,
+          categoryId,
+          brandId,
+        }),
       });
+
       const data = await res.json();
       if (!res.ok) {
         setError(data.error || "Could not save product.");
         setLoading(false);
         return;
       }
+
+      setLoading(false);
+
       router.push("/admin/products");
       router.refresh();
-    } catch {
+    } catch (err) {
+      console.error(err);
       setError("Something went wrong. Please try again.");
       setLoading(false);
     }
@@ -147,6 +218,15 @@ export default function ProductForm({ product }) {
 
       <L label="Name">
         <input className={inputCls} value={form.name} onChange={(e) => set("name", e.target.value)} required />
+      </L>
+
+      <L label="SKU">
+        <input
+          className={inputCls}
+          value={form.sku}
+          onChange={(e) => set("sku", e.target.value)}
+          required
+        />
       </L>
 
       <L label="Description">
@@ -167,16 +247,40 @@ export default function ProductForm({ product }) {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <L label="Brand">
-          <input className={inputCls} value={form.brand} onChange={(e) => set("brand", e.target.value)} required />
-        </L>
+  <select
+    className={inputCls}
+    value={form.brandId}
+    onChange={(e) => set("brandId", e.target.value)}
+  >
+    {brands.map((b) => (
+      <option key={b.id} value={b.id}>
+        {b.name}
+      </option>
+    ))}
+
+    <option value={NEW_BRAND}>
+      + Create New Brand
+    </option>
+  </select>
+
+  {creatingBrand && (
+    <input
+      className={`${inputCls} mt-2`}
+      value={newBrand}
+      onChange={(e) => setNewBrand(e.target.value)}
+      placeholder="Brand name"
+    />
+  )}
+</L>
         <L label="Category">
           <select
             className={inputCls}
-            value={form.category}
-            onChange={(e) => set("category", e.target.value)}
+            
+          value={form.categoryId}
+          onChange={(e) => set("categoryId", e.target.value)}
           >
             {categories.map((c) => (
-              <option key={c.slug} value={c.slug}>
+              <option key={c.id} value={c.id}>
                 {c.name}
               </option>
             ))}

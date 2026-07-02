@@ -19,18 +19,38 @@ export async function GET(request) {
   const q = searchParams.get("q");
 
   const where = {};
-  if (category) where.category = category;
+  if (category) {
+    where.category = {
+      slug: category,
+    };
+  }
   if (featured === "true") where.featured = true;
   if (q) {
     where.OR = [
-      { name: { contains: q, mode: "insensitive" } },
-      { brand: { contains: q, mode: "insensitive" } },
+      {
+        name: {
+          contains: q,
+          mode: "insensitive",
+        },
+      },
+      {
+        brand: {
+          name: {
+            contains: q,
+            mode: "insensitive",
+          },
+        },
+      },
     ];
   }
 
   const { prisma } = await import("@/lib/prisma");
   const products = await prisma.product.findMany({
     where,
+    include: {
+      category: true,
+      brand: true,
+    },
     orderBy: { createdAt: "desc" },
   });
   return NextResponse.json({ products });
@@ -42,9 +62,32 @@ export async function POST(request) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
   const body = await request.json();
-  const { name, description, price, category, brand, image } = body;
-  if (!name || !description || !price || !category || !brand || !image) {
-    return NextResponse.json({ error: "Missing required fields." }, { status: 400 });
+  const {
+    name,
+    description,
+    price,
+    salePrice,
+    stock,
+    image,
+    featured,
+    categoryId,
+    brandId,
+    sku,
+  } = body;
+
+  if (
+    !name ||
+    !description ||
+    !price ||
+    !categoryId ||
+    !brandId ||
+    !sku ||
+    !image
+  ) {
+    return NextResponse.json(
+      { error: "Missing required fields." },
+      { status: 400 }
+    );
   }
 
   let slug = slugify(name);
@@ -54,18 +97,48 @@ export async function POST(request) {
     slug = `${slug}-${Math.floor(Math.random() * 1000)}`;
   }
 
+  // Ensure SKU is unique.
+  const existingSku = await prisma.product.findUnique({
+    where: {
+      sku,
+    },
+  });
+
+  if (existingSku) {
+    return NextResponse.json(
+      { error: "SKU already exists" },
+      { status: 400 }
+    );
+  }
+
   const product = await prisma.product.create({
     data: {
       slug,
+      sku,
       name,
       description,
-      price: parseInt(price, 10),
-      salePrice: body.salePrice ? parseInt(body.salePrice, 10) : null,
-      stock: body.stock ? parseInt(body.stock, 10) : 0,
-      category,
-      brand,
+      price: Number(price),
+      salePrice:
+        salePrice !== null &&
+        salePrice !== undefined &&
+        salePrice !== ""
+          ? Number(salePrice)
+          : null,
+      stock: Number(stock),
       image,
-      featured: Boolean(body.featured),
+      featured: Boolean(featured),
+
+      category: {
+        connect: {
+          id: categoryId,
+        },
+      },
+
+      brand: {
+        connect: {
+          id: brandId,
+        },
+      },
     },
   });
   return NextResponse.json({ product }, { status: 201 });
