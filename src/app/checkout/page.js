@@ -17,7 +17,9 @@ export default function CheckoutPage() {
   const [form, setForm] = useState({
     fullName: "",
     phone: "",
-    line1: "",
+    flatHouse: "",   // Flat / House No., Building Name
+    area: "",        // Area / Sector / Locality
+    landmark: "",    // Optional landmark
     city: "",
     state: "",
     pincode: "",
@@ -80,11 +82,32 @@ export default function CheckoutPage() {
     });
   }
 
+  // Combine the split address fields into a single display line, so any
+  // existing code that reads address.line1 (order confirmation, admin,
+  // invoices) keeps working without changes.
+  function buildAddressPayload() {
+    const parts = [form.flatHouse.trim(), form.area.trim()];
+    if (form.landmark.trim()) parts.push(`Near ${form.landmark.trim()}`);
+    const line1 = parts.filter(Boolean).join(", ");
+
+    return {
+      fullName: form.fullName,
+      phone: form.phone,
+      line1,
+      flatHouse: form.flatHouse,
+      area: form.area,
+      landmark: form.landmark,
+      city: form.city,
+      state: form.state,
+      pincode: form.pincode,
+    };
+  }
+
   async function handleCOD() {
     const res = await fetch("/api/orders", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ address: form }),
+      body: JSON.stringify({ address: buildAddressPayload() }),
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Could not place order.");
@@ -100,6 +123,8 @@ export default function CheckoutPage() {
     const res = await fetch("/api/payment/create-order", { method: "POST" });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Could not start payment.");
+
+    const address = buildAddressPayload();
 
     // 2. Open the Razorpay checkout widget.
     await new Promise((resolve, reject) => {
@@ -117,7 +142,7 @@ export default function CheckoutPage() {
           const verifyRes = await fetch("/api/payment/verify", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ ...response, address: form }),
+            body: JSON.stringify({ ...response, address }),
           });
           const verifyData = await verifyRes.json();
           if (!verifyRes.ok) {
@@ -196,11 +221,43 @@ export default function CheckoutPage() {
               {error}
             </p>
           )}
+
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="Full name" value={form.fullName} onChange={(v) => update("fullName", v)} required />
-            <Field label="Phone" value={form.phone} onChange={(v) => update("phone", v)} required />
+            <Field
+              label="Phone"
+              value={form.phone}
+              onChange={(v) => update("phone", v.replace(/\D/g, "").slice(0, 10))}
+              required
+              type="tel"
+              inputMode="numeric"
+              placeholder="10-digit mobile number"
+            />
           </div>
-          <Field label="Address" value={form.line1} onChange={(v) => update("line1", v)} required />
+
+          <Field
+            label="Flat / House No/ Building Name"
+            value={form.flatHouse}
+            onChange={(v) => update("flatHouse", v)}
+            required
+            placeholder="e.g. Flat 302, Shree Residency"
+          />
+
+          <Field
+            label="Area / Sector / Locality"
+            value={form.area}
+            onChange={(v) => update("area", v)}
+            required
+            placeholder="e.g. Sector 62, Near City Mall"
+          />
+
+          <Field
+            label="Landmark (optional)"
+            value={form.landmark}
+            onChange={(v) => update("landmark", v)}
+            placeholder="e.g. Opposite HDFC Bank"
+          />
+
           <div className="grid gap-4 sm:grid-cols-3">
             <div>
               <label className="mb-1 block text-sm font-medium text-navy">Pincode</label>
@@ -336,16 +393,21 @@ function PayOption({ active, onClick, title, desc }) {
   );
 }
 
-function Field({ label, value, onChange, required }) {
+function Field({ label, value, onChange, required, type = "text", inputMode, placeholder }) {
   return (
     <div>
-      <label className="mb-1 block text-sm font-medium text-navy">{label}</label>
+      <label className="mb-1 block text-sm font-medium text-navy">
+        {label}
+        {required && <span className="ml-0.5 text-royal">*</span>}
+      </label>
       <input
-        type="text"
+        type={type}
+        inputMode={inputMode}
         required={required}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-lg border border-silver-dark px-3 py-2.5 text-sm outline-none focus:border-royal focus:ring-2 focus:ring-royal/30"
+        placeholder={placeholder}
+        className="w-full rounded-lg border border-silver-dark px-3 py-2.5 text-sm outline-none placeholder:text-silver-dark/60 focus:border-royal focus:ring-2 focus:ring-royal/30"
       />
     </div>
   );
