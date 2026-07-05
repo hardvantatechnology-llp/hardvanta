@@ -1,4 +1,4 @@
-// Server-side data access — used by Server Components to read directly from DB
+// Server-side data access – used by Server Components to read directly from DB
 
 import { prisma } from "@/lib/prisma";
 import { categories, products } from "./data";
@@ -16,17 +16,20 @@ function slugify(str = "") {
     .slice(0, 60);
 }
 
+// Yeh include har jagah use hoga — stock hamesha aayega
+const productInclude = {
+  category: true,
+  brand: true,
+  inventory: true,
+};
+
 /* -------------------- FEATURED -------------------- */
 export async function getFeaturedProducts() {
   if (useDummy) return products.filter((p) => p.featured);
 
   return prisma.product.findMany({
     where: { featured: true },
-    include: {
-      category: true,
-      brand: true,
-      inventory: true,
-    },
+    include: productInclude,
     orderBy: { createdAt: "desc" },
   });
 }
@@ -40,10 +43,7 @@ export async function getDeals(limit = 4) {
     where: {
       salePrice: { not: null },
     },
-    include: {
-      category: true,
-      brand: true,
-    },
+    include: productInclude, // ✅ stock ab aayega
     take: limit,
     orderBy: { createdAt: "desc" },
   });
@@ -54,11 +54,7 @@ export async function getAllProducts() {
   if (useDummy) return products;
 
   return prisma.product.findMany({
-    include: {
-      category: true,
-      brand: true,
-      inventory: true,
-    },
+    include: productInclude,
     orderBy: { createdAt: "desc" },
   });
 }
@@ -100,10 +96,7 @@ export async function searchProducts(q = "") {
         },
       ],
     },
-    include: {
-      category: true,
-      brand: true,
-    },
+    include: productInclude, // ✅ stock ab aayega
   });
 }
 
@@ -118,10 +111,7 @@ export async function getProductsByCategory(categorySlug) {
         slug: categorySlug,
       },
     },
-    include: {
-      category: true,
-      brand: true,
-    },
+    include: productInclude, // ✅ stock ab aayega
   });
 }
 
@@ -182,10 +172,7 @@ export async function getRelatedProducts(
       },
       NOT: { id: excludeId },
     },
-    include: {
-      category: true,
-      brand: true,
-    },
+    include: productInclude, // ✅ stock ab aayega
     take: limit,
   });
 }

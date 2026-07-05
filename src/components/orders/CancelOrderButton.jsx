@@ -17,7 +17,8 @@ export default function CancelOrderButton({ orderId }) {
         router.push(`/orders/${orderId}?cancelled=1`);
         router.refresh();
       } else {
-        alert("Could not cancel order. Please contact support.");
+        const data = await res.json();
+alert(data.error || "Could not cancel order. Please contact support.");
       }
     } catch {
       alert("Something went wrong. Please try again.");
