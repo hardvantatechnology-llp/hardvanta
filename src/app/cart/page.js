@@ -10,7 +10,7 @@ import { imageSrc } from "@/utils/imageSrc";
 export default function CartPage() {
   const { items, updateQuantity, removeItem, total, count } = useCart();
 
-  const shipping = total > 999 ? 0 : 49;
+  const shipping = total >= 999 ? 0 : 49;
   const grandTotal = total + shipping;
   const savedAmount = items.reduce((sum, item) => {
     if (item.salePrice != null) {
@@ -29,7 +29,7 @@ export default function CartPage() {
         </div>
         <h1 className="text-2xl font-bold text-navy">Your cart is empty</h1>
         <p className="mt-2 max-w-xs text-silver-dark">
-          Looks like you haven't added anything yet. Let's fix that!
+          Looks like you haven&apos;t added anything yet. Let&apos;s fix that!
         </p>
         <Link
           href="/products"
@@ -61,7 +61,7 @@ export default function CartPage() {
       <div className="container-page py-6">
         <div className="grid gap-6 lg:grid-cols-3">
 
-          {/* ── Cart Items ── */}
+          {/* Cart Items */}
           <div className="lg:col-span-2 space-y-3">
             {items.map((item) => {
               const price = item.salePrice ?? item.price;
@@ -75,7 +75,6 @@ export default function CartPage() {
                   key={item.id}
                   className="group flex gap-4 rounded-2xl border border-silver-light bg-white p-4 shadow-card transition-all hover:shadow-card-hover"
                 >
-                  {/* Product image */}
                   <Link href={`/products/${item.id}`} className="relative h-24 w-24 shrink-0 overflow-hidden rounded-xl bg-cloud border border-silver-light">
                     <Image
                       src={imageSrc(item.image)}
@@ -91,7 +90,6 @@ export default function CartPage() {
                     )}
                   </Link>
 
-                  {/* Info */}
                   <div className="flex flex-1 flex-col min-w-0">
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
@@ -104,7 +102,6 @@ export default function CartPage() {
                           <p className="mt-0.5 text-xs text-silver-dark">{item.brand?.name || item.brand}</p>
                         )}
                       </div>
-                      {/* Remove button */}
                       <button
                         onClick={() => removeItem(item.id)}
                         className="shrink-0 flex h-7 w-7 items-center justify-center rounded-lg text-silver-dark hover:bg-red-50 hover:text-red-500 transition-colors"
@@ -115,7 +112,6 @@ export default function CartPage() {
                     </div>
 
                     <div className="mt-auto flex items-center justify-between gap-2 pt-3">
-                      {/* Qty controls */}
                       <div className="flex items-center rounded-lg border border-silver bg-cloud overflow-hidden">
                         <button
                           onClick={() => updateQuantity(item.id, item.quantity - 1)}
@@ -136,7 +132,6 @@ export default function CartPage() {
                         </button>
                       </div>
 
-                      {/* Price */}
                       <div className="text-right">
                         <p className="font-bold text-navy">{formatPrice(price * item.quantity)}</p>
                         {hasDiscount && (
@@ -152,41 +147,39 @@ export default function CartPage() {
             })}
 
             {/* Free shipping progress bar */}
-            {total <= 999 && (
+            {total < 999 && (
               <div className="rounded-2xl border border-orange-100 bg-orange-50 p-4">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2 text-sm font-semibold text-orange-700">
                     <Truck size={16} />
-                    Add {formatPrice(1000 - total)} more for FREE shipping!
+                    Add {formatPrice(999 - total)} more for FREE shipping!
                   </div>
                   <span className="text-xs text-orange-500 font-medium">
-                    {Math.round((total / 1000) * 100)}%
+                    {Math.round((total / 999) * 100)}%
                   </span>
                 </div>
                 <div className="h-2 w-full rounded-full bg-orange-200 overflow-hidden">
                   <div
                     className="h-full rounded-full bg-orange-500 transition-all duration-500"
-                    style={{ width: `${Math.min((total / 1000) * 100, 100)}%` }}
+                    style={{ width: `${Math.min((total / 999) * 100, 100)}%` }}
                   />
                 </div>
               </div>
             )}
 
-            {total > 999 && (
+            {total >= 999 && (
               <div className="rounded-2xl border border-green-100 bg-green-50 p-4 flex items-center gap-3">
                 <Truck size={20} className="text-green-600 shrink-0" />
                 <p className="text-sm font-semibold text-green-700">
-                  🎉 You've unlocked FREE shipping!
+                  🎉 You&apos;ve unlocked FREE shipping!
                 </p>
               </div>
             )}
           </div>
 
-          {/* ── Order Summary ── */}
+          {/* Order Summary */}
           <div className="space-y-4">
             <div className="sticky top-24">
-
-              {/* Summary card */}
               <div className="rounded-2xl border border-silver-light bg-white p-5 shadow-card">
                 <h2 className="mb-4 text-base font-bold text-navy">Order Summary</h2>
 
@@ -260,7 +253,6 @@ export default function CartPage() {
                   ))}
                 </div>
               </div>
-
             </div>
           </div>
 
