@@ -20,7 +20,7 @@ const sections = [
   { id: "pricing", heading: "Pricing and availability" },
   { id: "orders", heading: "Orders and payment" },
   { id: "shipping", heading: "Shipping and delivery" },
-  { id: "returns", heading: "Returns and refunds" },
+  { id: "returns", heading: "Refunds" },
   { id: "intended-use", heading: "Intended use" },
   { id: "prohibited", heading: "Prohibited conduct" },
   { id: "third-party", heading: "Third-party links" },
@@ -625,41 +625,39 @@ export default function TermsPage() {
               </p>
             </Section>
 
-            <Section id="returns" heading="Returns and refunds">
-              <p>
-                We accept returns for products that arrive damaged, defective,
-                or incorrect. Return requests must be raised within 7 days of
-                the delivery date by contacting our support team at{" "}
-                <a href="mailto:support@hardvanta.com">
-                  support@hardvanta.com
-                </a>{" "}
-                with your order number, a description of the issue, and clear
-                photos of the product and packaging.
-              </p>
-              <p>
-                Once your return is approved, you may choose a refund to your
-                original payment method (processed within 5–7 business days)
-                or store credit, at your preference.
-              </p>
-              <p>The following items are not eligible for return:</p>
-              <ul>
-                <li>
-                  Products that have been used, soldered, modified, or
-                  physically damaged after delivery
-                </li>
-                <li>
-                  Electronic components removed from anti-static or sealed
-                  packaging
-                </li>
-                <li>Items not reported within the 7-day window</li>
-              </ul>
-              <p>
-                Return shipping costs for approved returns due to our error
-                (wrong item sent or defective on arrival) will be covered by
-                Hardvanta. For other approved return reasons, the customer is
-                responsible for return shipping costs.
-              </p>
-            </Section>
+          <Section id="refunds" heading=" Refunds">
+  <p>
+    If you make an online payment while placing an order and choose to cancel
+    the order <strong>before it has been shipped</strong>, you will be eligible
+    for a full refund.
+  </p>
+
+  <p>
+    The refunded amount will be processed back to your original payment method
+    within <strong>1–3 business days</strong>, depending on your bank or
+    payment service provider.
+  </p>
+
+  <p>Please note:</p>
+
+  <ul>
+    <li>
+      Refunds are applicable only for orders cancelled{" "}
+      <strong>before shipment</strong>.
+    </li>
+    <li>
+      Once an order has been shipped, it may no longer be eligible for
+      cancellation or refund, as per our Cancellation &amp; Return Policy.
+    </li>
+  </ul>
+
+  <p>
+    For any refund-related queries, please contact our customer support team at{" "}
+    <a href="mailto:support@hardvanta.com">
+      support@hardvanta.com
+    </a>.
+  </p>
+</Section>
 
             <Section id="intended-use" heading="Intended use of products">
               <p>
@@ -913,7 +911,7 @@ export default function TermsPage() {
               </p>
               <div className="tos-contact-box">
                 <strong>Hardvanta Technologies LLP</strong>
-                <p>Greater Noida, Uttar Pradesh, India</p>
+                <p>Plot 046, Knowledge Park 3, Alpha, Greater Noida, Uttar Pradesh - 201310, India</p>
                 <p>
                   <a href="mailto:support@hardvanta.com">
                     support@hardvanta.com

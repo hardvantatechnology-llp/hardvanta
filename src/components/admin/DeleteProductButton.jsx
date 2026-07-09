@@ -1,22 +1,25 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Trash2 } from "lucide-react";
 
 export default function DeleteProductButton({ id, name }) {
-  const router = useRouter();
   const [busy, setBusy] = useState(false);
 
   async function handleDelete() {
     if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
     setBusy(true);
-    const res = await fetch(`/api/products/${id}`, { method: "DELETE" });
-    if (res.ok) {
-      router.refresh();
-    } else {
+    try {
+      const res = await fetch(`/api/products/${id}`, { method: "DELETE" });
       const data = await res.json().catch(() => ({}));
-      alert(data.error || "Could not delete (the product may be in an order).");
+      if (res.ok) {
+        window.location.href = "/admin/products";
+      } else {
+        alert(data.error || "Could not delete product.");
+        setBusy(false);
+      }
+    } catch (err) {
+      alert("Network error. Please try again.");
       setBusy(false);
     }
   }
@@ -25,10 +28,15 @@ export default function DeleteProductButton({ id, name }) {
     <button
       onClick={handleDelete}
       disabled={busy}
-      className="text-silver-dark hover:text-red-500 disabled:opacity-50"
+      className="text-silver-dark hover:text-red-500 disabled:opacity-50 transition-colors"
       aria-label="Delete"
+      title={`Delete ${name}`}
     >
-      <Trash2 size={16} />
+      {busy ? (
+        <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-silver border-t-red-500" />
+      ) : (
+        <Trash2 size={16} />
+      )}
     </button>
   );
 }

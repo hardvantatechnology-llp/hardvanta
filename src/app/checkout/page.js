@@ -167,6 +167,10 @@ export default function CheckoutPage() {
   async function handleSubmit(e) {
     e.preventDefault();
     setError("");
+    if (form.phone.length !== 10) {
+      setError("Please enter a valid 10-digit mobile number.");
+      return;
+    }
     if (pinStatus === "error") {
       setError("Please enter a valid Indian PIN code before placing the order.");
       return;
@@ -225,14 +229,16 @@ export default function CheckoutPage() {
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="Full name" value={form.fullName} onChange={(v) => update("fullName", v)} required />
             <Field
-              label="Phone"
-              value={form.phone}
-              onChange={(v) => update("phone", v.replace(/\D/g, "").slice(0, 10))}
-              required
-              type="tel"
-              inputMode="numeric"
-              placeholder="10-digit mobile number"
-            />
+  label="Phone"
+  value={form.phone}
+  onChange={(v) => update("phone", v.replace(/\D/g, "").slice(0, 10))}
+  required
+  type="tel"
+  inputMode="numeric"
+  placeholder="10-digit mobile number"
+  minLength={10}
+  maxLength={10}
+/>
           </div>
 
           <Field
@@ -393,7 +399,7 @@ function PayOption({ active, onClick, title, desc }) {
   );
 }
 
-function Field({ label, value, onChange, required, type = "text", inputMode, placeholder }) {
+function Field({ label, value, onChange, required, type = "text", inputMode, placeholder, minLength, maxLength }) {
   return (
     <div>
       <label className="mb-1 block text-sm font-medium text-navy">
@@ -401,14 +407,16 @@ function Field({ label, value, onChange, required, type = "text", inputMode, pla
         {required && <span className="ml-0.5 text-royal">*</span>}
       </label>
       <input
-        type={type}
-        inputMode={inputMode}
-        required={required}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        className="w-full rounded-lg border border-silver-dark px-3 py-2.5 text-sm outline-none placeholder:text-silver-dark/60 focus:border-royal focus:ring-2 focus:ring-royal/30"
-      />
+  type={type}
+  inputMode={inputMode}
+  required={required}
+  minLength={minLength}
+  maxLength={maxLength}
+  value={value}
+  onChange={(e) => onChange(e.target.value)}
+  placeholder={placeholder}
+  className="w-full rounded-lg border border-silver-dark px-3 py-2.5 text-sm outline-none placeholder:text-silver-dark/60 focus:border-royal focus:ring-2 focus:ring-royal/30"
+/>
     </div>
   );
 }

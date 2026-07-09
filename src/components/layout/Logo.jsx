@@ -6,7 +6,7 @@ import Link from "next/link";
  * The logo art sits on a light background, so on dark (navy) bars it is
  * placed inside a white rounded badge to keep contrast clean.
  */
-export default function Logo({ onBadge = true, showWordmark = true, size = 40 }) {
+export default function Logo({ onBadge = true, showWordmark = true, size = 52 }) {
   return (
     <Link href="/" className="flex shrink-0 items-center gap-2.5">
       <span
@@ -18,8 +18,8 @@ export default function Logo({ onBadge = true, showWordmark = true, size = 40 })
         style={{ height: size, width: size }}
       >
         <Image
-          src="/images/logo.png"
-          alt="Hardvanta Technologies LLP"
+          src="/images/hardvanta.png"
+          alt="Hardvanta Technologies"
           width={size}
           height={size}
           className="h-full w-full object-contain"
@@ -27,8 +27,13 @@ export default function Logo({ onBadge = true, showWordmark = true, size = 40 })
         />
       </span>
       {showWordmark && (
-        <span className="text-xl font-extrabold tracking-tight">
-          Hard<span className="text-royal-light">vanta</span>
+        <span className="flex flex-col leading-none">
+          <span className="text-xl font-extrabold tracking-tight">
+            Hard<span className="text-royal">vanta</span>
+          </span>
+          <span className="text-[9px] font-semibold tracking-[0.18em] text-navy uppercase mt-0.5">
+            Technologies
+          </span>
         </span>
       )}
     </Link>

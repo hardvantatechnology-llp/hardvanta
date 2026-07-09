@@ -43,19 +43,18 @@ export async function POST(request) {
     return NextResponse.json({ error: "Cart is empty." }, { status: 400 });
   }
 
-const subtotal = cartItems.reduce(
+  const subtotal = cartItems.reduce(
     (sum, it) => sum + (it.product.salePrice ?? it.product.price) * it.quantity,
     0
   );
-const shipping = subtotal > 999 ? 0 : 49;
-const total = subtotal + shipping;
+  const shipping = subtotal >= 999 ? 0 : 49;
+  const total = subtotal + shipping;
 
   let order;
   try {
     order = await prisma.$transaction(
       async (tx) => {
         // STEP 1: Row-level lock ke saath stock check karo
-        // $queryRaw se SELECT ... FOR UPDATE hoga — race condition band!
         for (const it of cartItems) {
           const rows = await tx.$queryRaw`
             SELECT id, stock, name
@@ -83,6 +82,7 @@ const total = subtotal + shipping;
             userId,
             total,
             address,
+            paymentMethod: "COD",
             items: {
               create: cartItems.map((it) => ({
                 productId: it.productId,
@@ -95,13 +95,22 @@ const total = subtotal + shipping;
           include: { items: true },
         });
 
-        // STEP 4: Cart clear karo
+        // STEP 4: ✅ Payment record banao (COD)
+        await tx.payment.create({
+          data: {
+            orderId: created.id,
+            method: "COD",
+            amount: total,
+            status: "PENDING",
+          },
+        });
+
+        // STEP 5: Cart clear karo
         await tx.cartItem.deleteMany({ where: { userId } });
 
         return created;
       },
       {
-        // Timeout 10 seconds — agar lock nahi mila toh fail ho jayega
         timeout: 10000,
       }
     );
@@ -113,7 +122,7 @@ const total = subtotal + shipping;
     return NextResponse.json({ error: "Order failed. Please try again." }, { status: 500 });
   }
 
-  // Send confirmation email (best-effort — order pe depend nahi karta)
+  // Send confirmation email (best-effort)
   if (session.user?.email) {
     try {
       await sendOrderConfirmationEmail(session.user.email, order);
