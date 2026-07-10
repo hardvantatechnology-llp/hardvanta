@@ -7,7 +7,7 @@ import { Star, ShoppingCart, Heart, Check } from "lucide-react";
 import { formatPrice } from "@/utils/formatPrice";
 import { imageSrc } from "@/utils/imageSrc";
 import { useCart } from "@/context/CartContext";
-import { useWishlist } from "@/hooks/useWishlist";
+import { useWishlist } from "@/context/WishlistContext";
 
 export default function ProductCard({ product }) {
   const { addItem } = useCart();
@@ -66,7 +66,7 @@ export default function ProductCard({ product }) {
           aria-label="Add to wishlist"
           className="absolute right-2.5 top-2.5 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-navy shadow-sm backdrop-blur transition-colors hover:text-royal"
         >
-          <Heart size={16} className={wished ? "fill-royal text-royal" : ""} />
+          <Heart size={16} className={wished ? "fill-red-500 text-red-500" : ""} />
         </button>
       </div>
 
