@@ -1,12 +1,17 @@
 import { notFound } from "next/navigation";
-
 import ProductForm from "@/components/admin/ProductForm";
 
 export const dynamic = "force-dynamic";
 
 export default async function EditProductPage({ params }) {
   const { prisma } = await import("@/lib/prisma");
-  const product = await prisma.product.findUnique({ where: { id: params.id } });
+  const product = await prisma.product.findUnique({
+    where: { id: params.id },
+    include: {
+      category: true,
+      brand: true,
+    },
+  });
   if (!product) notFound();
 
   return (
@@ -15,4 +20,4 @@ export default async function EditProductPage({ params }) {
       <ProductForm product={product} />
     </div>
   );
-}
+} 

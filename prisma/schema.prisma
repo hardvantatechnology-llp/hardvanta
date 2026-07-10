@@ -109,6 +109,7 @@ model Product {
   price            Int
   salePrice        Int?
   stock            Int              @default(0)
+  inStock          Boolean          @default(true)   // ✅ NAYA FIELD
   featured         Boolean          @default(false)
   active           Boolean          @default(true)
   image            String?
@@ -305,6 +306,9 @@ model Coupon {
   code        String    @unique
   description String?
   discount    Int
+  type        String    @default("flat")   // 
+  minOrder    Int       @default(0)        // 
+  maxDiscount Int?                         // 
   active      Boolean   @default(true)
   expiresAt   DateTime?
   createdAt   DateTime  @default(now())
@@ -355,7 +359,7 @@ model GSTDetails {
   cinNumber   String?
   address     String
   city        String
-  state       String
+  state        String
   pincode     String
   email       String?
   phone       String?

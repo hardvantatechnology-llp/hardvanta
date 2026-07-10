@@ -54,16 +54,16 @@ export async function POST(request) {
   try {
     order = await prisma.$transaction(
       async (tx) => {
-        // STEP 1: Row-level lock ke saath stock check karo
+        // STEP 1: Row-level lock ke saath inStock check karo
         for (const it of cartItems) {
           const rows = await tx.$queryRaw`
-            SELECT id, stock, name
+            SELECT id, stock, "inStock", name
             FROM "Product"
             WHERE id = ${it.productId}
             FOR UPDATE
           `;
           const product = rows[0];
-          if (!product || product.stock < it.quantity) {
+          if (!product || product.inStock === false) {
             throw new Error(`"${it.product.name}" out of stock.`);
           }
         }
@@ -95,7 +95,7 @@ export async function POST(request) {
           include: { items: true },
         });
 
-        // STEP 4: ✅ Payment record banao (COD)
+        // STEP 4: Payment record banao (COD)
         await tx.payment.create({
           data: {
             orderId: created.id,

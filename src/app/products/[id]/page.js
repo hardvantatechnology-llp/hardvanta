@@ -27,11 +27,8 @@ export default async function ProductDetailPage({ params }) {
   const product = await getProductById(params.id);
   if (!product) notFound();
 
-  const related = await getRelatedProducts(
-  product.category.slug,
-  product.id,
-  4
-);
+  const related = await getRelatedProducts(product.category.slug, product.id, 4);
+
   const price = product.salePrice ?? product.price;
   const hasDiscount = product.salePrice != null;
   const discountPct = hasDiscount
@@ -44,7 +41,8 @@ export default async function ProductDetailPage({ params }) {
     ["Brand", product.brand?.name],
     ["Category", product.category?.name],
     ["SKU", product.id.slice(-8).toUpperCase()],
-    ["Availability", product.stock > 0 ? `In stock (${product.stock})` : "Out of stock"],
+    // ✅ FIXED: inStock field se check
+    ["Availability", product.inStock !== false ? "In stock" : "Out of stock"],
   ];
 
   return (
@@ -56,11 +54,11 @@ export default async function ProductDetailPage({ params }) {
         <Link href="/products" className="hover:text-royal">Products</Link>
         <ChevronRight size={14} />
         <Link
-  href={`/products?category=${product.category?.slug}`}
-  className="capitalize hover:text-royal"
->
-  {product.category?.name}
-</Link>
+          href={`/products?category=${product.category?.slug}`}
+          className="capitalize hover:text-royal"
+        >
+          {product.category?.name}
+        </Link>
       </nav>
 
       <div className="grid gap-10 lg:grid-cols-2">
@@ -81,7 +79,7 @@ export default async function ProductDetailPage({ params }) {
               </span>
             )}
           </div>
-          {/* Thumbnail strip (single image for now) */}
+          {/* Thumbnail strip */}
           <div className="mt-3 flex gap-3">
             <div className="relative h-20 w-20 overflow-hidden rounded-lg border-2 border-royal bg-white">
               <Image src={img} alt="" fill sizes="80px" className="object-contain p-1.5" />
@@ -103,9 +101,7 @@ export default async function ProductDetailPage({ params }) {
               <Star size={14} className="fill-green-600 text-green-600" />
               {product.rating}
             </span>
-            <span className="text-silver-dark">
-              {product.reviewCount} ratings
-            </span>
+            <span className="text-silver-dark">{product.reviewCount} ratings</span>
           </div>
 
           {/* Price */}
@@ -127,8 +123,9 @@ export default async function ProductDetailPage({ params }) {
             </div>
             <p className="mt-1 text-xs text-silver-dark">Inclusive of all taxes</p>
 
+            {/* ✅ FIXED: inStock field se check */}
             <p className="mt-3 text-sm font-medium">
-              {product.stock > 0 ? (
+              {product.inStock !== false ? (
                 <span className="text-green-600">● In stock — ready to ship</span>
               ) : (
                 <span className="text-red-500">● Out of stock</span>
@@ -171,9 +168,7 @@ export default async function ProductDetailPage({ params }) {
               {specs.map(([k, v], i) => (
                 <div
                   key={k}
-                  className={`grid grid-cols-3 text-sm ${
-                    i % 2 ? "bg-white" : "bg-cloud"
-                  }`}
+                  className={`grid grid-cols-3 text-sm ${i % 2 ? "bg-white" : "bg-cloud"}`}
                 >
                   <dt className="px-4 py-3 font-medium text-silver-dark">{k}</dt>
                   <dd className="col-span-2 px-4 py-3 capitalize text-navy">{v}</dd>

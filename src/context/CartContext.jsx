@@ -11,8 +11,10 @@ export function CartProvider({ children }) {
   const isAuthed = status === "authenticated";
 
   const [items, setItems] = useState([]);
-  const [hydrated, setHydrated] = useState(false);
-  const mergedRef = useRef(false);
+const [coupon, setCoupon] = useState(null);
+
+const [hydrated, setHydrated] = useState(false);
+const mergedRef = useRef(false);
 
   // --- Guest: load from localStorage on mount ---
   useEffect(() => {
@@ -135,8 +137,19 @@ export function CartProvider({ children }) {
 
   return (
     <CartContext.Provider
-      value={{ items, addItem, removeItem, updateQuantity, clearCart, count, total }}
-    >
+  value={{
+    items,
+    addItem,
+    removeItem,
+    updateQuantity,
+    clearCart,
+    count,
+    total,
+
+    coupon,
+    setCoupon,
+  }}
+>
       {children}
     </CartContext.Provider>
   );
