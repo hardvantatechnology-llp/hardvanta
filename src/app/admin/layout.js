@@ -96,7 +96,13 @@ export default async function AdminLayout({ children }) {
               </div>
             ))}
 
-            <div className="border-t border-silver-light pt-2">
+            <div className="space-y-1 border-t border-silver-light pt-2">
+              <Link
+                href="/account"
+                className="flex items-center gap-3 rounded-lg bg-royal/10 px-3 py-2 text-sm font-semibold text-royal hover:bg-royal/15 transition-colors"
+              >
+                <UserCog size={16} /> Switch to User View
+              </Link>
               <Link
                 href="/"
                 className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-silver-dark hover:bg-cloud hover:text-royal transition-colors"

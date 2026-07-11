@@ -26,8 +26,12 @@ function LoginForm() {
 
   // Forgot password states
   const [forgotStep, setForgotStep] = useState(false);
+  const [forgotStage, setForgotStage] = useState("email"); // email | reset | done
   const [forgotEmail, setForgotEmail] = useState("");
-  const [forgotSent, setForgotSent] = useState(false);
+  const [forgotCode, setForgotCode] = useState("");
+  const [forgotNewPassword, setForgotNewPassword] = useState("");
+  const [forgotError, setForgotError] = useState("");
+  const [forgotInfo, setForgotInfo] = useState("");
   const [forgotLoading, setForgotLoading] = useState(false);
 
   async function handlePasswordSubmit(e) {
@@ -77,10 +81,49 @@ function LoginForm() {
 
   async function handleForgotPassword(e) {
     e.preventDefault();
+    setForgotError("");
+    setForgotInfo("");
     setForgotLoading(true);
-    await new Promise((r) => setTimeout(r, 1200));
+    const res = await fetch("/api/auth/reset-password/request", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: forgotEmail }),
+    });
+    const data = await res.json().catch(() => ({}));
     setForgotLoading(false);
-    setForgotSent(true);
+    if (!res.ok) {
+      setForgotError(data.error || "Something went wrong. Please try again.");
+      return;
+    }
+    setForgotStage("reset");
+    if (data.demo && data.devCode) {
+      setForgotCode(data.devCode);
+      setForgotInfo(`Demo mode: your reset code is ${data.devCode}`);
+    } else {
+      setForgotInfo(`If an account exists, we've emailed a code to ${forgotEmail}.`);
+    }
+  }
+
+  async function handleResetConfirm(e) {
+    e.preventDefault();
+    setForgotError("");
+    setForgotLoading(true);
+    const res = await fetch("/api/auth/reset-password/confirm", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: forgotEmail,
+        code: forgotCode,
+        password: forgotNewPassword,
+      }),
+    });
+    const data = await res.json().catch(() => ({}));
+    setForgotLoading(false);
+    if (!res.ok) {
+      setForgotError(data.error || "Could not reset password.");
+      return;
+    }
+    setForgotStage("done");
   }
 
   // Forgot Password Screen
@@ -89,18 +132,32 @@ function LoginForm() {
       <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-12">
         <div className="w-full max-w-md">
           <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
-            {!forgotSent ? (
+            {forgotStage !== "done" && (
+              <button
+                onClick={() => { setForgotStep(false); setForgotStage("email"); setForgotError(""); setForgotInfo(""); }}
+                className="flex items-center gap-1.5 text-sm text-silver-dark hover:text-royal mb-6 transition-colors"
+              >
+                <ArrowLeft size={15} /> Back to login
+              </button>
+            )}
+
+            <div className="flex justify-center mb-5">
+              <div className="w-14 h-14 rounded-full bg-royal/10 flex items-center justify-center">
+                <Lock size={26} className="text-royal" />
+              </div>
+            </div>
+
+            {forgotInfo && (
+              <p className="mb-4 rounded-lg bg-blue-50 px-3 py-2 text-sm text-blue-700">{forgotInfo}</p>
+            )}
+            {forgotError && (
+              <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{forgotError}</p>
+            )}
+
+            {forgotStage === "email" && (
               <>
-                <button onClick={() => setForgotStep(false)} className="flex items-center gap-1.5 text-sm text-silver-dark hover:text-royal mb-6 transition-colors">
-                  <ArrowLeft size={15} /> Back to login
-                </button>
-                <div className="flex justify-center mb-5">
-                  <div className="w-14 h-14 rounded-full bg-royal/10 flex items-center justify-center">
-                    <Lock size={26} className="text-royal" />
-                  </div>
-                </div>
                 <h2 className="text-xl font-bold text-navy text-center mb-1">Forgot password?</h2>
-                <p className="text-sm text-silver-dark text-center mb-6">Enter your email and we will send you a reset link.</p>
+                <p className="text-sm text-silver-dark text-center mb-6">Enter your email and we&apos;ll send you a reset code.</p>
                 <form onSubmit={handleForgotPassword} className="space-y-4">
                   <div className="relative">
                     <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-silver-dark" />
@@ -113,20 +170,53 @@ function LoginForm() {
                   </div>
                   <button type="submit" disabled={forgotLoading}
                     className="w-full rounded-xl bg-royal py-2.5 text-sm font-semibold text-white hover:bg-navy transition-colors disabled:opacity-70">
-                    {forgotLoading ? "Sending..." : "Send Reset Link"}
+                    {forgotLoading ? "Sending..." : "Send Reset Code"}
                   </button>
                 </form>
               </>
-            ) : (
-              <div className="text-center py-4">
+            )}
+
+            {forgotStage === "reset" && (
+              <>
+                <h2 className="text-xl font-bold text-navy text-center mb-1">Reset password</h2>
+                <p className="text-sm text-silver-dark text-center mb-6">Enter the code and choose a new password.</p>
+                <form onSubmit={handleResetConfirm} className="space-y-4">
+                  <input
+                    type="text" inputMode="numeric" maxLength={6} required autoFocus
+                    value={forgotCode}
+                    onChange={(e) => setForgotCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                    placeholder="6-digit code"
+                    className="w-full rounded-xl border border-silver px-4 py-2.5 text-center text-lg font-semibold tracking-[0.4em] outline-none focus:border-royal focus:ring-2 focus:ring-royal/20"
+                  />
+                  <div className="relative">
+                    <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-silver-dark" />
+                    <input
+                      type="password" required minLength={6}
+                      value={forgotNewPassword}
+                      onChange={(e) => setForgotNewPassword(e.target.value)}
+                      placeholder="New password (min 6 characters)"
+                      className="w-full rounded-xl border border-silver pl-9 pr-4 py-2.5 text-sm outline-none focus:border-royal focus:ring-2 focus:ring-royal/20"
+                    />
+                  </div>
+                  <button type="submit" disabled={forgotLoading || forgotCode.length < 6}
+                    className="w-full rounded-xl bg-royal py-2.5 text-sm font-semibold text-white hover:bg-navy transition-colors disabled:opacity-70">
+                    {forgotLoading ? "Resetting..." : "Reset Password"}
+                  </button>
+                </form>
+              </>
+            )}
+
+            {forgotStage === "done" && (
+              <div className="text-center py-2">
                 <div className="flex justify-center mb-4">
                   <CheckCircle2 size={52} className="text-green-500" />
                 </div>
-                <h2 className="text-xl font-bold text-navy mb-2">Check your email!</h2>
-                <p className="text-sm text-silver-dark mb-1">We have sent a password reset link to</p>
-                <p className="text-sm font-semibold text-navy mb-6">{forgotEmail}</p>
-                <button onClick={() => { setForgotStep(false); setForgotSent(false); setForgotEmail(""); }}
-                  className="text-sm font-semibold text-royal hover:underline">
+                <h2 className="text-xl font-bold text-navy mb-2">Password updated!</h2>
+                <p className="text-sm text-silver-dark mb-6">You can now sign in with your new password.</p>
+                <button
+                  onClick={() => { setForgotStep(false); setForgotStage("email"); setForgotEmail(""); setForgotCode(""); setForgotNewPassword(""); setForgotInfo(""); setForgotError(""); }}
+                  className="rounded-xl bg-royal px-6 py-2.5 text-sm font-semibold text-white hover:bg-navy transition-colors"
+                >
                   Back to login
                 </button>
               </div>
