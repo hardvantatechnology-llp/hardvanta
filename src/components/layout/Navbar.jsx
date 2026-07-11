@@ -1,6 +1,7 @@
 ﻿"use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
@@ -14,6 +15,7 @@ import {
   Menu,
   X,
   ChevronDown,
+  ChevronRight,
   Phone,
   LogOut,
   LayoutDashboard,
@@ -68,10 +70,46 @@ export default function Navbar() {
   const isAdmin = session?.user?.role === "ADMIN";
 
   const [mobileOpen, setMobileOpen]       = useState(false); // Menu drawer
-  const [catOpen, setCatOpen]             = useState(false);
+  const [catOpen, setCatOpen]             = useState(false); // Categories sidebar (desktop trigger)
   const [shopOpen, setShopOpen]           = useState(false);
-  const [mobileCatOpen, setMobileCatOpen] = useState(false);
+  const [mobileCatOpen, setMobileCatOpen] = useState(false); // Categories sidebar (mobile trigger)
   const [query, setQuery]                 = useState("");
+
+  const categorySidebarOpen = catOpen || mobileCatOpen;
+  const closeCategorySidebar = () => {
+    setCatOpen(false);
+    setMobileCatOpen(false);
+  };
+
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  // Measure the real navbar height live, so the mobile drawer can snap
+  // exactly to its bottom edge instead of relying on a fixed pixel guess
+  const headerRef = useRef(null);
+  const [headerHeight, setHeaderHeight] = useState(0);
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el) return;
+    const update = () => setHeaderHeight(el.offsetHeight);
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    window.addEventListener("resize", update);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", update);
+    };
+  }, []);
+
+  // Lock background scroll while the categories sidebar or mobile drawer is open
+  useEffect(() => {
+    if (categorySidebarOpen || mobileOpen) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => { document.body.style.overflow = prev; };
+    }
+  }, [categorySidebarOpen, mobileOpen]);
 
   function handleSearch(e) {
     e.preventDefault();
@@ -81,7 +119,7 @@ export default function Navbar() {
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white">
+    <header ref={headerRef} className="sticky top-0 z-50 w-full bg-white">
 
       {/* ── Row 1 MOBILE: Phone (centered) ── */}
       <div className="border-b border-silver-light bg-white md:hidden">
@@ -193,13 +231,13 @@ export default function Navbar() {
       {/* ── Row 3 MOBILE: ≡ All Categories  icons  ≡ Menu ── */}
       <div className="border-b border-silver-light bg-white md:hidden">
         <div className="flex items-center justify-between px-4 py-2">
-          {/* All Categories — apni alag state */}
+          {/* All Categories — opens the categories sidebar */}
           <button
-            onClick={() => { setMobileCatOpen((v) => !v); setMobileOpen(false); }}
+            onClick={() => { setMobileCatOpen(true); setMobileOpen(false); }}
             className="flex items-center gap-1.5 text-sm font-semibold text-navy">
             <AlignJustify size={18} />
             <span>All Categories</span>
-            <ChevronDown size={14} className={`transition-transform ${mobileCatOpen ? "rotate-180" : ""}`} />
+            <ChevronRight size={14} />
           </button>
 
           <div className="flex items-center gap-5 text-navy">
@@ -218,42 +256,14 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* ── All Categories dropdown (mobile bar se) ── */}
-      {mobileCatOpen && (
-        <div className="border-b border-silver-light bg-white md:hidden">
-          <div className="max-h-64 overflow-y-auto">
-            {categories.map((c, i) => (
-              <Link key={c.slug} href={`/products?category=${c.slug}`}
-                onClick={() => setMobileCatOpen(false)}
-                className={`block px-4 py-2.5 text-sm text-navy hover:bg-cloud hover:text-royal transition-colors ${
-                  i !== categories.length - 1 ? "border-b border-silver-light" : ""}`}>
-                {c.name}
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
-
       {/* ── Row 3 DESKTOP: Full nav bar ── */}
       <div className="hidden border-b border-silver-light bg-white shadow-sm md:block">
         <div className="container-page flex items-stretch">
-          <div className="relative"
-            onMouseEnter={() => setCatOpen(true)}
-            onMouseLeave={() => setCatOpen(false)}>
-            <button className="flex h-full items-center gap-2 bg-navy px-5 py-3 text-sm font-semibold text-white hover:bg-navy-dark transition-colors">
-              <AlignJustify size={16} /> All Categories <ChevronDown size={14} />
-            </button>
-            {catOpen && (
-              <div className="absolute left-0 top-full z-50 max-h-[70vh] w-72 overflow-y-auto rounded-b-lg border border-silver-light bg-white py-2 shadow-xl">
-                {categories.map((c) => (
-                  <Link key={c.slug} href={`/products?category=${c.slug}`}
-                    className="block px-4 py-2 text-sm text-navy hover:bg-cloud hover:text-royal transition-colors">
-                    {c.name}
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
+          <button
+            onClick={() => setCatOpen(true)}
+            className="flex h-full items-center gap-2 bg-navy px-5 py-3 text-sm font-semibold text-white hover:bg-navy-dark transition-colors">
+            <AlignJustify size={16} /> All Categories <ChevronDown size={14} />
+          </button>
 
           <nav className="flex flex-1 flex-wrap items-center">
             {navLinks.map((l) =>
@@ -294,8 +304,15 @@ export default function Navbar() {
       </div>
 
       {/* ── Mobile drawer ── */}
-      {mobileOpen && (
-        <div className="fixed inset-0 top-[148px] z-40 overflow-y-auto bg-white md:hidden">
+      {/* Portalled to document.body (same reasoning as the categories
+          sidebar) and pinned to the live-measured navbar height so it
+          always sits flush against the bottom of the navbar — no gap,
+          no overlap — regardless of exact navbar height on the device. */}
+      {mounted && mobileOpen && createPortal(
+        <div
+          className="fixed inset-x-0 bottom-0 z-40 overflow-y-auto bg-white md:hidden"
+          style={{ top: headerHeight }}
+        >
           <div className="px-4 pb-8 pt-3">
 
             {/* Search */}
@@ -324,26 +341,13 @@ export default function Navbar() {
               ))}
             </div>
 
-            {/* All Categories accordion */}
-            <div className="mb-4 rounded-xl border border-silver-light overflow-hidden">
-              <button onClick={() => setMobileCatOpen((v) => !v)}
-                className="flex w-full items-center justify-between bg-navy px-4 py-3 text-sm font-semibold text-white">
-                <span className="flex items-center gap-2"><AlignJustify size={15} /> All Categories</span>
-                <ChevronDown size={15} className={`transition-transform ${mobileCatOpen ? "rotate-180" : ""}`} />
-              </button>
-              {mobileCatOpen && (
-                <div className="max-h-56 overflow-y-auto">
-                  {categories.map((c, i) => (
-                    <Link key={c.slug} href={`/products?category=${c.slug}`}
-                      onClick={() => setMobileOpen(false)}
-                      className={`block px-4 py-2.5 text-sm text-navy hover:bg-cloud hover:text-royal transition-colors ${
-                        i !== categories.length - 1 ? "border-b border-silver-light" : ""}`}>
-                      {c.name}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
+            {/* All Categories — opens the categories sidebar */}
+            <button
+              onClick={() => { setMobileCatOpen(true); setMobileOpen(false); }}
+              className="mb-4 flex w-full items-center justify-between rounded-xl bg-navy px-4 py-3 text-sm font-semibold text-white">
+              <span className="flex items-center gap-2"><AlignJustify size={15} /> All Categories</span>
+              <ChevronRight size={15} />
+            </button>
 
             {/* Account */}
             <div className="mb-4 rounded-xl border border-silver-light overflow-hidden">
@@ -393,7 +397,66 @@ export default function Navbar() {
               </a>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
+      )}
+
+      {/* ── All Categories Sidebar (works across mobile, tablet & desktop) ── */}
+      {/* Portalled to document.body so it is always truly fixed to the real
+          viewport — never trapped inside a transformed/sticky ancestor,
+          which is what was causing the panel to open with a gap at the top. */}
+      {mounted && createPortal(
+        <>
+          {/* Overlay */}
+          <div
+            onClick={closeCategorySidebar}
+            aria-hidden={!categorySidebarOpen}
+            className={`fixed inset-0 z-[90] h-screen w-screen bg-navy/50 backdrop-blur-[2px] transition-opacity duration-300 ${
+              categorySidebarOpen ? "opacity-100" : "pointer-events-none opacity-0"
+            }`}
+          />
+
+          {/* Sliding panel */}
+          <aside
+            role="dialog"
+            aria-label="All Categories"
+            aria-hidden={!categorySidebarOpen}
+            className={`fixed left-0 top-0 z-[100] flex h-screen w-[86%] max-w-[300px] flex-col bg-white shadow-2xl transition-transform duration-300 ease-in-out sm:max-w-[320px] ${
+              categorySidebarOpen ? "translate-x-0" : "-translate-x-full"
+            }`}
+          >
+            {/* Sidebar header */}
+            <div className="flex shrink-0 items-center justify-between bg-navy px-5 py-4">
+              <span className="flex items-center gap-2 text-base font-semibold text-white">
+                <AlignJustify size={18} /> All Categories
+              </span>
+              <button
+                onClick={closeCategorySidebar}
+                aria-label="Close categories"
+                className="rounded-full p-1.5 text-white transition-colors hover:bg-navy-dark hover:text-royal-light">
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Sidebar category list */}
+            <div className="flex-1 overflow-y-auto overscroll-contain">
+              {categories.map((c, i) => (
+                <Link
+                  key={c.slug}
+                  href={`/products?category=${c.slug}`}
+                  onClick={closeCategorySidebar}
+                  className={`flex items-center justify-between px-5 py-3.5 text-sm font-medium text-navy transition-colors hover:bg-cloud hover:text-royal ${
+                    i !== categories.length - 1 ? "border-b border-silver-light" : ""
+                  }`}
+                >
+                  <span>{c.name}</span>
+                  <ChevronRight size={15} className="text-silver-dark" />
+                </Link>
+              ))}
+            </div>
+          </aside>
+        </>,
+        document.body
       )}
     </header>
   );

@@ -86,15 +86,15 @@ export default function InvestorRelationsPage() {
         </p>
         <div style={s.stats}>
           <div style={s.stat}>
-            <div style={s.statValue}>10<span style={s.statAccent}>K+</span></div>
-            <div style={s.statLabel}>Products Listed</div>
+            <div style={s.statValue}>100<span style={s.statAccent}>%</span></div>
+            <div style={s.statLabel}>Quality Commitment</div>
           </div>
           <div style={s.stat}>
             <div style={s.statValue}>2026<span style={s.statAccent}>+</span></div>
             <div style={s.statLabel}>Est. April 2026</div>
           </div>
           <div style={s.stat}>
-            <div style={s.statValue}>Pan<span style={s.statAccent}>-IN</span></div>
+            <div style={s.statValue}>Delhi<span style={s.statAccent}>-NCR</span></div>
             <div style={s.statLabel}>Delivery Reach</div>
           </div>
         </div>

@@ -62,7 +62,7 @@ export default function CategoryTiles() {
           View all
         </Link>
       </div>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-6">
+      <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent">
         {categories.map((c, i) => {
           const Icon = iconMap[c.icon] ?? Box;
           const color = palette[i % palette.length];

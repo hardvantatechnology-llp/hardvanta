@@ -66,29 +66,7 @@ function Section({ id, heading, children }) {
   );
 }
 
-export default function TermsPage() {
-  const [activeId, setActiveId] = useState("");
-  const [tocOpen, setTocOpen] = useState(false);
-  const observerRef = useRef(null);
-
-  useEffect(() => {
-    const els = sections.map(({ id }) => document.getElementById(id)).filter(Boolean);
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        const visible = entries.filter((e) => e.isIntersecting);
-        if (visible.length > 0) {
-          setActiveId(visible[0].target.id);
-        }
-      },
-      { rootMargin: "-20% 0px -70% 0px", threshold: 0 }
-    );
-    els.forEach((el) => observerRef.current.observe(el));
-    return () => observerRef.current?.disconnect();
-  }, []);
-
-  return (
-    <>
-      <style>{`
+const tosStyles = `
         /* ── Google Font ── */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
@@ -400,7 +378,31 @@ export default function TermsPage() {
           .tos-section-heading { font-size: 18px; }
           .tos-section-body p, .tos-section-body ul li { font-size: 14.5px; }
         }
-      `}</style>
+      `;
+
+export default function TermsPage() {
+  const [activeId, setActiveId] = useState("");
+  const [tocOpen, setTocOpen] = useState(false);
+  const observerRef = useRef(null);
+
+  useEffect(() => {
+    const els = sections.map(({ id }) => document.getElementById(id)).filter(Boolean);
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.filter((e) => e.isIntersecting);
+        if (visible.length > 0) {
+          setActiveId(visible[0].target.id);
+        }
+      },
+      { rootMargin: "-20% 0px -70% 0px", threshold: 0 }
+    );
+    els.forEach((el) => observerRef.current.observe(el));
+    return () => observerRef.current?.disconnect();
+  }, []);
+
+  return (
+    <>
+      <style dangerouslySetInnerHTML={{ __html: tosStyles }} />
 
       <div className="tos-root">
         {/* ── Hero ── */}
@@ -625,16 +627,14 @@ export default function TermsPage() {
               </p>
             </Section>
 
-            <Section id="returns" heading="Returns and refunds">
+            <Section id="refunds" heading="Refunds">
               <p>
-                We accept returns for products that arrive damaged, defective,
-                or incorrect. Return requests must be raised within 7 days of
-                the delivery date by contacting our support team at{" "}
+                All products undergo a quality inspection before dispatch. We also provide Open Delivery, allowing customers to inspect the product at the time of delivery. If the product is found to be damaged or broken during the open delivery inspection, the customer will be eligible for a full refund.
+                A refund for order cancellation will only be processed if the order is cancelled before it has been shipped. Once the order has been dispatched, cancellation and refund requests will not be accepted.
+                For any problem contact our support team at{" "} 
                 <a href="mailto:support@hardvanta.com">
                   support@hardvanta.com
                 </a>{" "}
-                with your order number, a description of the issue, and clear
-                photos of the product and packaging.
               </p>
               <p>
                 Once your return is approved, you may choose a refund to your
@@ -651,14 +651,9 @@ export default function TermsPage() {
                   Electronic components removed from anti-static or sealed
                   packaging
                 </li>
-                <li>Items not reported within the 7-day window</li>
+
               </ul>
-              <p>
-                Return shipping costs for approved returns due to our error
-                (wrong item sent or defective on arrival) will be covered by
-                Hardvanta. For other approved return reasons, the customer is
-                responsible for return shipping costs.
-              </p>
+              
             </Section>
 
             <Section id="intended-use" heading="Intended use of products">
@@ -913,10 +908,11 @@ export default function TermsPage() {
               </p>
               <div className="tos-contact-box">
                 <strong>Hardvanta Technologies LLP</strong>
-                <p>Greater Noida, Uttar Pradesh, India</p>
+                <p>Plot 046, Knowledge Park III,Alpha, Greater Noida,Uttar Pradesh – 201310, India.</p>
+                <p>(Located inside the New Gen IEDC at ITS Engineering College)</p>
                 <p>
-                  <a href="mailto:support@hardvanta.com">
-                    support@hardvanta.com
+                  <a href="mailto:support@hardvantatechnology@gmail.com">
+                    support@hardvantatechnology@gmail.com
                   </a>
                 </p>
                 <p style={{ marginTop: "10px", fontSize: "13px", color: "#6b7280" }}>

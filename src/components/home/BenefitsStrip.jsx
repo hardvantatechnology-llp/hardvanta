@@ -1,9 +1,9 @@
-import { Truck, ShieldCheck, RotateCcw, Headphones } from "lucide-react";
+import { Truck, ShieldCheck, Lightbulb , Headphones } from "lucide-react";
 
 const benefits = [
   { Icon: Truck, title: "Fast Delivery", sub: "Across India" },
   { Icon: ShieldCheck, title: "100% Genuine", sub: "Authentic parts" },
-  { Icon: RotateCcw, title: "Easy Returns", sub: "7-day policy" },
+  { Icon: Lightbulb, title: "Project Assistance", sub: "From Idea To Project" },
   { Icon: Headphones, title: "Expert Support", sub: "Mon–Sat" },
 ];
 

@@ -34,9 +34,9 @@ export default function ContactPage() {
             {
               icon: "✉️",
               title: "Email Us",
-              info: "support@hardvanta.com",
+              info: "support@hardvantatechnology@gmail.com",
               sub: "We reply within 24 hours",
-              href: "mailto:support@hardvanta.com",
+              href: "mailto:support@hardvantatechnology@gmail.com",
               label: "Send Email",
             },
             {
