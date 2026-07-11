@@ -29,6 +29,7 @@ import { categories } from "@/lib/data";
 import { useCart } from "@/context/CartContext";
 import Logo from "./Logo";
 
+// X (Twitter) official SVG — lucide mein Twitter icon nahi hota
 function XIcon({ size = 16 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
@@ -40,6 +41,7 @@ function XIcon({ size = 16 }) {
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "Shop", href: "/products", dropdown: true },
+  { label: "Forum", href: "#" },
   { label: "Bulk Enquiry", href: "/bulk-enquiry" },
   { label: "New Arrivals", href: "/products" },
   { label: "ATL Kits Enquiry", href: "/atl-kits-enquiry" },
@@ -132,7 +134,7 @@ export default function Navbar() {
           <div className="flex items-center gap-4 text-navy">
             {socials.map(({ Icon, href }, i) => (
               <a key={i} href={href} target="_blank" rel="noopener noreferrer"
-                className="hover:text-royal transition-colors">
+                className="hover:text-royal transition-colors duration-150">
                 <Icon size={18} />
               </a>
             ))}
@@ -143,15 +145,15 @@ export default function Navbar() {
       {/* ── Row 1 DESKTOP: Phone + Socials single line ── */}
       <div className="hidden border-b border-silver-light bg-white md:block">
         <div className="container-page flex items-center justify-between py-2 text-sm">
-          <a href="tel:+919170546395" className="flex items-center gap-2 text-navy">
+          <a href="tel:+919170546395" className="flex items-center gap-2 text-navy hover:text-royal transition-colors">
             <Phone size={15} className="text-royal" />
             <span className="font-semibold">+91 91705 46395</span>
-            <span className="text-silver-dark">Customer Support</span>
+            <span className="text-silver-dark">· Customer Support</span>
           </a>
           <div className="flex items-center gap-3 text-silver-dark">
             {socials.map(({ Icon, href }, i) => (
               <a key={i} href={href} target="_blank" rel="noopener noreferrer"
-                className="hover:text-royal transition-colors">
+                className="hover:text-royal transition-colors duration-150">
                 <Icon size={17} />
               </a>
             ))}
@@ -167,61 +169,72 @@ export default function Navbar() {
 
           {/* Search — desktop only */}
           <form onSubmit={handleSearch}
-            className="hidden flex-1 md:flex items-center overflow-hidden rounded-full border border-silver bg-white shadow-sm">
+            className="hidden flex-1 md:flex items-center overflow-hidden rounded-full border border-silver bg-white shadow-sm focus-within:border-royal focus-within:ring-2 focus-within:ring-royal/20 transition-all duration-200">
             <span className="pl-4 text-silver-dark"><Search size={17} /></span>
             <input type="text" value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search for Products..."
-              className="w-full px-3 py-2 text-sm text-navy outline-none bg-transparent"
+              className="w-full px-3 py-2 text-sm text-navy outline-none bg-transparent placeholder:text-silver-dark"
             />
             <button type="submit"
-              className="m-1 rounded-full bg-royal px-5 py-2 text-sm font-semibold text-white hover:bg-royal-dark transition-colors">
+              className="m-1 rounded-full bg-royal px-5 py-2 text-sm font-semibold text-white hover:bg-royal-dark active:scale-95 transition-all duration-150">
               Search
             </button>
           </form>
 
           {/* Desktop action icons */}
           <div className="hidden md:flex items-center gap-5 text-navy">
-            <Link href="#" className="flex flex-col items-center text-xs hover:text-royal transition-colors">
-              <Repeat size={20} /><span className="mt-0.5">Compare</span>
+            <Link href="#" className="group flex flex-col items-center text-xs hover:text-royal transition-colors duration-150">
+              <Repeat size={20} className="group-hover:scale-110 transition-transform duration-150" />
+              <span className="mt-0.5">Compare</span>
             </Link>
-            <Link href="/orders" className="flex flex-col items-center text-xs hover:text-royal transition-colors">
-              <Package size={20} /><span className="mt-0.5">Orders</span>
+            <Link href="/orders" className="group flex flex-col items-center text-xs hover:text-royal transition-colors duration-150">
+              <Package size={20} className="group-hover:scale-110 transition-transform duration-150" />
+              <span className="mt-0.5">Orders</span>
             </Link>
             {isAdmin && (
-              <Link href="/admin" className="flex flex-col items-center text-xs font-semibold text-royal hover:text-royal-dark transition-colors">
-                <LayoutDashboard size={20} /><span className="mt-0.5">Admin</span>
+              <Link href="/admin" className="group flex flex-col items-center text-xs font-semibold text-royal hover:text-royal-dark transition-colors duration-150">
+                <LayoutDashboard size={20} className="group-hover:scale-110 transition-transform duration-150" />
+                <span className="mt-0.5">Admin</span>
               </Link>
             )}
-            <Link href={loggedIn ? "/account" : "/login"} className="flex flex-col items-center text-xs hover:text-royal transition-colors">
-              <User size={20} /><span className="mt-0.5">{loggedIn ? "Account" : "Login"}</span>
+            <Link href={loggedIn ? "/account" : "/login"} className="group flex flex-col items-center text-xs hover:text-royal transition-colors duration-150">
+              <User size={20} className="group-hover:scale-110 transition-transform duration-150" />
+              <span className="mt-0.5">{loggedIn ? "Account" : "Login"}</span>
             </Link>
             {loggedIn && (
               <button onClick={() => signOut({ callbackUrl: "/" })}
-                className="flex flex-col items-center text-xs hover:text-royal transition-colors">
-                <LogOut size={20} /><span className="mt-0.5">Logout</span>
+                className="group flex flex-col items-center text-xs hover:text-royal transition-colors duration-150">
+                <LogOut size={20} className="group-hover:scale-110 transition-transform duration-150" />
+                <span className="mt-0.5">Logout</span>
               </button>
             )}
-            <Link href="/wishlist" className="flex flex-col items-center text-xs hover:text-royal transition-colors">
-              <Heart size={20} /><span className="mt-0.5">Wishlist</span>
+            <Link href="/wishlist" className="group flex flex-col items-center text-xs hover:text-royal transition-colors duration-150">
+              <Heart size={20} className="group-hover:scale-110 group-hover:fill-royal/20 transition-all duration-150" />
+              <span className="mt-0.5">Wishlist</span>
             </Link>
-            <Link href="/cart" className="relative flex flex-col items-center text-xs hover:text-royal transition-colors">
-              <ShoppingBag size={20} /><span className="mt-0.5">Cart</span>
+            <Link href="/cart" className="group relative flex flex-col items-center text-xs hover:text-royal transition-colors duration-150">
+              <ShoppingBag size={20} className="group-hover:scale-110 transition-transform duration-150" />
+              <span className="mt-0.5">Cart</span>
               {count > 0 && (
-                <span className="absolute -right-2 -top-1.5 flex min-w-[18px] h-[18px] items-center justify-center rounded-full bg-royal px-1 text-[10px] font-bold text-white">{count}</span>
+                <span className="absolute -right-2 -top-1.5 flex min-w-[18px] h-[18px] items-center justify-center rounded-full bg-royal px-1 text-[10px] font-bold text-white">
+                  {count}
+                </span>
               )}
             </Link>
           </div>
 
-          {/* Mobile icons: 👤 🛒 only */}
+          {/* Mobile icons: cart only (search is in Row 3) */}
           <div className="flex md:hidden items-center gap-3 ml-auto">
-            <Link href={loggedIn ? "/account" : "/login"} className="text-navy hover:text-royal">
+            <Link href={loggedIn ? "/account" : "/login"} className="text-navy hover:text-royal transition-colors">
               <User size={22} />
             </Link>
-            <Link href="/cart" className="relative text-navy hover:text-royal">
+            <Link href="/cart" className="relative text-navy hover:text-royal transition-colors">
               <ShoppingBag size={22} />
               {count > 0 && (
-                <span className="absolute -right-0.5 -top-0.5 flex min-w-[16px] h-[16px] items-center justify-center rounded-full bg-royal text-[9px] font-bold text-white">{count}</span>
+                <span className="absolute -right-0.5 -top-0.5 flex min-w-[16px] h-[16px] items-center justify-center rounded-full bg-royal text-[9px] font-bold text-white">
+                  {count}
+                </span>
               )}
             </Link>
           </div>
@@ -246,7 +259,6 @@ export default function Navbar() {
             {isAdmin && <Link href="/admin"><LayoutDashboard size={20} className="text-royal" /></Link>}
           </div>
 
-          {/* Menu — apni alag state */}
           <button
             onClick={() => { setMobileOpen((v) => !v); setMobileCatOpen(false); }}
             className="flex items-center gap-1.5 text-sm font-semibold text-navy">
@@ -272,23 +284,25 @@ export default function Navbar() {
                   onMouseEnter={() => setShopOpen(true)}
                   onMouseLeave={() => setShopOpen(false)}>
                   <Link href={l.href}
-                    className="flex items-center gap-1 whitespace-nowrap px-3 py-3 text-sm font-medium text-navy hover:text-royal transition-colors">
-                    {l.label} <ChevronDown size={13} />
+                    className="flex items-center gap-1 whitespace-nowrap px-3 py-3 text-sm font-medium text-navy hover:text-royal transition-colors duration-150">
+                    {l.label} <ChevronDown size={13} className={`transition-transform duration-200 ${shopOpen ? "rotate-180" : ""}`} />
                   </Link>
-                  {shopOpen && (
-                    <div className="absolute left-0 top-full z-50 w-52 rounded-b-lg border border-silver-light bg-white py-2 shadow-xl">
-                      {shopMenu.map((m) => (
-                        <Link key={m.label} href={m.href}
-                          className="block px-4 py-2.5 text-sm text-navy hover:bg-cloud hover:text-royal transition-colors">
-                          {m.label}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
+                  <div
+                    className={`absolute left-0 top-full z-50 w-52 rounded-b-lg border border-silver-light bg-white py-2 shadow-xl transition-all duration-200 origin-top ${
+                      shopOpen ? "opacity-100 scale-y-100 pointer-events-auto" : "opacity-0 scale-y-95 pointer-events-none"
+                    }`}
+                  >
+                    {shopMenu.map((m) => (
+                      <Link key={m.label} href={m.href}
+                        className="block px-4 py-2.5 text-sm text-navy hover:bg-cloud hover:text-royal hover:pl-6 transition-all duration-150">
+                        {m.label}
+                      </Link>
+                    ))}
+                  </div>
                 </div>
               ) : (
                 <Link key={l.label} href={l.href}
-                  className="flex items-center gap-1 whitespace-nowrap px-3 py-3 text-sm font-medium text-navy hover:text-royal transition-colors">
+                  className="flex items-center gap-1 whitespace-nowrap px-3 py-3 text-sm font-medium text-navy hover:text-royal transition-colors duration-150">
                   {l.label}
                   {l.dropdown && <ChevronDown size={13} />}
                 </Link>
@@ -297,17 +311,15 @@ export default function Navbar() {
           </nav>
 
           <Link href="#"
-            className="flex items-center gap-2 border-l border-silver-light bg-cloud px-5 py-3 text-sm font-semibold text-navy hover:text-royal transition-colors">
+            className="flex items-center gap-2 border-l border-silver-light bg-cloud px-5 py-3 text-sm font-semibold text-navy hover:text-royal hover:bg-silver-light transition-colors duration-150">
             <ShoppingBag size={16} /> Sell on Hardvanta
           </Link>
         </div>
       </div>
 
       {/* ── Mobile drawer ── */}
-      {/* Portalled to document.body (same reasoning as the categories
-          sidebar) and pinned to the live-measured navbar height so it
-          always sits flush against the bottom of the navbar — no gap,
-          no overlap — regardless of exact navbar height on the device. */}
+      {/* Portalled to document.body and pinned to the live-measured navbar height
+          so it always sits flush against the bottom of the navbar. */}
       {mounted && mobileOpen && createPortal(
         <div
           className="fixed inset-x-0 bottom-0 z-40 overflow-y-auto bg-white md:hidden"
@@ -315,17 +327,16 @@ export default function Navbar() {
         >
           <div className="px-4 pb-8 pt-3">
 
-            {/* Search */}
             <form onSubmit={handleSearch}
-              className="mb-4 flex items-center overflow-hidden rounded-full border border-silver shadow-sm">
+              className="mb-4 flex items-center overflow-hidden rounded-full border border-silver shadow-sm focus-within:border-royal focus-within:ring-2 focus-within:ring-royal/20 transition-all duration-200">
               <span className="pl-4 text-silver-dark"><Search size={16} /></span>
               <input type="text" value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search for Products..."
-                className="w-full px-3 py-2.5 text-sm outline-none"
+                className="w-full px-3 py-2.5 text-sm outline-none bg-transparent"
               />
-              <button type="submit" className="m-1 rounded-full bg-royal px-4 py-2 text-white">
-                <Search size={15} />
+              <button type="submit" className="m-1 rounded-full bg-royal px-4 py-2 text-white hover:bg-royal-dark transition-colors">
+                <Search size={16} />
               </button>
             </form>
 
@@ -396,6 +407,7 @@ export default function Navbar() {
                 <Phone size={15} className="text-royal" /> +91 91705 46395
               </a>
             </div>
+
           </div>
         </div>,
         document.body
@@ -403,8 +415,7 @@ export default function Navbar() {
 
       {/* ── All Categories Sidebar (works across mobile, tablet & desktop) ── */}
       {/* Portalled to document.body so it is always truly fixed to the real
-          viewport — never trapped inside a transformed/sticky ancestor,
-          which is what was causing the panel to open with a gap at the top. */}
+          viewport — never trapped inside a transformed/sticky ancestor. */}
       {mounted && createPortal(
         <>
           {/* Overlay */}

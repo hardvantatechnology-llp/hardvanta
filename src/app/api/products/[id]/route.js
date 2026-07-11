@@ -102,17 +102,38 @@ export async function PUT(request, { params }) {
   }
 }
 
-// DELETE /api/products/[id] — delete a product (admin only).
 export async function DELETE(request, { params }) {
   if (!(await isAdmin())) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
   const { prisma } = await import("@/lib/prisma");
   try {
+    const orderCount = await prisma.orderItem.count({
+      where: { productId: params.id },
+    });
+
+    if (orderCount > 0) {
+      // Orders hain toh sirf deactivate karo
+      await prisma.product.update({
+        where: { id: params.id },
+        data: { active: false },
+      });
+      return NextResponse.json({
+        ok: true,
+        message: "Product deactivated because it has existing orders.",
+      });
+    }
+
+    // Koi orders nahi toh seedha delete karo
+    await prisma.cartItem.deleteMany({ where: { productId: params.id } });
+    await prisma.wishlist.deleteMany({ where: { productId: params.id } });
+    await prisma.review.deleteMany({ where: { productId: params.id } });
+    await prisma.inventory.deleteMany({ where: { productId: params.id } });
     await prisma.product.delete({ where: { id: params.id } });
+
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error(err);
-    return NextResponse.json({ error: "Product not found." }, { status: 404 });
+    return NextResponse.json({ error: "Could not delete product." }, { status: 500 });
   }
 }

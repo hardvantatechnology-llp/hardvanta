@@ -14,21 +14,19 @@ export default function ProductForm({ product }) {
   const router = useRouter();
   const isEdit = Boolean(product);
 
- const [form, setForm] = useState({
-  name: product?.name || "",
-  sku: product?.sku || "",
-  description: product?.description || "",
-  price: product?.price ?? "",
-  salePrice: product?.salePrice ?? "",
-  stock: product?.stock ?? 0,
-
-  // Prisma Relation IDs
-  categoryId: product?.category?.id ?? "",
-  brandId: product?.brand?.id ?? "",
-
-  image: product?.image || "",
-  featured: product?.featured || false,
-});
+  const [form, setForm] = useState({
+    name: product?.name || "",
+    sku: product?.sku || "",
+    description: product?.description || "",
+    price: product?.price ?? "",
+    salePrice: product?.salePrice ?? "",
+    stock: product?.stock ?? 0,
+    inStock: product?.inStock ?? true,
+    categoryId: product?.category?.id ?? "",
+    brandId: product?.brand?.id ?? "",
+    image: product?.image || "",
+    featured: product?.featured || false,
+  });
 
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
@@ -39,41 +37,40 @@ export default function ProductForm({ product }) {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
 
-  // Load existing categories from the database.
   useEffect(() => {
-  async function loadData() {
-    try {
-      const [catRes, brandRes] = await Promise.all([
-        fetch("/api/categories"),
-        fetch("/api/brands"),
-      ]);
-
-      const catData = await catRes.json();
-      const brandData = await brandRes.json();
-
-      const cats = catData.categories || [];
-      const brands = brandData.brands || [];
-
-      setCategories(cats);
-      setBrands(brands);
-
-      setForm((f) => ({
-        ...f,
-        categoryId: f.categoryId || cats[0]?.id || "",
-        brandId: f.brandId || brands[0]?.id || "",
-      }));
-    } catch (err) {
-      console.log(err);
+    async function loadData() {
+      try {
+        const [catRes, brandRes] = await Promise.all([
+          fetch("/api/categories"),
+          fetch("/api/brands"),
+        ]);
+        const catData = await catRes.json();
+        const brandData = await brandRes.json();
+        const cats = catData.categories || [];
+        const brands = brandData.brands || [];
+        setCategories(cats);
+        setBrands(brands);
+        setForm((f) => ({
+          ...f,
+          categoryId: f.categoryId || cats[0]?.id || "",
+          brandId: f.brandId || brands[0]?.id || "",
+        }));
+      } catch (err) {
+        console.log(err);
+      }
     }
-  }
-
-  loadData();
-}, []);
+    loadData();
+  }, []);
 
   const creatingCategory = form.categoryId === NEW_CATEGORY;
   const creatingBrand = form.brandId === NEW_BRAND;
+
   function set(key, value) {
     setForm((f) => ({ ...f, [key]: value }));
+  }
+
+  function handleStockChange(value) {
+    setForm((f) => ({ ...f, stock: value }));
   }
 
   async function handleFileUpload(e) {
@@ -89,9 +86,7 @@ export default function ProductForm({ product }) {
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
         if (res.status === 403) {
-          throw new Error(
-            "You're not signed in as an admin. Log out and log back in with your admin account, then try again."
-          );
+          throw new Error("You're not signed in as an admin. Log out and log back in with your admin account, then try again.");
         }
         throw new Error(data.error || `Upload failed (HTTP ${res.status}).`);
       }
@@ -102,7 +97,7 @@ export default function ProductForm({ product }) {
       setError(err.message);
     } finally {
       setUploading(false);
-      e.target.value = ""; // let them re-pick the same file if needed
+      e.target.value = "";
     }
   }
 
@@ -119,7 +114,6 @@ export default function ProductForm({ product }) {
       let categoryId = form.categoryId;
       let brandId = form.brandId;
 
-      // If the admin is creating a new category, save it first and use its slug.
       if (creatingCategory) {
         const name = newCategory.trim();
         if (!name) {
@@ -147,25 +141,17 @@ export default function ProductForm({ product }) {
           setLoading(false);
           return;
         }
-
         const res = await fetch("/api/brands", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: newBrand,
-          }),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: newBrand }),
         });
-
         const data = await res.json();
-
         if (!res.ok) {
           setError(data.error || "Could not create brand.");
           setLoading(false);
           return;
         }
-
         brandId = data.brand.id;
       }
 
@@ -173,18 +159,15 @@ export default function ProductForm({ product }) {
       const method = isEdit ? "PUT" : "POST";
       const res = await fetch(url, {
         method,
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: form.name,
           sku: form.sku,
           description: form.description,
           price: Number(form.price),
-          salePrice: form.salePrice
-            ? Number(form.salePrice)
-            : null,
+          salePrice: form.salePrice ? Number(form.salePrice) : null,
           stock: Number(form.stock),
+          inStock: form.inStock,
           image: form.image,
           featured: form.featured,
           categoryId,
@@ -200,7 +183,6 @@ export default function ProductForm({ product }) {
       }
 
       setLoading(false);
-
       router.push("/admin/products");
       router.refresh();
     } catch (err) {
@@ -221,12 +203,7 @@ export default function ProductForm({ product }) {
       </L>
 
       <L label="SKU">
-        <input
-          className={inputCls}
-          value={form.sku}
-          onChange={(e) => set("sku", e.target.value)}
-          required
-        />
+        <input className={inputCls} value={form.sku} onChange={(e) => set("sku", e.target.value)} required />
       </L>
 
       <L label="Description">
@@ -241,48 +218,55 @@ export default function ProductForm({ product }) {
           <input type="number" className={inputCls} value={form.salePrice ?? ""} onChange={(e) => set("salePrice", e.target.value)} />
         </L>
         <L label="Stock">
-          <input type="number" className={inputCls} value={form.stock} onChange={(e) => set("stock", e.target.value)} required />
+          <input
+            type="number"
+            className={inputCls}
+            value={form.stock}
+            min={0}
+            onChange={(e) => handleStockChange(e.target.value)}
+            required
+          />
+          <div className="mt-2 flex items-center gap-4">
+            <label className="flex cursor-pointer items-center gap-1.5 text-sm">
+              <input
+                type="radio"
+                name="inStock"
+                checked={form.inStock === true}
+                onChange={() => set("inStock", true)}
+                className="accent-royal"
+              />
+              <span className="font-medium text-green-600">In Stock</span>
+            </label>
+            <label className="flex cursor-pointer items-center gap-1.5 text-sm">
+              <input
+                type="radio"
+                name="inStock"
+                checked={form.inStock === false}
+                onChange={() => set("inStock", false)}
+                className="accent-royal"
+              />
+              <span className="font-medium text-red-500">Out of Stock</span>
+            </label>
+          </div>
         </L>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <L label="Brand">
-  <select
-    className={inputCls}
-    value={form.brandId}
-    onChange={(e) => set("brandId", e.target.value)}
-  >
-    {brands.map((b) => (
-      <option key={b.id} value={b.id}>
-        {b.name}
-      </option>
-    ))}
-
-    <option value={NEW_BRAND}>
-      + Create New Brand
-    </option>
-  </select>
-
-  {creatingBrand && (
-    <input
-      className={`${inputCls} mt-2`}
-      value={newBrand}
-      onChange={(e) => setNewBrand(e.target.value)}
-      placeholder="Brand name"
-    />
-  )}
-</L>
+          <select className={inputCls} value={form.brandId} onChange={(e) => set("brandId", e.target.value)}>
+            {brands.map((b) => (
+              <option key={b.id} value={b.id}>{b.name}</option>
+            ))}
+            <option value={NEW_BRAND}>+ Create New Brand</option>
+          </select>
+          {creatingBrand && (
+            <input className={`${inputCls} mt-2`} value={newBrand} onChange={(e) => setNewBrand(e.target.value)} placeholder="Brand name" />
+          )}
+        </L>
         <L label="Category">
-          <select
-            className={inputCls}
-            
-          value={form.categoryId}
-          onChange={(e) => set("categoryId", e.target.value)}
-          >
+          <select className={inputCls} value={form.categoryId} onChange={(e) => set("categoryId", e.target.value)}>
             {categories.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
+              <option key={c.id} value={c.id}>{c.name}</option>
             ))}
             <option value={NEW_CATEGORY}>+ Create new category…</option>
           </select>
@@ -312,19 +296,11 @@ export default function ProductForm({ product }) {
           <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-royal bg-royal px-4 py-2 text-sm font-semibold text-white hover:bg-royal-dark">
             <Upload size={16} />
             {uploading ? "Uploading…" : "Upload photo from device"}
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              disabled={uploading}
-              onChange={handleFileUpload}
-            />
+            <input type="file" accept="image/*" className="hidden" disabled={uploading} onChange={handleFileUpload} />
           </label>
         </div>
         {uploadMsg && (
-          <p className="mt-2 rounded-lg bg-green-50 px-3 py-2 text-sm font-medium text-green-700">
-            {uploadMsg}
-          </p>
+          <p className="mt-2 rounded-lg bg-green-50 px-3 py-2 text-sm font-medium text-green-700">{uploadMsg}</p>
         )}
         <input
           className={`${inputCls} mt-2`}
@@ -333,8 +309,7 @@ export default function ProductForm({ product }) {
           placeholder="Auto-fills after upload — or paste an image URL here"
         />
         <p className="mt-1 text-xs text-silver-dark">
-          Tip: click “Upload photo from device” to use a photo from your computer/phone.
-          You do not need a URL.
+          Tip: click &quot;Upload photo from device&quot; to use a photo from your computer/phone. You do not need a URL.
         </p>
       </L>
 
@@ -355,8 +330,7 @@ export default function ProductForm({ product }) {
   );
 }
 
-const inputCls =
-  "w-full rounded-lg border border-silver-dark px-3 py-2 text-sm outline-none focus:border-royal focus:ring-2 focus:ring-royal/30";
+const inputCls = "w-full rounded-lg border border-silver-dark px-3 py-2 text-sm outline-none focus:border-royal focus:ring-2 focus:ring-royal/30";
 
 function L({ label, children }) {
   return (

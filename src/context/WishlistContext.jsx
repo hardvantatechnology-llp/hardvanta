@@ -1,16 +1,20 @@
-// src/hooks/useWishlist.js
 "use client";
-import { useState, useEffect, useCallback } from "react";
+
+import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 
-export function useWishlist() {
+const WishlistContext = createContext(null);
+
+export function WishlistProvider({ children }) {
   const { data: session } = useSession();
   const [wishlistIds, setWishlistIds] = useState(new Set());
   const [loading, setLoading] = useState(false);
 
-  // Wishlist fetch karo jab user login ho
   useEffect(() => {
-    if (!session) return;
+    if (!session) {
+      setWishlistIds(new Set());
+      return;
+    }
     fetch("/api/wishlist")
       .then((r) => r.json())
       .then((data) => {
@@ -20,7 +24,6 @@ export function useWishlist() {
       });
   }, [session]);
 
-  // Toggle — add ya remove
   const toggleWishlist = useCallback(
     async (productId) => {
       if (!session) {
@@ -32,7 +35,6 @@ export function useWishlist() {
       setLoading(true);
 
       if (isInWishlist) {
-        // Remove
         setWishlistIds((prev) => {
           const next = new Set(prev);
           next.delete(productId);
@@ -44,7 +46,6 @@ export function useWishlist() {
           body: JSON.stringify({ productId }),
         });
       } else {
-        // Add
         setWishlistIds((prev) => new Set(prev).add(productId));
         await fetch("/api/wishlist", {
           method: "POST",
@@ -58,5 +59,13 @@ export function useWishlist() {
     [session, wishlistIds]
   );
 
-  return { wishlistIds, toggleWishlist, loading };
+  return (
+    <WishlistContext.Provider value={{ wishlistIds, toggleWishlist, loading }}>
+      {children}
+    </WishlistContext.Provider>
+  );
+}
+
+export function useWishlist() {
+  return useContext(WishlistContext);
 }

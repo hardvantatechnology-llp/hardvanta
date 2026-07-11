@@ -11,6 +11,7 @@ export async function GET() {
   const session = await getServerSession(authOptions);
   const userId = session?.user?.id;
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
   const { prisma } = await import("@/lib/prisma");
   const orders = await prisma.order.findMany({
     where: { userId },
@@ -33,6 +34,7 @@ export async function POST(request) {
   }
 
   const { prisma } = await import("@/lib/prisma");
+
   const cartItems = await prisma.cartItem.findMany({
     where: { userId },
     include: { product: true },
@@ -41,34 +43,86 @@ export async function POST(request) {
     return NextResponse.json({ error: "Cart is empty." }, { status: 400 });
   }
 
-  const total = cartItems.reduce(
+  const subtotal = cartItems.reduce(
     (sum, it) => sum + (it.product.salePrice ?? it.product.price) * it.quantity,
     0
   );
+  const shipping = subtotal >= 999 ? 0 : 49;
+  const total = subtotal + shipping;
 
-  // Create order + items, then clear the cart, atomically.
-  const order = await prisma.$transaction(async (tx) => {
-    const created = await tx.order.create({
-      data: {
-        userId,
-        total,
-        address,
-        items: {
-          create: cartItems.map((it) => ({
-            productId: it.productId,
-            name: it.product.name,
-            quantity: it.quantity,
-            price: it.product.salePrice ?? it.product.price,
-          })),
-        },
+  let order;
+  try {
+    order = await prisma.$transaction(
+      async (tx) => {
+        // STEP 1: Row-level lock ke saath inStock check karo
+        for (const it of cartItems) {
+          const rows = await tx.$queryRaw`
+            SELECT id, stock, "inStock", name
+            FROM "Product"
+            WHERE id = ${it.productId}
+            FOR UPDATE
+          `;
+          const product = rows[0];
+          if (!product || product.inStock === false) {
+            throw new Error(`"${it.product.name}" out of stock.`);
+          }
+        }
+
+        // STEP 2: Stock decrement karo
+        for (const it of cartItems) {
+          await tx.product.update({
+            where: { id: it.productId },
+            data: { stock: { decrement: it.quantity } },
+          });
+        }
+
+        // STEP 3: Order banao
+        const created = await tx.order.create({
+          data: {
+            userId,
+            total,
+            address,
+            paymentMethod: "COD",
+            items: {
+              create: cartItems.map((it) => ({
+                productId: it.productId,
+                productName: it.product.name,
+                quantity: it.quantity,
+                price: it.product.salePrice ?? it.product.price,
+              })),
+            },
+          },
+          include: { items: true },
+        });
+
+        // STEP 4: Payment record banao (COD)
+        await tx.payment.create({
+          data: {
+            orderId: created.id,
+            method: "COD",
+            amount: total,
+            status: "PENDING",
+          },
+        });
+
+        // STEP 5: Cart clear karo
+        await tx.cartItem.deleteMany({ where: { userId } });
+
+        return created;
       },
-      include: { items: true },
-    });
-    await tx.cartItem.deleteMany({ where: { userId } });
-    return created;
-  });
+      {
+        timeout: 10000,
+      }
+    );
+  } catch (err) {
+    if (err.message?.includes("out of stock")) {
+      return NextResponse.json({ error: err.message }, { status: 409 });
+    }
+    console.error("[orders] error:", err?.message || err);
+    return NextResponse.json({ error: "Order failed. Please try again." }, { status: 500 });
+  }
 
-  // Send confirmation email (best-effort — never block the order on email).
+  // Send confirmation email (best-effort)
   if (session.user?.email) {
     try {
       await sendOrderConfirmationEmail(session.user.email, order);

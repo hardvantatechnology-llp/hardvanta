@@ -51,6 +51,24 @@ export async function sendOtpEmail(to, code) {
   });
 }
 
+export async function sendPasswordResetEmail(to, code) {
+  // Always log in dev so reset is testable without a configured sender.
+  if (!process.env.RESEND_API_KEY) {
+    console.log(`\n[email] Password reset code for ${to}: ${code}\n`);
+  }
+  return send({
+    to,
+    subject: `${code} is your hardvanta password reset code`,
+    html: `
+      <div style="font-family:Arial,sans-serif;max-width:480px;margin:auto">
+        <h2 style="color:#0a1f44">Reset your password</h2>
+        <p style="color:#444">Use this code to reset your hardvanta password. It expires in 10 minutes.</p>
+        <p style="font-size:32px;font-weight:bold;letter-spacing:8px;color:#1e4fd8">${code}</p>
+        <p style="color:#888;font-size:12px">If you didn't request this, you can safely ignore this email.</p>
+      </div>`,
+  });
+}
+
 export async function sendOrderConfirmationEmail(to, order) {
   const rows = (order.items || [])
     .map(

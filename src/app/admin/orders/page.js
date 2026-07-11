@@ -32,17 +32,28 @@ export default async function AdminOrdersPage() {
                     {o.user?.email} ·{" "}
                     {new Date(o.createdAt).toLocaleDateString("en-IN", {
                       day: "numeric", month: "short", year: "numeric",
-                    })}{" "}
-                    · {o.paymentMethod}
+                    })}
                   </p>
                 </div>
-                <OrderStatusSelect id={o.id} status={o.status} />
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
+                      o.paymentMethod === "ONLINE"
+                        ? "bg-green-50 text-green-700"
+                        : "bg-amber-50 text-amber-700"
+                    }`}
+                    title={o.paymentId ? `Payment ID: ${o.paymentId}` : undefined}
+                  >
+                    {o.paymentMethod === "ONLINE" ? "💳 Paid Online" : "💵 Cash on Delivery"}
+                  </span>
+                  <OrderStatusSelect id={o.id} status={o.status} />
+                </div>
               </div>
 
               <div className="space-y-1 py-3 text-sm">
                 {o.items.map((it) => (
                   <div key={it.id} className="flex justify-between">
-                    <span className="text-silver-dark">{it.name} × {it.quantity}</span>
+                    <span className="text-silver-dark">{it.productName} × {it.quantity}</span>
                     <span className="font-medium text-navy">
                       {formatPrice(it.price * it.quantity)}
                     </span>

@@ -7,7 +7,7 @@ import { Star, ShoppingCart, Heart, Check } from "lucide-react";
 import { formatPrice } from "@/utils/formatPrice";
 import { imageSrc } from "@/utils/imageSrc";
 import { useCart } from "@/context/CartContext";
-import { useWishlist } from "@/hooks/useWishlist";
+import { useWishlist } from "@/context/WishlistContext";
 
 export default function ProductCard({ product }) {
   const { addItem } = useCart();
@@ -21,7 +21,9 @@ export default function ProductCard({ product }) {
   const discountPct = hasDiscount
     ? Math.round(((product.price - product.salePrice) / product.price) * 100)
     : 0;
-  const outOfStock = product.stock != null && product.stock <= 0;
+
+  // ✅ FIXED: sirf inStock field se check — stock number se nahi
+  const outOfStock = product.inStock === false;
 
   function handleAdd() {
     if (outOfStock) return;
@@ -66,7 +68,7 @@ export default function ProductCard({ product }) {
           aria-label="Add to wishlist"
           className="absolute right-2.5 top-2.5 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-navy shadow-sm backdrop-blur transition-colors hover:text-royal"
         >
-          <Heart size={16} className={wished ? "fill-royal text-royal" : ""} />
+          <Heart size={16} className={wished ? "fill-red-500 text-red-500" : ""} />
         </button>
       </div>
 
@@ -86,16 +88,12 @@ export default function ProductCard({ product }) {
               <Star size={12} className="fill-green-600 text-green-600" />
               {product.rating}
             </span>
-            <span className="text-xs text-silver-dark">
-              ({product.reviewCount})
-            </span>
+            <span className="text-xs text-silver-dark">({product.reviewCount})</span>
           </div>
         )}
 
         <div className="mt-3 flex items-end gap-2">
-          <span className="text-lg font-bold text-navy">
-            {formatPrice(price)}
-          </span>
+          <span className="text-lg font-bold text-navy">{formatPrice(price)}</span>
           {hasDiscount && (
             <span className="mb-0.5 text-xs text-silver-dark line-through">
               {formatPrice(product.price)}
@@ -117,13 +115,9 @@ export default function ProductCard({ product }) {
           {outOfStock ? (
             "Out of stock"
           ) : added ? (
-            <>
-              <Check size={16} /> Added
-            </>
+            <><Check size={16} /> Added</>
           ) : (
-            <>
-              <ShoppingCart size={16} /> Add to Cart
-            </>
+            <><ShoppingCart size={16} /> Add to Cart</>
           )}
         </button>
       </div>

@@ -113,6 +113,28 @@ export default async function OrdersPage({ searchParams }) {
             ))}
           </div>
         )}
+
+        {/* Customer support */}
+        <div className="mt-6 rounded-2xl border border-gray-200 bg-white p-5">
+          <h2 className="text-sm font-bold text-navy">Need help with an order?</h2>
+          <p className="mt-1 text-xs text-gray-500">
+            Our support team is here for you, Mon–Sat, 9:15 AM – 6:15 PM.
+          </p>
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+            <a
+              href="tel:+919170546395"
+              className="flex items-center gap-2 rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-semibold text-navy hover:border-royal hover:text-royal transition-colors"
+            >
+              📞 +91 91705 46395
+            </a>
+            <a
+              href="mailto:support@hardvanta.in"
+              className="flex items-center gap-2 rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-semibold text-navy hover:border-royal hover:text-royal transition-colors"
+            >
+              ✉️ support@hardvanta.in
+            </a>
+          </div>
+        </div>
       </div>
     </main>
   );

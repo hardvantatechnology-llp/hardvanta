@@ -1,9 +1,10 @@
 import Link from "next/link";
+import Image from "next/image";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { getAuthOptions } from "@/lib/auth";
 import {
-  Package, User as UserIcon, MapPin, Heart,
+  Package, MapPin, Heart,
   Shield, Bell, ChevronRight, Star, Clock, CheckCircle2
 } from "lucide-react";
 import SignOutButton from "@/components/auth/SignOutButton";
@@ -95,15 +96,18 @@ export default async function AccountPage() {
 
   return (
     <div className="min-h-screen bg-cloud">
-      {/* ── Hero Banner ── */}
+      {/* Hero Banner */}
       <div className="bg-navy">
         <div className="container-page py-6">
           <div className="flex items-center gap-4">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-royal text-xl font-bold text-white shadow-lg ring-2 ring-white/20">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-royal text-xl font-bold text-white shadow-lg ring-2 ring-white/20 overflow-hidden">
               {session.user.image ? (
-                <img
+                // ✅ <img> → <Image> fix
+                <Image
                   src={session.user.image}
                   alt={session.user.name || "User"}
+                  width={64}
+                  height={64}
                   className="h-16 w-16 rounded-full object-cover"
                 />
               ) : (
@@ -143,7 +147,7 @@ export default async function AccountPage() {
 
       <div className="container-page py-6">
         <div className="grid gap-6 lg:grid-cols-3">
-          {/* ── Left: Menu ── */}
+          {/* Left: Menu */}
           <div className="space-y-4 lg:col-span-1">
             {menuItems.map((group) => (
               <div
@@ -185,21 +189,17 @@ export default async function AccountPage() {
               </div>
             ))}
 
-            {/* Sign Out */}
             <div className="overflow-hidden rounded-xl border border-silver-light bg-white p-4 shadow-card">
               <SignOutButton />
             </div>
           </div>
 
-          {/* ── Right: Recent Orders ── */}
+          {/* Right: Recent Orders */}
           <div className="lg:col-span-2 space-y-4">
             <div className="overflow-hidden rounded-xl border border-silver-light bg-white shadow-card">
               <div className="flex items-center justify-between border-b border-silver-light px-5 py-4">
                 <h2 className="text-base font-bold text-navy">Recent Orders</h2>
-                <Link
-                  href="/orders"
-                  className="text-xs font-semibold text-royal hover:underline"
-                >
+                <Link href="/orders" className="text-xs font-semibold text-royal hover:underline">
                   View all →
                 </Link>
               </div>
@@ -228,12 +228,14 @@ export default async function AccountPage() {
                           href={`/orders/${order.id}`}
                           className="flex items-center gap-4 px-5 py-4 hover:bg-cloud transition-colors"
                         >
-                          {/* Product image */}
+                          {/* ✅ <img> → <Image> fix */}
                           <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg border border-silver-light bg-cloud">
                             {firstItem?.product?.image ? (
-                              <img
+                              <Image
                                 src={firstItem.product.image}
-                                alt={firstItem.product.name}
+                                alt={firstItem.product.name || "Product"}
+                                width={56}
+                                height={56}
                                 className="h-full w-full object-contain p-1"
                               />
                             ) : (
@@ -245,7 +247,7 @@ export default async function AccountPage() {
 
                           <div className="flex-1 min-w-0">
                             <p className="truncate text-sm font-semibold text-navy">
-                              {firstItem?.name || "Order"}
+                              {firstItem?.productName || "Order"}
                               {order.items.length > 1 && (
                                 <span className="ml-1 text-silver-dark font-normal">
                                   +{order.items.length - 1} more
@@ -259,9 +261,7 @@ export default async function AccountPage() {
                               })}
                             </p>
                             <div className="mt-1.5 flex items-center gap-2">
-                              <span
-                                className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold ${s.bg} ${s.text} ${s.border}`}
-                              >
+                              <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold ${s.bg} ${s.text} ${s.border}`}>
                                 <CheckCircle2 size={10} />
                                 {order.status.charAt(0) + order.status.slice(1).toLowerCase()}
                               </span>
@@ -286,10 +286,10 @@ export default async function AccountPage() {
               </p>
               <div className="grid grid-cols-2 gap-px bg-silver-light sm:grid-cols-4">
                 {[
-                  { label: "Shop Now",     href: "/products",  icon: "🛍️" },
-                  { label: "My Wishlist",  href: "/wishlist",  icon: "❤️" },
-                  { label: "Track Order",  href: "/orders",    icon: "📦" },
-                  { label: "Get Help",     href: "/contact",   icon: "💬" },
+                  { label: "Shop Now",    href: "/products", icon: "🛍️" },
+                  { label: "My Wishlist", href: "/wishlist", icon: "❤️" },
+                  { label: "Track Order", href: "/orders",   icon: "📦" },
+                  { label: "Get Help",    href: "/contact",  icon: "💬" },
                 ].map((a) => (
                   <Link
                     key={a.label}
