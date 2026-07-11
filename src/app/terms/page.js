@@ -20,7 +20,7 @@ const sections = [
   { id: "pricing", heading: "Pricing and availability" },
   { id: "orders", heading: "Orders and payment" },
   { id: "shipping", heading: "Shipping and delivery" },
-  { id: "returns", heading: "Returns and refunds" },
+  { id: "returns", heading: "Refunds" },
   { id: "intended-use", heading: "Intended use" },
   { id: "prohibited", heading: "Prohibited conduct" },
   { id: "third-party", heading: "Third-party links" },
@@ -66,7 +66,29 @@ function Section({ id, heading, children }) {
   );
 }
 
-const tosStyles = `
+export default function TermsPage() {
+  const [activeId, setActiveId] = useState("");
+  const [tocOpen, setTocOpen] = useState(false);
+  const observerRef = useRef(null);
+
+  useEffect(() => {
+    const els = sections.map(({ id }) => document.getElementById(id)).filter(Boolean);
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.filter((e) => e.isIntersecting);
+        if (visible.length > 0) {
+          setActiveId(visible[0].target.id);
+        }
+      },
+      { rootMargin: "-20% 0px -70% 0px", threshold: 0 }
+    );
+    els.forEach((el) => observerRef.current.observe(el));
+    return () => observerRef.current?.disconnect();
+  }, []);
+
+  return (
+    <>
+      <style>{`
         /* ── Google Font ── */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
@@ -378,31 +400,7 @@ const tosStyles = `
           .tos-section-heading { font-size: 18px; }
           .tos-section-body p, .tos-section-body ul li { font-size: 14.5px; }
         }
-      `;
-
-export default function TermsPage() {
-  const [activeId, setActiveId] = useState("");
-  const [tocOpen, setTocOpen] = useState(false);
-  const observerRef = useRef(null);
-
-  useEffect(() => {
-    const els = sections.map(({ id }) => document.getElementById(id)).filter(Boolean);
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        const visible = entries.filter((e) => e.isIntersecting);
-        if (visible.length > 0) {
-          setActiveId(visible[0].target.id);
-        }
-      },
-      { rootMargin: "-20% 0px -70% 0px", threshold: 0 }
-    );
-    els.forEach((el) => observerRef.current.observe(el));
-    return () => observerRef.current?.disconnect();
-  }, []);
-
-  return (
-    <>
-      <style dangerouslySetInnerHTML={{ __html: tosStyles }} />
+      `}</style>
 
       <div className="tos-root">
         {/* ── Hero ── */}
@@ -627,34 +625,39 @@ export default function TermsPage() {
               </p>
             </Section>
 
-            <Section id="refunds" heading="Refunds">
-              <p>
-                All products undergo a quality inspection before dispatch. We also provide Open Delivery, allowing customers to inspect the product at the time of delivery. If the product is found to be damaged or broken during the open delivery inspection, the customer will be eligible for a full refund.
-                A refund for order cancellation will only be processed if the order is cancelled before it has been shipped. Once the order has been dispatched, cancellation and refund requests will not be accepted.
-                For any problem contact our support team at{" "} 
-                <a href="mailto:support@hardvanta.com">
-                  support@hardvanta.com
-                </a>{" "}
-              </p>
-              <p>
-                Once your return is approved, you may choose a refund to your
-                original payment method (processed within 5–7 business days)
-                or store credit, at your preference.
-              </p>
-              <p>The following items are not eligible for return:</p>
-              <ul>
-                <li>
-                  Products that have been used, soldered, modified, or
-                  physically damaged after delivery
-                </li>
-                <li>
-                  Electronic components removed from anti-static or sealed
-                  packaging
-                </li>
+          <Section id="refunds" heading=" Refunds">
+  <p>
+    If you make an online payment while placing an order and choose to cancel
+    the order <strong>before it has been shipped</strong>, you will be eligible
+    for a full refund.
+  </p>
 
-              </ul>
-              
-            </Section>
+  <p>
+    The refunded amount will be processed back to your original payment method
+    within <strong>1–3 business days</strong>, depending on your bank or
+    payment service provider.
+  </p>
+
+  <p>Please note:</p>
+
+  <ul>
+    <li>
+      Refunds are applicable only for orders cancelled{" "}
+      <strong>before shipment</strong>.
+    </li>
+    <li>
+      Once an order has been shipped, it may no longer be eligible for
+      cancellation or refund, as per our Cancellation &amp; Return Policy.
+    </li>
+  </ul>
+
+  <p>
+    For any refund-related queries, please contact our customer support team at{" "}
+    <a href="mailto:support@hardvanta.com">
+      support@hardvanta.com
+    </a>.
+  </p>
+</Section>
 
             <Section id="intended-use" heading="Intended use of products">
               <p>
@@ -908,11 +911,10 @@ export default function TermsPage() {
               </p>
               <div className="tos-contact-box">
                 <strong>Hardvanta Technologies LLP</strong>
-                <p>Plot 046, Knowledge Park III,Alpha, Greater Noida,Uttar Pradesh – 201310, India.</p>
-                <p>(Located inside the New Gen IEDC at ITS Engineering College)</p>
+                <p>Plot 046, Knowledge Park 3, Alpha, Greater Noida, Uttar Pradesh - 201310, India</p>
                 <p>
-                  <a href="mailto:support@hardvantatechnology@gmail.com">
-                    support@hardvantatechnology@gmail.com
+                  <a href="mailto:support@hardvanta.com">
+                    support@hardvanta.com
                   </a>
                 </p>
                 <p style={{ marginTop: "10px", fontSize: "13px", color: "#6b7280" }}>

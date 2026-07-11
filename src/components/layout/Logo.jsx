@@ -31,7 +31,7 @@ export default function Logo({ onBadge = true, showWordmark = true, size = 52 })
           <span className="text-xl font-extrabold tracking-tight">
             Hard<span className="text-royal">vanta</span>
           </span>
-          <span className="text-[9px] font-semibold tracking-[0.18em] text-navy uppercase mt-0.5">
+          <span className="text-[9px] font-semibold tracking-[0.18em] text-navy uppercase mt-0.6">
             Technologies
           </span>
         </span>
