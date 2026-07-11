@@ -5,14 +5,10 @@ export const dynamic = 'force-dynamic';
 export async function GET() {
   try {
     const { prisma } = await import("@/lib/prisma");
-    
     const coupons = await prisma.coupon.findMany({
       where: {
         active: true,
-        OR: [
-          { expiresAt: null },
-          { expiresAt: { gt: new Date() } }
-        ]
+        OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }]
       },
       select: {
         code: true,
@@ -22,13 +18,9 @@ export async function GET() {
         minOrder: true,
       }
     });
-    
     return NextResponse.json(coupons);
   } catch (err) {
     console.error("GET /api/coupons error:", err);
-    return NextResponse.json(
-      { error: "Internal server error", details: err.message },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal server error", details: err.message }, { status: 500 });
   }
 }
