@@ -1,3 +1,5 @@
+import B2BEnquiryForm from "@/components/b2b/B2BEnquiryForm";
+
 export const metadata = {
   title: "Hardvanta B2B | Bulk Orders & Prototyping Services",
   description:
@@ -108,92 +110,7 @@ export default function B2BPage() {
         </div>
 
         {/* Bulk Enquiry Form */}
-        <div className="mt-12 rounded-2xl bg-cloud p-8">
-          <h3 className="text-xl font-bold text-navy">Submit Bulk Enquiry</h3>
-          <p className="mt-1 text-sm text-silver-dark">
-            Fill in your requirements and our B2B team will contact you within
-            24 hours.
-          </p>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2">
-            <div>
-              <label className="mb-1 block text-sm font-medium text-navy">
-                Company / Institute Name
-              </label>
-              <input
-                type="text"
-                placeholder="ABC Technologies Pvt Ltd"
-                className="w-full rounded-lg border border-silver-dark bg-white px-3 py-2.5 text-sm outline-none focus:border-royal focus:ring-2 focus:ring-royal/20"
-              />
-            </div>
-            <div>
-              <label className="mb-1 block text-sm font-medium text-navy">
-                Contact Person
-              </label>
-              <input
-                type="text"
-                placeholder="Rahul Sharma"
-                className="w-full rounded-lg border border-silver-dark bg-white px-3 py-2.5 text-sm outline-none focus:border-royal focus:ring-2 focus:ring-royal/20"
-              />
-            </div>
-            <div>
-              <label className="mb-1 block text-sm font-medium text-navy">
-                Email
-              </label>
-              <input
-                type="email"
-                placeholder="rahul@company.com"
-                className="w-full rounded-lg border border-silver-dark bg-white px-3 py-2.5 text-sm outline-none focus:border-royal focus:ring-2 focus:ring-royal/20"
-              />
-            </div>
-            <div>
-              <label className="mb-1 block text-sm font-medium text-navy">
-                Phone Number
-              </label>
-              <input
-                type="tel"
-                placeholder="+91 9876543210"
-                className="w-full rounded-lg border border-silver-dark bg-white px-3 py-2.5 text-sm outline-none focus:border-royal focus:ring-2 focus:ring-royal/20"
-              />
-            </div>
-            <div>
-              <label className="mb-1 block text-sm font-medium text-navy">
-                GST Number (Optional)
-              </label>
-              <input
-                type="text"
-                placeholder="22AAAAA0000A1Z5"
-                className="w-full rounded-lg border border-silver-dark bg-white px-3 py-2.5 text-sm outline-none focus:border-royal focus:ring-2 focus:ring-royal/20"
-              />
-            </div>
-            <div>
-              <label className="mb-1 block text-sm font-medium text-navy">
-                Estimated Quantity
-              </label>
-              <select className="w-full rounded-lg border border-silver-dark bg-white px-3 py-2.5 text-sm outline-none focus:border-royal focus:ring-2 focus:ring-royal/20">
-                <option>50 – 200 units</option>
-                <option>200 – 500 units</option>
-                <option>500 – 1000 units</option>
-                <option>1000+ units</option>
-              </select>
-            </div>
-            <div className="sm:col-span-2">
-              <label className="mb-1 block text-sm font-medium text-navy">
-                Product Requirements
-              </label>
-              <textarea
-                rows={4}
-                placeholder="List the products and quantities you need..."
-                className="w-full rounded-lg border border-silver-dark bg-white px-3 py-2.5 text-sm outline-none focus:border-royal focus:ring-2 focus:ring-royal/20"
-              />
-            </div>
-          </div>
-          <button
-            type="button"
-            className="mt-4 rounded-lg bg-royal px-10 py-3 text-sm font-bold text-white hover:bg-royal-dark transition-colors"
-          >
-            Submit Bulk Enquiry
-          </button>
-        </div>
+        <B2BEnquiryForm />
       </section>
 
       {/* Prototyping Services */}
