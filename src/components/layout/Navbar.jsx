@@ -166,12 +166,16 @@ export default function Navbar() {
             <span className="text-silver-dark">· Customer Support</span>
           </a>
           <div className="flex items-center gap-3 text-silver-dark">
-            {mounted && isAdmin && userViewMode && (
+            {mounted && isAdmin && (
               <button
-                onClick={() => { setUserView(false); router.push("/admin"); }}
+                onClick={() => {
+                  if (userViewMode) { setUserView(false); router.push("/admin"); }
+                  else { setUserView(true); router.push("/"); }
+                }}
                 className="rounded-full bg-royal/10 px-3 py-1 text-xs font-semibold text-royal hover:bg-royal/20 transition-colors"
+                title={userViewMode ? "Switch back to admin" : "Browse the store as a normal customer"}
               >
-                Exit user view
+                {userViewMode ? "🔧 Back to Admin" : "👁 View as customer"}
               </button>
             )}
             {socials.map(({ Icon, href }, i) => (
@@ -403,6 +407,19 @@ export default function Navbar() {
                   className="flex items-center gap-3 border-t border-silver-light px-4 py-3 text-sm font-semibold text-royal hover:bg-cloud">
                   <LayoutDashboard size={18} /> Admin Dashboard
                 </Link>
+              )}
+              {mounted && isAdmin && (
+                <button
+                  onClick={() => {
+                    setMobileOpen(false);
+                    if (userViewMode) { setUserView(false); router.push("/admin"); }
+                    else { setUserView(true); router.push("/"); }
+                  }}
+                  className="flex w-full items-center gap-3 border-t border-silver-light px-4 py-3 text-sm font-medium text-navy hover:bg-cloud">
+                  {userViewMode
+                    ? <><LayoutDashboard size={18} className="text-royal" /> Back to Admin</>
+                    : <><User size={18} className="text-royal" /> View as customer</>}
+                </button>
               )}
               {loggedIn && (
                 <button onClick={() => { signOut({ callbackUrl: "/" }); setMobileOpen(false); }}
