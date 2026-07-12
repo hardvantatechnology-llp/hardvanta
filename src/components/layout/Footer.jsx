@@ -18,6 +18,11 @@ const columns = [
       { label: "Videos", href: "/videos" },
       { label: "FAQ", href: "/faq" },
       { label: "Careers", href: "/careers" },
+    ],
+  },
+  {
+    title: "My Account",
+    links: [
       { label: "My Account", href: "/account" },
       { label: "Cart", href: "/cart" },
       { label: "Checkout", href: "/checkout" },
@@ -100,17 +105,17 @@ export default function Footer() {
       </div>
 
       {/* Main grid */}
-      <div className="container-page grid grid-cols-2 gap-8 py-12 sm:grid-cols-2 md:grid-cols-5">
+      <div className="container-page grid grid-cols-2 gap-8 py-12 sm:grid-cols-2 md:grid-cols-6">
 
         {/* Brand col */}
         <div className="col-span-2">
-          <Logo size={44} />
+          <Logo size={44} dark />
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-silver">
             India&apos;s store for robotics, electronics and DIY engineering
             products. Your ideas, our parts!
           </p>
           <p className="mt-1 text-xs text-silver/70">
-            A unit of Hardvanta Technologies LLP
+            A unit of Hardvanta Technologies
           </p>
 
           {/* Contact */}

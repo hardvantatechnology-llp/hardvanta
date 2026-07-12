@@ -6,7 +6,7 @@ import Link from "next/link";
  * The logo art sits on a light background, so on dark (navy) bars it is
  * placed inside a white rounded badge to keep contrast clean.
  */
-export default function Logo({ onBadge = true, showWordmark = true, size = 52 }) {
+export default function Logo({ onBadge = true, showWordmark = true, size = 52, dark = false }) {
   return (
     <Link href="/" className="flex shrink-0 items-center gap-2.5">
       <span
@@ -28,10 +28,18 @@ export default function Logo({ onBadge = true, showWordmark = true, size = 52 })
       </span>
       {showWordmark && (
         <span className="flex flex-col leading-none">
-          <span className="text-xl font-extrabold tracking-tight">
+          <span
+            className={`text-xl font-extrabold tracking-tight ${
+              dark ? "text-white" : ""
+            }`}
+          >
             Hard<span className="text-royal">vanta</span>
           </span>
-          <span className="text-[9px] font-semibold tracking-[0.18em] text-navy uppercase mt-0.6">
+          <span
+            className={`text-[9px] font-semibold tracking-[0.18em] uppercase mt-0.6 ${
+              dark ? "text-silver-light" : "text-navy"
+            }`}
+          >
             Technologies
           </span>
         </span>
