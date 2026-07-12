@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import { categories } from "@/lib/data";
 import { useCart } from "@/context/CartContext";
+import { getUserView, setUserView } from "@/lib/viewMode";
 import Logo from "./Logo";
 
 // X (Twitter) official SVG — lucide mein Twitter icon nahi hota
@@ -85,6 +86,20 @@ export default function Navbar() {
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
+
+  // "User view": when an admin switches to user view, hide admin-only UI.
+  const [userViewMode, setUserViewMode] = useState(false);
+  useEffect(() => {
+    const sync = () => setUserViewMode(getUserView());
+    sync();
+    window.addEventListener("viewmodechange", sync);
+    window.addEventListener("storage", sync);
+    return () => {
+      window.removeEventListener("viewmodechange", sync);
+      window.removeEventListener("storage", sync);
+    };
+  }, []);
+  const showAdmin = isAdmin && !userViewMode;
 
   // Measure the real navbar height live, so the mobile drawer can snap
   // exactly to its bottom edge instead of relying on a fixed pixel guess
@@ -151,6 +166,14 @@ export default function Navbar() {
             <span className="text-silver-dark">· Customer Support</span>
           </a>
           <div className="flex items-center gap-3 text-silver-dark">
+            {mounted && isAdmin && userViewMode && (
+              <button
+                onClick={() => { setUserView(false); router.push("/admin"); }}
+                className="rounded-full bg-royal/10 px-3 py-1 text-xs font-semibold text-royal hover:bg-royal/20 transition-colors"
+              >
+                Exit user view
+              </button>
+            )}
             {socials.map(({ Icon, href }, i) => (
               <a key={i} href={href} target="_blank" rel="noopener noreferrer"
                 className="hover:text-royal transition-colors duration-150">
@@ -184,7 +207,7 @@ export default function Navbar() {
 
           {/* Desktop action icons */}
           <div className="hidden md:flex items-center gap-5 text-navy">
-            <Link href="#" className="group flex flex-col items-center text-xs hover:text-royal transition-colors duration-150">
+            <Link href="/compare" className="group flex flex-col items-center text-xs hover:text-royal transition-colors duration-150">
               <Repeat size={20} className="group-hover:scale-110 transition-transform duration-150" />
               <span className="mt-0.5">Compare</span>
             </Link>
@@ -192,7 +215,7 @@ export default function Navbar() {
               <Package size={20} className="group-hover:scale-110 transition-transform duration-150" />
               <span className="mt-0.5">Orders</span>
             </Link>
-            {isAdmin && (
+            {showAdmin && (
               <Link href="/admin" className="group flex flex-col items-center text-xs font-semibold text-royal hover:text-royal-dark transition-colors duration-150">
                 <LayoutDashboard size={20} className="group-hover:scale-110 transition-transform duration-150" />
                 <span className="mt-0.5">Admin</span>
@@ -254,9 +277,9 @@ export default function Navbar() {
           </button>
 
           <div className="flex items-center gap-5 text-navy">
-            <Link href="#" title="Compare"><Repeat size={20} /></Link>
+            <Link href="/compare" title="Compare"><Repeat size={20} /></Link>
             <Link href="/orders" title="Orders"><Package size={20} /></Link>
-            {isAdmin && <Link href="/admin"><LayoutDashboard size={20} className="text-royal" /></Link>}
+            {showAdmin && <Link href="/admin"><LayoutDashboard size={20} className="text-royal" /></Link>}
           </div>
 
           <button
@@ -310,7 +333,7 @@ export default function Navbar() {
             )}
           </nav>
 
-          <Link href="#"
+          <Link href="/sell"
             className="flex items-center gap-2 border-l border-silver-light bg-cloud px-5 py-3 text-sm font-semibold text-navy hover:text-royal hover:bg-silver-light transition-colors duration-150">
             <ShoppingBag size={16} /> Sell on Hardvanta
           </Link>
@@ -375,7 +398,7 @@ export default function Navbar() {
                 className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-navy hover:bg-cloud">
                 <Heart size={18} className="text-royal" /> Wishlist
               </Link>
-              {isAdmin && (
+              {showAdmin && (
                 <Link href="/admin" onClick={() => setMobileOpen(false)}
                   className="flex items-center gap-3 border-t border-silver-light px-4 py-3 text-sm font-semibold text-royal hover:bg-cloud">
                   <LayoutDashboard size={18} /> Admin Dashboard
