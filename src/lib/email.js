@@ -73,7 +73,7 @@ export async function sendOrderConfirmationEmail(to, order) {
   const rows = (order.items || [])
     .map(
       (it) =>
-        `<tr><td style="padding:6px 0;color:#444">${it.name} × ${it.quantity}</td>
+        `<tr><td style="padding:6px 0;color:#444">${it.productName ?? it.name} × ${it.quantity}</td>
          <td style="padding:6px 0;text-align:right;color:#0a1f44">${formatPrice(it.price * it.quantity)}</td></tr>`
     )
     .join("");
