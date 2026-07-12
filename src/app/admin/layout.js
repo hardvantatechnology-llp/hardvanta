@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getAdminSession } from "@/lib/admin";
+import SwitchToUserView from "@/components/admin/SwitchToUserView";
+import AdminViewReset from "@/components/admin/AdminViewReset";
 import {
   LayoutDashboard, Package, ShoppingCart, Home,
   Users, Tag, Layers, Star, Ticket, Archive,
@@ -70,6 +72,7 @@ export default async function AdminLayout({ children }) {
 
   return (
     <div className="container-page flex flex-col gap-6 py-8 lg:flex-row">
+      <AdminViewReset />
       <aside className="lg:w-60 shrink-0">
         <div className="rounded-xl border border-silver-light bg-white p-3 sticky top-24">
           <p className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-silver-dark">
@@ -97,12 +100,7 @@ export default async function AdminLayout({ children }) {
             ))}
 
             <div className="space-y-1 border-t border-silver-light pt-2">
-              <Link
-                href="/account"
-                className="flex items-center gap-3 rounded-lg bg-royal/10 px-3 py-2 text-sm font-semibold text-royal hover:bg-royal/15 transition-colors"
-              >
-                <UserCog size={16} /> Switch to User View
-              </Link>
+              <SwitchToUserView />
               <Link
                 href="/"
                 className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-silver-dark hover:bg-cloud hover:text-royal transition-colors"

@@ -1,0 +1,21 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { UserCog } from "lucide-react";
+import { setUserView } from "@/lib/viewMode";
+
+// Admin sidebar button: enter "user view" and go to the account page.
+export default function SwitchToUserView() {
+  const router = useRouter();
+  return (
+    <button
+      onClick={() => {
+        setUserView(true);
+        router.push("/account");
+      }}
+      className="flex w-full items-center gap-3 rounded-lg bg-royal/10 px-3 py-2 text-sm font-semibold text-royal hover:bg-royal/15 transition-colors"
+    >
+      <UserCog size={16} /> Switch to User View
+    </button>
+  );
+}
