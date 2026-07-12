@@ -27,7 +27,8 @@ export function WishlistProvider({ children }) {
   const toggleWishlist = useCallback(
     async (productId) => {
       if (!session) {
-        alert("Wishlist use karne ke liye pehle login karo!");
+        // Not logged in — send them to login (wishlist is saved per account).
+        window.location.href = "/login?callbackUrl=/wishlist";
         return;
       }
 
