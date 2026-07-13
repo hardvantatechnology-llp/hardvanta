@@ -32,7 +32,9 @@ function LoginForm() {
   const [forgotNewPassword, setForgotNewPassword] = useState("");
   const [forgotError, setForgotError] = useState("");
   const [forgotInfo, setForgotInfo] = useState("");
+  const [forgotDevCode, setForgotDevCode] = useState("");
   const [forgotLoading, setForgotLoading] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
 
   async function handlePasswordSubmit(e) {
     e.preventDefault();
@@ -98,9 +100,34 @@ function LoginForm() {
     setForgotStage("reset");
     if (data.demo && data.devCode) {
       setForgotCode(data.devCode);
-      setForgotInfo(`Demo mode: your reset code is ${data.devCode}`);
+      setForgotDevCode(data.devCode);
+      setForgotInfo("");
     } else {
-      setForgotInfo(`If an account exists, we've emailed a code to ${forgotEmail}.`);
+      setForgotDevCode("");
+      setForgotInfo(`If an account exists for ${forgotEmail}, a 6-digit code is on its way.`);
+    }
+  }
+
+  async function handleResendCode() {
+    setForgotError("");
+    setForgotLoading(true);
+    const res = await fetch("/api/auth/reset-password/request", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: forgotEmail }),
+    });
+    const data = await res.json().catch(() => ({}));
+    setForgotLoading(false);
+    if (!res.ok) {
+      setForgotError(data.error || "Could not resend the code.");
+      return;
+    }
+    if (data.demo && data.devCode) {
+      setForgotCode(data.devCode);
+      setForgotDevCode(data.devCode);
+      setForgotInfo("");
+    } else {
+      setForgotInfo(`A new code was sent to ${forgotEmail}.`);
     }
   }
 
@@ -179,30 +206,54 @@ function LoginForm() {
             {forgotStage === "reset" && (
               <>
                 <h2 className="text-xl font-bold text-navy text-center mb-1">Reset password</h2>
-                <p className="text-sm text-silver-dark text-center mb-6">Enter the code and choose a new password.</p>
+                <p className="text-sm text-silver-dark text-center mb-5">
+                  Enter the 6-digit code sent to{" "}
+                  <span className="font-semibold text-navy">{forgotEmail}</span> and choose a new password.
+                </p>
+
+                {forgotDevCode && (
+                  <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-center text-sm text-amber-800">
+                    Email isn&apos;t set up yet, so here&apos;s your code:{" "}
+                    <span className="font-bold tracking-widest">{forgotDevCode}</span>
+                  </div>
+                )}
+
                 <form onSubmit={handleResetConfirm} className="space-y-4">
                   <input
                     type="text" inputMode="numeric" maxLength={6} required autoFocus
                     value={forgotCode}
                     onChange={(e) => setForgotCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                    placeholder="6-digit code"
-                    className="w-full rounded-xl border border-silver px-4 py-2.5 text-center text-lg font-semibold tracking-[0.4em] outline-none focus:border-royal focus:ring-2 focus:ring-royal/20"
+                    placeholder="------"
+                    className="w-full rounded-xl border border-silver px-4 py-2.5 text-center text-lg font-semibold tracking-[0.5em] outline-none focus:border-royal focus:ring-2 focus:ring-royal/20"
                   />
                   <div className="relative">
                     <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-silver-dark" />
                     <input
-                      type="password" required minLength={6}
+                      type={showNewPassword ? "text" : "password"} required minLength={6}
                       value={forgotNewPassword}
                       onChange={(e) => setForgotNewPassword(e.target.value)}
                       placeholder="New password (min 6 characters)"
-                      className="w-full rounded-xl border border-silver pl-9 pr-4 py-2.5 text-sm outline-none focus:border-royal focus:ring-2 focus:ring-royal/20"
+                      className="w-full rounded-xl border border-silver pl-9 pr-10 py-2.5 text-sm outline-none focus:border-royal focus:ring-2 focus:ring-royal/20"
                     />
+                    <button type="button" onClick={() => setShowNewPassword((v) => !v)}
+                      aria-label={showNewPassword ? "Hide password" : "Show password"}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-silver-dark hover:text-royal">
+                      {showNewPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
                   </div>
                   <button type="submit" disabled={forgotLoading || forgotCode.length < 6}
                     className="w-full rounded-xl bg-royal py-2.5 text-sm font-semibold text-white hover:bg-navy transition-colors disabled:opacity-70">
                     {forgotLoading ? "Resetting..." : "Reset Password"}
                   </button>
                 </form>
+
+                <p className="mt-4 text-center text-xs text-silver-dark">
+                  Didn&apos;t get the code?{" "}
+                  <button type="button" onClick={handleResendCode} disabled={forgotLoading}
+                    className="font-semibold text-royal hover:underline disabled:opacity-50">
+                    Resend
+                  </button>
+                </p>
               </>
             )}
 
