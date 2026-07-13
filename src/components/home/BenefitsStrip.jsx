@@ -1,7 +1,7 @@
 import { Truck, ShieldCheck, Lightbulb , Headphones } from "lucide-react";
 
 const benefits = [
-  { Icon: Truck, title: "Fast Delivery", sub: "Across India" },
+  { Icon: Truck, title: "Fast Delivery", sub: "Across Delhi NCR" },
   { Icon: ShieldCheck, title: "100% Genuine", sub: "Authentic parts" },
   { Icon: Lightbulb, title: "Project Assistance", sub: "From Idea To Project" },
   { Icon: Headphones, title: "Expert Support", sub: "Mon–Sat" },

@@ -62,7 +62,7 @@ const socials = [
   },
   {
     Icon: Instagram,
-    href: "https://www.instagram.com/hardvantatechnology",
+    href: "https://www.instagram.com/hardvantatechnologies",
     label: "Instagram",
   },
   { Icon: Youtube, href: "#", label: "YouTube" },

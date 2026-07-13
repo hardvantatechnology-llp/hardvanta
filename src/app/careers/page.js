@@ -171,7 +171,7 @@ export default function CareersPage() {
             <div className="hero-stats">
               {[
                 { emoji: "🏭", label: "10,000+ Products" },
-                { emoji: "📦", label: "Pan-India Delivery" },
+                { emoji: "📦", label: "Pan-Delhi NCR Delivery" },
                 { emoji: "👥", label: "Growing Team" },
                 { emoji: "🔩", label: "Makers Community" },
               ].map((s) => (
@@ -484,7 +484,7 @@ export default function CareersPage() {
                   📩 Send Your Resume
                 </a>
                 <a
-                  href="mailto:careers@hardvanta.com"
+                  href="mailto:careers@hardvantatechnology@gmail.com"
                   style={{
                     display: "inline-block",
                     background: "rgba(255,255,255,0.12)",
@@ -495,7 +495,7 @@ export default function CareersPage() {
                     textDecoration: "none", letterSpacing: "0.01em",
                   }}
                 >
-                  📧 careers@hardvanta.com
+                  📧 careers@hardvantatechnology@gmail.com
                 </a>
               </div>
             </div>
