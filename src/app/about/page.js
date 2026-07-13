@@ -83,7 +83,7 @@ export default function AboutPage() {
           high-performance industrial solutions.
         </p>
         <a
-          href="https://hardvantatechnologies.in/contact"
+          href="https://hardvantatechnologies.in"
           target="_blank"
           rel="noopener noreferrer"
           className="mt-8 inline-block rounded-lg bg-white px-8 py-3 text-sm font-bold text-navy hover:bg-silver-light transition-colors"
