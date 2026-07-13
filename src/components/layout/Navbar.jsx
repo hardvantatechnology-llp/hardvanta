@@ -194,18 +194,19 @@ export default function Navbar() {
 
           <Logo size={48} />
 
-          {/* Search — desktop only */}
+          {/* Search — inline on all screens */}
           <form onSubmit={handleSearch}
-            className="hidden flex-1 md:flex items-center overflow-hidden rounded-full border border-silver bg-white shadow-sm focus-within:border-royal focus-within:ring-2 focus-within:ring-royal/20 transition-all duration-200">
-            <span className="pl-4 text-silver-dark"><Search size={17} /></span>
+            className="flex flex-1 items-center overflow-hidden rounded-full border border-silver bg-white shadow-sm focus-within:border-royal focus-within:ring-2 focus-within:ring-royal/20 transition-all duration-200">
+            <span className="pl-3 md:pl-4 text-silver-dark"><Search size={17} /></span>
             <input type="text" value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search for Products..."
-              className="w-full px-3 py-2 text-sm text-navy outline-none bg-transparent placeholder:text-silver-dark"
+              className="w-full px-2 py-2 text-sm text-navy outline-none bg-transparent placeholder:text-silver-dark md:px-3"
             />
-            <button type="submit"
-              className="m-1 rounded-full bg-royal px-5 py-2 text-sm font-semibold text-white hover:bg-royal-dark active:scale-95 transition-all duration-150">
-              Search
+            <button type="submit" aria-label="Search"
+              className="m-1 rounded-full bg-royal px-3 py-2 text-sm font-semibold text-white hover:bg-royal-dark active:scale-95 transition-all duration-150 md:px-5">
+              <Search size={16} className="md:hidden" />
+              <span className="hidden md:inline">Search</span>
             </button>
           </form>
 
@@ -265,25 +266,6 @@ export default function Navbar() {
               )}
             </Link>
           </div>
-        </div>
-      </div>
-
-      {/* ── Row 2.5 MOBILE: Search bar ── */}
-      <div className="border-b border-silver-light bg-white md:hidden">
-        <div className="px-4 py-2.5">
-          <form onSubmit={handleSearch}
-            className="flex items-center overflow-hidden rounded-full border border-silver bg-white shadow-sm focus-within:border-royal focus-within:ring-2 focus-within:ring-royal/20 transition-all duration-200">
-            <span className="pl-4 text-silver-dark"><Search size={17} /></span>
-            <input type="text" value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search for Products..."
-              className="w-full px-3 py-2.5 text-sm text-navy outline-none bg-transparent placeholder:text-silver-dark"
-            />
-            <button type="submit" aria-label="Search"
-              className="m-1 rounded-full bg-royal px-4 py-2 text-white hover:bg-royal-dark active:scale-95 transition-all duration-150">
-              <Search size={16} />
-            </button>
-          </form>
         </div>
       </div>
 
