@@ -69,11 +69,16 @@ export async function POST(request) {
     salePrice,
     stock,
     image,
+    images,
     featured,
     categoryId,
     brandId,
     sku,
   } = body;
+
+  // Gallery images (array). Fall back to the single `image` for old callers.
+  const gallery = Array.isArray(images) && images.length ? images : image ? [image] : [];
+  const mainImage = image || gallery[0];
 
   if (
     !name ||
@@ -82,7 +87,7 @@ export async function POST(request) {
     !categoryId ||
     !brandId ||
     !sku ||
-    !image
+    !mainImage
   ) {
     return NextResponse.json(
       { error: "Missing required fields." },
@@ -125,7 +130,7 @@ export async function POST(request) {
           ? Number(salePrice)
           : null,
       stock: Number(stock),
-      image,
+      image: mainImage,
       featured: Boolean(featured),
 
       category: {
@@ -138,6 +143,10 @@ export async function POST(request) {
         connect: {
           id: brandId,
         },
+      },
+
+      images: {
+        create: gallery.map((imageUrl) => ({ imageUrl })),
       },
     },
   });

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Upload } from "lucide-react";
+import { Upload, X } from "lucide-react";
 import Button from "@/components/ui/Button";
 import { imageSrc } from "@/utils/imageSrc";
 
@@ -24,9 +24,14 @@ export default function ProductForm({ product }) {
     inStock: product?.inStock ?? true,
     categoryId: product?.category?.id ?? "",
     brandId: product?.brand?.id ?? "",
-    image: product?.image || "",
+    images: product?.images?.length
+      ? product.images.map((i) => i.imageUrl)
+      : product?.image
+        ? [product.image]
+        : [],
     featured: product?.featured || false,
   });
+  const [urlInput, setUrlInput] = useState("");
 
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
@@ -73,15 +78,29 @@ export default function ProductForm({ product }) {
     setForm((f) => ({ ...f, stock: value }));
   }
 
+  function addImages(urls) {
+    const list = Array.isArray(urls) ? urls : [urls];
+    setForm((f) => ({ ...f, images: [...f.images, ...list.filter(Boolean)] }));
+  }
+  function removeImage(idx) {
+    setForm((f) => ({ ...f, images: f.images.filter((_, i) => i !== idx) }));
+  }
+  function addUrl() {
+    const u = urlInput.trim();
+    if (!u) return;
+    addImages(u);
+    setUrlInput("");
+  }
+
   async function handleFileUpload(e) {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
     setError("");
     setUploadMsg("");
     setUploading(true);
     try {
       const fd = new FormData();
-      fd.append("file", file);
+      files.forEach((f) => fd.append("file", f));
       const res = await fetch("/api/upload", { method: "POST", body: fd });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -90,9 +109,10 @@ export default function ProductForm({ product }) {
         }
         throw new Error(data.error || `Upload failed (HTTP ${res.status}).`);
       }
-      if (!data.url) throw new Error("Upload returned no image URL.");
-      set("image", data.url);
-      setUploadMsg("✓ Photo uploaded! You can create the product now.");
+      const urls = data.urls || (data.url ? [data.url] : []);
+      if (urls.length === 0) throw new Error("Upload returned no image URL.");
+      addImages(urls);
+      setUploadMsg(`✓ ${urls.length} photo${urls.length > 1 ? "s" : ""} uploaded!`);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -104,8 +124,8 @@ export default function ProductForm({ product }) {
   async function handleSubmit(e) {
     e.preventDefault();
     setError("");
-    if (!form.image) {
-      setError("Please upload a photo (or paste an image URL) before saving.");
+    if (!form.images.length) {
+      setError("Please add at least one product image (upload or paste a URL).");
       return;
     }
     setLoading(true);
@@ -168,7 +188,8 @@ export default function ProductForm({ product }) {
           salePrice: form.salePrice ? Number(form.salePrice) : null,
           stock: Number(form.stock),
           inStock: form.inStock,
-          image: form.image,
+          image: form.images[0],
+          images: form.images,
           featured: form.featured,
           categoryId,
           brandId,
@@ -282,34 +303,66 @@ export default function ProductForm({ product }) {
         </L>
       </div>
 
-      <L label="Product Image">
-        <div className="flex flex-wrap items-center gap-4">
-          {form.image ? (
-            <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg border border-silver-light bg-cloud">
-              <Image src={imageSrc(form.image)} alt="Preview" fill sizes="80px" className="object-cover" />
+      <L label="Product Images">
+        {/* Thumbnails of all added images */}
+        <div className="flex flex-wrap gap-3">
+          {form.images.map((url, idx) => (
+            <div
+              key={`${url}-${idx}`}
+              className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg border border-silver-light bg-cloud"
+            >
+              <Image src={imageSrc(url)} alt={`Image ${idx + 1}`} fill sizes="80px" className="object-cover" />
+              {idx === 0 && (
+                <span className="absolute bottom-0 left-0 right-0 bg-royal/80 py-0.5 text-center text-[9px] font-semibold text-white">
+                  Main
+                </span>
+              )}
+              <button
+                type="button"
+                onClick={() => removeImage(idx)}
+                className="absolute right-0.5 top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-white/90 text-silver-dark shadow hover:text-red-500"
+                aria-label="Remove image"
+              >
+                <X size={12} />
+              </button>
             </div>
-          ) : (
-            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-lg border border-dashed border-silver-dark text-xs text-silver-dark">
-              No image
-            </div>
-          )}
-          <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-royal bg-royal px-4 py-2 text-sm font-semibold text-white hover:bg-royal-dark">
-            <Upload size={16} />
-            {uploading ? "Uploading…" : "Upload photo from device"}
-            <input type="file" accept="image/*" className="hidden" disabled={uploading} onChange={handleFileUpload} />
+          ))}
+          <label className="flex h-20 w-20 shrink-0 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-royal text-xs font-semibold text-royal hover:bg-royal/5">
+            <Upload size={18} />
+            {uploading ? "…" : "Add"}
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              className="hidden"
+              disabled={uploading}
+              onChange={handleFileUpload}
+            />
           </label>
         </div>
         {uploadMsg && (
           <p className="mt-2 rounded-lg bg-green-50 px-3 py-2 text-sm font-medium text-green-700">{uploadMsg}</p>
         )}
-        <input
-          className={`${inputCls} mt-2`}
-          value={form.image}
-          onChange={(e) => set("image", e.target.value)}
-          placeholder="Auto-fills after upload — or paste an image URL here"
-        />
+        {/* Add by URL */}
+        <div className="mt-2 flex gap-2">
+          <input
+            className={inputCls}
+            value={urlInput}
+            onChange={(e) => setUrlInput(e.target.value)}
+            onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addUrl(); } }}
+            placeholder="…or paste an image URL and press Add"
+          />
+          <button
+            type="button"
+            onClick={addUrl}
+            className="shrink-0 rounded-lg border border-silver-dark px-4 text-sm font-semibold text-navy hover:border-royal hover:text-royal"
+          >
+            Add
+          </button>
+        </div>
         <p className="mt-1 text-xs text-silver-dark">
-          Tip: click &quot;Upload photo from device&quot; to use a photo from your computer/phone. You do not need a URL.
+          Upload multiple photos at once (Ctrl/Cmd-click to select several). The first
+          image is used as the main product photo. Drag isn&apos;t needed — just remove and re-add to reorder.
         </p>
       </L>
 

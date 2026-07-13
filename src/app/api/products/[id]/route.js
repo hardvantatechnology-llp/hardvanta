@@ -57,6 +57,15 @@ export async function PUT(request, { params }) {
   if (body.image !== undefined)
     data.image = body.image;
 
+  // Replace the whole gallery when an images array is supplied.
+  if (Array.isArray(body.images)) {
+    data.image = body.images[0] ?? body.image ?? null;
+    data.images = {
+      deleteMany: {},
+      create: body.images.map((imageUrl) => ({ imageUrl })),
+    };
+  }
+
   if (body.price !== undefined)
     data.price = Number(body.price);
 

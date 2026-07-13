@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
@@ -12,7 +11,7 @@ import {
 } from "lucide-react";
 import { getProductById, getRelatedProducts } from "@/lib/queries";
 import { formatPrice } from "@/utils/formatPrice";
-import { imageSrc } from "@/utils/imageSrc";
+import ProductGallery from "@/components/products/ProductGallery";
 import ProductGrid from "@/components/products/ProductGrid";
 import AddToCart from "@/components/products/AddToCart";
 
@@ -35,7 +34,12 @@ export default async function ProductDetailPage({ params }) {
     ? Math.round(((product.price - product.salePrice) / product.price) * 100)
     : 0;
   const savings = hasDiscount ? product.price - product.salePrice : 0;
-  const img = imageSrc(product.image);
+  // Build the gallery: main image first, then the extra ProductImage rows (deduped).
+  const galleryImages = [
+    ...new Set(
+      [product.image, ...(product.images || []).map((i) => i.imageUrl)].filter(Boolean)
+    ),
+  ];
 
   const specs = [
     ["Brand", product.brand?.name],
@@ -62,30 +66,8 @@ export default async function ProductDetailPage({ params }) {
       </nav>
 
       <div className="grid gap-10 lg:grid-cols-2">
-        {/* Image panel */}
-        <div className="lg:sticky lg:top-24 lg:self-start">
-          <div className="relative aspect-square overflow-hidden rounded-2xl border border-silver-light bg-white">
-            <Image
-              src={img}
-              alt={product.name}
-              fill
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-contain p-6"
-              priority
-            />
-            {hasDiscount && (
-              <span className="absolute left-4 top-4 rounded-lg bg-royal px-3 py-1 text-sm font-bold text-white shadow-sm">
-                -{discountPct}% OFF
-              </span>
-            )}
-          </div>
-          {/* Thumbnail strip */}
-          <div className="mt-3 flex gap-3">
-            <div className="relative h-20 w-20 overflow-hidden rounded-lg border-2 border-royal bg-white">
-              <Image src={img} alt="" fill sizes="80px" className="object-contain p-1.5" />
-            </div>
-          </div>
-        </div>
+        {/* Image gallery */}
+        <ProductGallery images={galleryImages} alt={product.name} discountPct={discountPct} />
 
         {/* Buy box */}
         <div>
