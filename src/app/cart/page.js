@@ -22,10 +22,6 @@ function QuantityModal({ currentQty, onClose, onApply }) {
       setError("Please enter a valid quantity (min 1).");
       return;
     }
-    if (num > 99) {
-      setError("Max quantity allowed is 99.");
-      return;
-    }
     onApply(num);
     onClose();
   }
@@ -62,7 +58,6 @@ function QuantityModal({ currentQty, onClose, onApply }) {
           <input
             type="number"
             min={1}
-            max={99}
             value={inputVal}
             onChange={(e) => { setInputVal(e.target.value); setError(""); }}
             onKeyDown={(e) => e.key === "Enter" && handleApply()}
@@ -140,15 +135,9 @@ export default function CartPage() {
   const grandTotal = subtotal - couponDiscount + shipping;
   const totalSaved = productDiscount + couponDiscount;
 
-  // ── Quantity handler with modal trigger ───────────────────────────────────
+  // ── Quantity handler: + always increments by 1 (no limit) ─────────────────
   function handleIncrement(item) {
-    const newQty = item.quantity + 1;
-    if (newQty > 3) {
-      // Open modal so user can type the exact quantity
-      setModalItemId(item.id);
-    } else {
-      updateQuantity(item.id, newQty);
-    }
+    updateQuantity(item.id, item.quantity + 1);
   }
 
   function handleModalApply(itemId, qty) {
