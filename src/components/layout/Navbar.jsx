@@ -268,6 +268,25 @@ export default function Navbar() {
         </div>
       </div>
 
+      {/* ── Row 2.5 MOBILE: Search bar ── */}
+      <div className="border-b border-silver-light bg-white md:hidden">
+        <div className="px-4 py-2.5">
+          <form onSubmit={handleSearch}
+            className="flex items-center overflow-hidden rounded-full border border-silver bg-white shadow-sm focus-within:border-royal focus-within:ring-2 focus-within:ring-royal/20 transition-all duration-200">
+            <span className="pl-4 text-silver-dark"><Search size={17} /></span>
+            <input type="text" value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search for Products..."
+              className="w-full px-3 py-2.5 text-sm text-navy outline-none bg-transparent placeholder:text-silver-dark"
+            />
+            <button type="submit" aria-label="Search"
+              className="m-1 rounded-full bg-royal px-4 py-2 text-white hover:bg-royal-dark active:scale-95 transition-all duration-150">
+              <Search size={16} />
+            </button>
+          </form>
+        </div>
+      </div>
+
       {/* ── Row 3 MOBILE: ≡ All Categories  icons  ≡ Menu ── */}
       <div className="border-b border-silver-light bg-white md:hidden">
         <div className="flex items-center justify-between px-4 py-2">
