@@ -1,7 +1,24 @@
 import { PackageSearch } from "lucide-react";
 import ProductCard from "./ProductCard";
+import ProductCardSkeleton from "./ProductCardSkeleton";
 
-export default function ProductGrid({ products }) {
+// Responsive grid: 2 cols (mobile & tablet), 4 cols (desktop),
+// equal-height cards (auto-rows-fr), consistent 16px gap.
+const GRID = "grid grid-cols-2 gap-4 lg:grid-cols-4 auto-rows-fr";
+
+export function ProductGridSkeleton({ count = 8 }) {
+  return (
+    <div className={GRID}>
+      {Array.from({ length: count }).map((_, i) => (
+        <ProductCardSkeleton key={i} />
+      ))}
+    </div>
+  );
+}
+
+export default function ProductGrid({ products, loading = false }) {
+  if (loading) return <ProductGridSkeleton />;
+
   if (!products?.length) {
     return (
       <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-silver py-16 text-center">
@@ -13,8 +30,9 @@ export default function ProductGrid({ products }) {
       </div>
     );
   }
+
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
+    <div className={GRID}>
       {products.map((p) => (
         <ProductCard key={p.id} product={p} />
       ))}
