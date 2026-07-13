@@ -170,7 +170,7 @@ export default async function OrderDetailPage({ params, searchParams }) {
             {[
               { icon: <ShieldCheck size={15} className="text-green-600" />, text: "100% Secure Order" },
               { icon: <Truck size={15} className="text-royal" />, text: "Free shipping above ₹999" },
-              { icon: <Phone size={15} className="text-orange-500" />, text: "Support: Mon–Sat, 9AM–6PM" },
+              { icon: <Phone size={15} className="text-orange-500" />, text: "Support: +91 91705 46395 (Mon–Sat)" },
             ].map((b) => (
               <div key={b.text} className="flex items-center gap-2 text-xs text-silver-dark">
                 {b.icon} {b.text}
@@ -188,7 +188,7 @@ export default async function OrderDetailPage({ params, searchParams }) {
             href="tel:+919170546395"
             className="flex items-center gap-2 rounded-xl border border-silver-light bg-white px-4 py-2.5 text-sm font-semibold text-navy hover:border-royal hover:text-royal transition-colors shadow-card"
           >
-            <Phone size={15} /> Contact Support
+            <Phone size={15} /> Call Support: +91 91705 46395
           </a>
           <Link
             href="/products"

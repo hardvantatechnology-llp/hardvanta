@@ -109,7 +109,7 @@ export default function Footer() {
 
         {/* Brand col */}
         <div className="col-span-2">
-          <Logo size={44} dark />
+          <Logo size={56} dark />
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-silver">
             India&apos;s store for robotics, electronics and DIY engineering
             products. Your ideas, our parts!

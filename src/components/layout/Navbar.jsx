@@ -192,7 +192,7 @@ export default function Navbar() {
       <div className="border-b border-silver-light bg-white">
         <div className="container-page flex items-center gap-3 py-2.5">
 
-          <Logo size={48} />
+          <Logo size={60} />
 
           {/* Search — inline on all screens */}
           <form onSubmit={handleSearch}
