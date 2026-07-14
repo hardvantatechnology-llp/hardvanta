@@ -5,6 +5,9 @@ import { CheckCircle2, Loader2 } from "lucide-react";
 
 const QUANTITIES = ["50 – 200 units", "200 – 500 units", "500 – 1000 units", "1000+ units"];
 
+// Valid Indian mobile numbers: exactly 10 digits, starting with 6-9
+const INDIAN_PHONE_REGEX = /^[6-9]\d{9}$/;
+
 export default function B2BEnquiryForm() {
   const [form, setForm] = useState({
     organization: "",
@@ -17,13 +20,42 @@ export default function B2BEnquiryForm() {
   });
   const [status, setStatus] = useState("idle"); // idle | loading | success | error
   const [error, setError] = useState("");
+  const [phoneError, setPhoneError] = useState("");
 
-  const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+  const set = (k, v) => {
+    if (k === "phone") {
+      // Strip anything that isn't a digit, cap at 10 digits
+      const digitsOnly = v.replace(/\D/g, "").slice(0, 10);
+      setForm((f) => ({ ...f, phone: digitsOnly }));
+
+      if (digitsOnly.length === 0) {
+        setPhoneError("");
+      } else if (digitsOnly.length < 10) {
+        setPhoneError("Phone number must be 10 digits");
+      } else if (!INDIAN_PHONE_REGEX.test(digitsOnly)) {
+        setPhoneError("Enter a valid Indian mobile number (must start with 6-9)");
+      } else {
+        setPhoneError("");
+      }
+      return;
+    }
+
+    setForm((f) => ({ ...f, [k]: v }));
+  };
+
   const input =
     "w-full rounded-lg border border-silver-dark bg-white px-3 py-2.5 text-sm outline-none focus:border-royal focus:ring-2 focus:ring-royal/20";
+  const inputError =
+    "w-full rounded-lg border border-red-400 bg-white px-3 py-2.5 text-sm outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100";
 
   async function handleSubmit(e) {
     e.preventDefault();
+
+    if (!INDIAN_PHONE_REGEX.test(form.phone)) {
+      setPhoneError("Enter a valid 10-digit Indian mobile number");
+      return;
+    }
+
     setStatus("loading");
     setError("");
     try {
@@ -89,7 +121,18 @@ export default function B2BEnquiryForm() {
         </div>
         <div>
           <label className="mb-1 block text-sm font-medium text-navy">Phone Number *</label>
-          <input type="tel" required value={form.phone} onChange={(e) => set("phone", e.target.value)} placeholder="+91 9876543210" className={input} />
+          <input
+            type="tel"
+            required
+            inputMode="numeric"
+            maxLength={10}
+            value={form.phone}
+            onChange={(e) => set("phone", e.target.value)}
+            placeholder="10-digit mobile number"
+            aria-invalid={phoneError ? "true" : "false"}
+            className={phoneError ? inputError : input}
+          />
+          {phoneError && <p className="mt-1 text-xs font-medium text-red-600">{phoneError}</p>}
         </div>
         <div>
           <label className="mb-1 block text-sm font-medium text-navy">GST Number (Optional)</label>
