@@ -60,7 +60,7 @@ const socials = [
   { Icon: Facebook,  href: "#" },
   { Icon: XIcon,     href: "#" },
   { Icon: Linkedin,  href: "https://www.linkedin.com/company/hardvanta-technologies-llp/posts/?feedView=all" },
-  { Icon: Instagram, href: "https://www.instagram.com/hardvantatechnology" },
+  { Icon: Instagram, href: "https://www.instagram.com/hardvantatechnologies?utm_source=qr&igsh=ZG92b3oxZzczeXZw" },
   { Icon: Youtube,   href: "#" },
 ];
 
