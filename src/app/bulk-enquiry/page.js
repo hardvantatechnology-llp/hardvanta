@@ -75,6 +75,9 @@ const benefits = [
 
 const enquiryTypes = ["School / College", "Reseller / Distributor", "Corporate / Startup", "Other"];
 
+// Valid Indian mobile numbers: exactly 10 digits, starting with 6-9
+const INDIAN_PHONE_REGEX = /^[6-9]\d{9}$/;
+
 export default function BulkEnquiryPage() {
   const [form, setForm] = useState({
     name: "",
@@ -88,13 +91,37 @@ export default function BulkEnquiryPage() {
   });
   const [status, setStatus] = useState("idle"); // idle | loading | success | error
   const [errorMsg, setErrorMsg] = useState("");
+  const [phoneError, setPhoneError] = useState("");
 
   function update(field, value) {
+    if (field === "phone") {
+      // Strip anything that isn't a digit, cap at 10 digits
+      const digitsOnly = value.replace(/\D/g, "").slice(0, 10);
+      setForm((f) => ({ ...f, phone: digitsOnly }));
+
+      if (digitsOnly.length === 0) {
+        setPhoneError("");
+      } else if (digitsOnly.length < 10) {
+        setPhoneError("Phone number must be 10 digits");
+      } else if (!INDIAN_PHONE_REGEX.test(digitsOnly)) {
+        setPhoneError("Enter a valid Indian mobile number (must start with 6-9)");
+      } else {
+        setPhoneError("");
+      }
+      return;
+    }
+
     setForm((f) => ({ ...f, [field]: value }));
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
+
+    if (!INDIAN_PHONE_REGEX.test(form.phone)) {
+      setPhoneError("Enter a valid 10-digit Indian mobile number");
+      return;
+    }
+
     setStatus("loading");
     setErrorMsg("");
     try {
@@ -292,11 +319,22 @@ export default function BulkEnquiryPage() {
                     <input
                       required
                       type="tel"
+                      inputMode="numeric"
+                      maxLength={10}
                       value={form.phone}
                       onChange={(e) => update("phone", e.target.value)}
-                      className="w-full rounded-lg border border-silver px-3.5 py-2.5 text-sm text-navy outline-none focus:border-royal"
-                      placeholder="+91 XXXXX XXXXX"
+                      aria-invalid={phoneError ? "true" : "false"}
+                      className={
+                        "w-full rounded-lg border px-3.5 py-2.5 text-sm text-navy outline-none " +
+                        (phoneError
+                          ? "border-red-400 focus:border-red-500"
+                          : "border-silver focus:border-royal")
+                      }
+                      placeholder="10-digit mobile number"
                     />
+                    {phoneError && (
+                      <p className="mt-1 text-xs font-medium text-red-600">{phoneError}</p>
+                    )}
                   </div>
                   <div className="sm:col-span-2">
                     <label className="mb-1.5 block text-sm font-medium text-navy">
