@@ -1,9 +1,30 @@
-export const metadata = {
-  title: "Contact Us | Hardvanta",
-  description: "Get in touch with Hardvanta Technologies LLP",
-};
+"use client";
+
+import { useState } from "react";
+
+// Valid Indian mobile numbers: exactly 10 digits, starting with 6-9
+const INDIAN_PHONE_REGEX = /^[6-9]\d{9}$/;
 
 export default function ContactPage() {
+  const [phone, setPhone] = useState("");
+  const [phoneError, setPhoneError] = useState("");
+
+  function handlePhoneChange(e) {
+    // Strip anything that isn't a digit, cap at 10 digits
+    const digitsOnly = e.target.value.replace(/\D/g, "").slice(0, 10);
+    setPhone(digitsOnly);
+
+    if (digitsOnly.length === 0) {
+      setPhoneError("");
+    } else if (digitsOnly.length < 10) {
+      setPhoneError("Phone number must be 10 digits");
+    } else if (!INDIAN_PHONE_REGEX.test(digitsOnly)) {
+      setPhoneError("Enter a valid Indian mobile number (must start with 6-9)");
+    } else {
+      setPhoneError("");
+    }
+  }
+
   return (
     <main className="min-h-screen bg-white">
 
@@ -118,9 +139,22 @@ export default function ContactPage() {
               </label>
               <input
                 type="tel"
-                placeholder="+91 9876543210"
-                className="w-full rounded-lg border border-silver-dark px-3 py-2.5 text-sm outline-none focus:border-royal focus:ring-2 focus:ring-royal/20"
+                inputMode="numeric"
+                maxLength={10}
+                value={phone}
+                onChange={handlePhoneChange}
+                placeholder="10-digit mobile number"
+                aria-invalid={phoneError ? "true" : "false"}
+                className={
+                  "w-full rounded-lg border px-3 py-2.5 text-sm outline-none focus:ring-2 " +
+                  (phoneError
+                    ? "border-red-400 focus:border-red-500 focus:ring-red-100"
+                    : "border-silver-dark focus:border-royal focus:ring-royal/20")
+                }
               />
+              {phoneError && (
+                <p className="mt-1 text-xs font-medium text-red-600">{phoneError}</p>
+              )}
             </div>
 
             <div>

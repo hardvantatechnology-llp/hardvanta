@@ -3,7 +3,7 @@ import { Cpu, ShieldCheck, Truck, Headphones } from "lucide-react";
 import Logo from "@/components/layout/Logo";
 
 const points = [
-  { Icon: Truck, text: "Fast delivery across India" },
+  { Icon: Truck, text: "elhi-NCR" },
   { Icon: ShieldCheck, text: "100% genuine components" },
   { Icon: Headphones, text: "Real technical support" },
 ];

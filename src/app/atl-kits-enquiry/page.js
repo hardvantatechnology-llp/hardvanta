@@ -16,14 +16,50 @@ const ATL_KITS = [
 const STATES = ["Uttar Pradesh","Delhi","Maharashtra","Rajasthan","Gujarat","Karnataka","Tamil Nadu","West Bengal","Madhya Pradesh","Other"];
 const BUDGET_RANGES = ["Under Rs.1 Lakh","Rs.1 - Rs.3 Lakh","Rs.3 - Rs.5 Lakh","Rs.5 - Rs.10 Lakh","Above Rs.10 Lakh"];
 
+// Valid Indian mobile numbers: exactly 10 digits, starting with 6-9
+const INDIAN_PHONE_REGEX = /^[6-9]\d{9}$/;
+
 export default function ATLKitsEnquiryPage() {
   const [selectedKits, setSelectedKits] = useState([]);
   const [submitted, setSubmitted] = useState(false);
+  const [phoneError, setPhoneError] = useState("");
   const [form, setForm] = useState({ schoolName:"", contactPerson:"", designation:"", phone:"", email:"", state:"", quantity:"", budgetRange:"", udise:"", message:"" });
 
   function toggleKit(id) { setSelectedKits((prev) => prev.includes(id) ? prev.filter((k) => k !== id) : [...prev, id]); }
-  function handleChange(e) { setForm((f) => ({ ...f, [e.target.name]: e.target.value })); }
-  function handleSubmit(e) { e.preventDefault(); setSubmitted(true); }
+
+  function handleChange(e) {
+    const { name, value } = e.target;
+
+    if (name === "phone") {
+      // Strip anything that isn't a digit, cap at 10 digits
+      const digitsOnly = value.replace(/\D/g, "").slice(0, 10);
+      setForm((f) => ({ ...f, phone: digitsOnly }));
+
+      if (digitsOnly.length === 0) {
+        setPhoneError("");
+      } else if (digitsOnly.length < 10) {
+        setPhoneError("Phone number must be 10 digits");
+      } else if (!INDIAN_PHONE_REGEX.test(digitsOnly)) {
+        setPhoneError("Enter a valid Indian mobile number (must start with 6-9)");
+      } else {
+        setPhoneError("");
+      }
+      return;
+    }
+
+    setForm((f) => ({ ...f, [name]: value }));
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    if (!INDIAN_PHONE_REGEX.test(form.phone)) {
+      setPhoneError("Enter a valid 10-digit Indian mobile number");
+      return;
+    }
+
+    setSubmitted(true);
+  }
 
   if (submitted) {
     return (
@@ -75,12 +111,46 @@ export default function ATLKitsEnquiryPage() {
 
             <p className="text-xs font-semibold uppercase tracking-widest text-royal mb-3">School / Institution Details</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-              {[{ name:"schoolName", label:"School name", req:true, placeholder:"e.g. Kendriya Vidyalaya No. 1", type:"text" },{ name:"contactPerson", label:"Contact person", req:true, placeholder:"Your full name", type:"text" },{ name:"designation", label:"Designation", req:false, placeholder:"e.g. ATL Coordinator", type:"text" },{ name:"phone", label:"Phone number", req:true, placeholder:"+91 XXXXX XXXXX", type:"tel" },{ name:"email", label:"Email address", req:true, placeholder:"school@email.com", type:"email" }].map(({ name, label, req, placeholder, type }) => (
-                <div key={name} className="flex flex-col gap-1.5">
-                  <label className="text-xs font-medium text-gray-500">{label} {req && <span className="text-royal">*</span>}</label>
-                  <input name={name} value={form[name]} onChange={handleChange} required={req} type={type} placeholder={placeholder} className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-navy outline-none focus:border-royal focus:ring-2 focus:ring-blue-100" />
-                </div>
-              ))}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-medium text-gray-500">School name <span className="text-royal">*</span></label>
+                <input name="schoolName" value={form.schoolName} onChange={handleChange} required type="text" placeholder="e.g. Kendriya Vidyalaya No. 1" className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-navy outline-none focus:border-royal focus:ring-2 focus:ring-blue-100" />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-medium text-gray-500">Contact person <span className="text-royal">*</span></label>
+                <input name="contactPerson" value={form.contactPerson} onChange={handleChange} required type="text" placeholder="Your full name" className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-navy outline-none focus:border-royal focus:ring-2 focus:ring-blue-100" />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-medium text-gray-500">Designation</label>
+                <input name="designation" value={form.designation} onChange={handleChange} type="text" placeholder="e.g. ATL Coordinator" className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-navy outline-none focus:border-royal focus:ring-2 focus:ring-blue-100" />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-medium text-gray-500">Phone number <span className="text-royal">*</span></label>
+                <input
+                  name="phone"
+                  value={form.phone}
+                  onChange={handleChange}
+                  required
+                  type="tel"
+                  inputMode="numeric"
+                  maxLength={10}
+                  placeholder="10-digit mobile number"
+                  aria-invalid={phoneError ? "true" : "false"}
+                  className={
+                    "border rounded-lg px-3 py-2 text-sm text-navy outline-none focus:ring-2 " +
+                    (phoneError
+                      ? "border-red-400 focus:border-red-500 focus:ring-red-100"
+                      : "border-gray-300 focus:border-royal focus:ring-blue-100")
+                  }
+                />
+                {phoneError && <span className="text-xs text-red-500 mt-0.5">{phoneError}</span>}
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-medium text-gray-500">Email address <span className="text-royal">*</span></label>
+                <input name="email" value={form.email} onChange={handleChange} required type="email" placeholder="school@email.com" className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-navy outline-none focus:border-royal focus:ring-2 focus:ring-blue-100" />
+              </div>
+
               <div className="flex flex-col gap-1.5">
                 <label className="text-xs font-medium text-gray-500">State <span className="text-royal">*</span></label>
                 <select name="state" value={form.state} onChange={handleChange} required className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-navy outline-none focus:border-royal bg-white">

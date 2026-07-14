@@ -20,7 +20,7 @@ const sections = [
   { id: "pricing", heading: "Pricing and availability" },
   { id: "orders", heading: "Orders and payment" },
   { id: "shipping", heading: "Shipping and delivery" },
-  { id: "returns", heading: "Refunds" },
+  { id: "refunds", heading: "Refunds" },
   { id: "intended-use", heading: "Intended use" },
   { id: "prohibited", heading: "Prohibited conduct" },
   { id: "third-party", heading: "Third-party links" },
@@ -442,7 +442,7 @@ export default function TermsPage() {
                   <path d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0L6.343 16.657a8 8 0 1111.314 0z" />
                   <circle cx="12" cy="11" r="3" />
                 </svg>
-                Greater Noida, UP, India
+                Plot 046, Knowledge Park 3, Alpha, Greater Noida,UP, India
               </span>
               <span className="tos-meta-item">
                 <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
