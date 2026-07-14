@@ -59,7 +59,7 @@ const benefits = [
   {
     Icon: Truck,
     title: "Reliable Bulk Shipping",
-    desc: "Pan-India logistics for large orders, with multi-address delivery for institutions.",
+    desc: "Pan-Delhi NCR logistics for large orders, with multi-address delivery for institutions.",
   },
   {
     Icon: ShieldCheck,

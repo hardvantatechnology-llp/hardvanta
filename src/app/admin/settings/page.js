@@ -59,7 +59,7 @@ export default async function SettingsPage() {
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
               <p className="text-xs text-silver-dark uppercase font-semibold">Store Name</p>
-              <p className="font-semibold text-navy mt-0.5">Hardvanta</p>
+              <p className="font-semibold text-navy mt-0.5">Hardvanta Technologies </p>
             </div>
             <div>
               <p className="text-xs text-silver-dark uppercase font-semibold">Support Phone</p>

@@ -124,7 +124,7 @@ export default async function ProductDetailPage({ params }) {
             {[
               [Truck, "Fast delivery"],
               [BadgeCheck, "Genuine"],
-              [RotateCcw, "7-day returns"],
+
               [Headphones, "Support"],
             ].map(([Icon, label], i) => (
               <div

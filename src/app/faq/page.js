@@ -26,19 +26,12 @@ const faqs = [
   },
   {
     emoji: "🇮🇳",
-    question: "Do you ship across India?",
+    question: "Do you ship across Delhi NCR ?",
     answer:
-      "Yes! Hardvanta delivers to all serviceable PIN codes across India. Simply enter your PIN code at checkout to instantly confirm availability in your area. We're expanding coverage every week.",
+      "Yes. Hardvanta currently delivers exclusively across Delhi NCR. Simply enter your PIN code at checkout to confirm delivery availability in your location.",
     highlight: null,
   },
-  {
-    emoji: "🔄",
-    question: "Can I cancel or return an order?",
-    answer:
-      "Orders can be cancelled any time before they are shipped. Returns are accepted within 7 days of delivery for items that are defective or incorrect. Please refer to our Shipping & Refund Policy for the complete process.",
-    highlight:
-      "Items must be unused, in original packaging, and accompanied by proof of purchase.",
-  },
+  
   {
     emoji: "🏫",
     question: "Do you offer bulk / institutional pricing?",

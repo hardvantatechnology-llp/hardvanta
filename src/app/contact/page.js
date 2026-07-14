@@ -43,7 +43,7 @@ export default function ContactPage() {
               icon: "📍",
               title: "Our Office",
               info: "Hardvanta Technologies LLP",
-              sub: "India",
+              sub: "Plot 046, Knowledge Park III,Alpha, Greater Noida, UP 201310",
               href: "#",
               label: "Get Directions",
             },

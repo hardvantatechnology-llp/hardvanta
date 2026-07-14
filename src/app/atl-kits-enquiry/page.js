@@ -205,7 +205,7 @@ export default function ATLKitsEnquiryPage() {
           <aside className="flex flex-col gap-4">
             <div className="bg-white rounded-2xl border border-gray-200 p-5">
               <h3 className="text-sm font-semibold text-navy flex items-center gap-2 mb-4"><Phone size={16} className="text-royal" /> Contact us directly</h3>
-              {[{ Icon:Phone, strong:"+91 91705 46395", sub:"Mon - Sat, 9 AM - 6 PM" },{ Icon:Mail, strong:"atl@hardvanta.com", sub:"Enquiries responded within 48 hrs" },{ Icon:MapPin, strong:"Pan-India shipping", sub:"Delivered with GST invoice" }].map(({ Icon, strong, sub }) => (
+              {[{ Icon:Phone, strong:"+91 91705 46395", sub:"Mon - Sat, 9 AM - 6 PM" },{ Icon:Mail, strong:"atl@hardvantatechnology@gmail.com", sub:"Enquiries responded within 48 hrs" },{ Icon:MapPin, strong:"Pan-Delhi-NCR shipping", sub:"Delivered with GST invoice" }].map(({ Icon, strong, sub }) => (
                 <div key={strong} className="flex items-start gap-3 py-2.5 border-b border-gray-100 last:border-none">
                   <Icon size={16} className="text-royal mt-0.5 flex-shrink-0" />
                   <div><p className="text-sm font-medium text-navy">{strong}</p><p className="text-xs text-gray-500 mt-0.5">{sub}</p></div>
@@ -224,7 +224,7 @@ export default function ATLKitsEnquiryPage() {
 
             <div className="bg-white rounded-2xl border border-gray-200 p-5">
               <h3 className="text-sm font-semibold text-navy flex items-center gap-2 mb-4"><FileText size={16} className="text-royal" /> Procurement process</h3>
-              {[{ Icon:Clock, strong:"Quote in 48 hours", sub:"After form submission" },{ Icon:FileText, strong:"PO accepted", sub:"School / trust purchase orders" },{ Icon:Truck, strong:"Delivery 7 - 14 days", sub:"Pan-India, tracked shipment" }].map(({ Icon, strong, sub }) => (
+              {[{ Icon:Clock, strong:"Quote in 48 hours", sub:"After form submission" },{ Icon:FileText, strong:"PO accepted", sub:"School / trust purchase orders" },{ Icon:Truck, strong:"Delivery 7 - 14 days", sub:"Pan-Delhi-NCR, tracked shipment" }].map(({ Icon, strong, sub }) => (
                 <div key={strong} className="flex items-start gap-3 py-2.5 border-b border-gray-100 last:border-none">
                   <Icon size={16} className="text-royal mt-0.5 flex-shrink-0" />
                   <div><p className="text-sm font-medium text-navy">{strong}</p><p className="text-xs text-gray-500 mt-0.5">{sub}</p></div>
