@@ -215,7 +215,7 @@ export default function AboutPage() {
             📞 +91 91705 46395
           </a>
           <a
-            href="https://hardvantatechnologies.in/contact"
+            href="https://hardvantatechnologies.in"
             target="_blank"
             rel="noopener noreferrer"
             className="rounded-lg border border-navy px-8 py-3 text-sm font-bold text-navy hover:bg-navy hover:text-white transition-colors"
