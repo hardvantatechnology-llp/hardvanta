@@ -20,7 +20,7 @@ const sections = [
   { id: "pricing", heading: "Pricing and availability" },
   { id: "orders", heading: "Orders and payment" },
   { id: "shipping", heading: "Shipping and delivery" },
-  { id: "returns", heading: "Refunds" },
+  { id: "refunds", heading: "Refunds" },
   { id: "intended-use", heading: "Intended use" },
   { id: "prohibited", heading: "Prohibited conduct" },
   { id: "third-party", heading: "Third-party links" },
