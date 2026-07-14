@@ -21,16 +21,45 @@ const STEPS = [
   { icon: IndianRupee, title: "3. Start earning", desc: "Receive orders and get paid for every sale." },
 ];
 
+// Valid Indian mobile numbers: exactly 10 digits, starting with 6-9
+const INDIAN_PHONE_REGEX = /^[6-9]\d{9}$/;
+
 export default function SellPage() {
   const [form, setForm] = useState({ business: "", name: "", email: "", phone: "", products: "", message: "" });
   const [status, setStatus] = useState("idle"); // idle | sending | done
   const [error, setError] = useState("");
+  const [phoneError, setPhoneError] = useState("");
 
-  function set(k, v) { setForm((f) => ({ ...f, [k]: v })); }
+  function set(k, v) {
+    if (k === "phone") {
+      // Strip anything that isn't a digit, cap at 10 digits
+      const digitsOnly = v.replace(/\D/g, "").slice(0, 10);
+      setForm((f) => ({ ...f, phone: digitsOnly }));
+
+      if (digitsOnly.length === 0) {
+        setPhoneError("");
+      } else if (digitsOnly.length < 10) {
+        setPhoneError("Phone number must be 10 digits");
+      } else if (!INDIAN_PHONE_REGEX.test(digitsOnly)) {
+        setPhoneError("Enter a valid Indian mobile number (must start with 6-9)");
+      } else {
+        setPhoneError("");
+      }
+      return;
+    }
+
+    setForm((f) => ({ ...f, [k]: v }));
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
     setError("");
+
+    if (!INDIAN_PHONE_REGEX.test(form.phone)) {
+      setPhoneError("Enter a valid 10-digit Indian mobile number");
+      return;
+    }
+
     setStatus("sending");
     try {
       const res = await fetch("/api/bulk-enquiry", {
@@ -132,7 +161,17 @@ export default function SellPage() {
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Email" type="email" value={form.email} onChange={(v) => set("email", v)} required />
-              <Field label="Phone" type="tel" value={form.phone} onChange={(v) => set("phone", v)} required />
+              <Field
+                label="Phone"
+                type="tel"
+                value={form.phone}
+                onChange={(v) => set("phone", v)}
+                required
+                placeholder="10-digit mobile number"
+                inputMode="numeric"
+                maxLength={10}
+                error={phoneError}
+              />
             </div>
             <Field label="What products do you sell?" value={form.products} onChange={(v) => set("products", v)} placeholder="e.g. Arduino boards, sensors, 3D printer parts" required />
             <div>
@@ -159,7 +198,7 @@ export default function SellPage() {
   );
 }
 
-function Field({ label, value, onChange, type = "text", required, placeholder }) {
+function Field({ label, value, onChange, type = "text", required, placeholder, inputMode, maxLength, error }) {
   return (
     <div>
       <label className="mb-1 block text-sm font-medium text-navy">{label}</label>
@@ -169,8 +208,17 @@ function Field({ label, value, onChange, type = "text", required, placeholder })
         value={value}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-lg border border-silver-dark px-3 py-2.5 text-sm outline-none focus:border-royal focus:ring-2 focus:ring-royal/20"
+        inputMode={inputMode}
+        maxLength={maxLength}
+        aria-invalid={error ? "true" : "false"}
+        className={
+          "w-full rounded-lg border px-3 py-2.5 text-sm outline-none focus:ring-2 " +
+          (error
+            ? "border-red-400 focus:border-red-500 focus:ring-red-100"
+            : "border-silver-dark focus:border-royal focus:ring-royal/20")
+        }
       />
+      {error && <p className="mt-1 text-xs font-medium text-red-600">{error}</p>}
     </div>
   );
 }
