@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 /* ─── Data ─────────────────────────────────────────────────── */
 
@@ -477,7 +478,7 @@ export default function PaymentOptionsPage() {
                 }}
               >
                 📧 <strong>Email</strong><br />
-                <span style={{ color: "rgba(255,255,255,0.8)" }}>support@hardvanta.com</span>
+                <span style={{ color: "rgba(255,255,255,0.8)" }}>support@hardvantatechnology@gmail.com</span>
               </div>
               <div
                 style={{
@@ -495,8 +496,8 @@ export default function PaymentOptionsPage() {
               When contacting us, please have your <strong style={{ color: "rgba(255,255,255,0.8)" }}>Order ID</strong> and <strong style={{ color: "rgba(255,255,255,0.8)" }}>transaction reference number</strong> ready.
             </p>
 
-            <a
-              href="mailto:support@hardvanta.com"
+            <Link
+              href="/contact"
               style={{
                 display: "inline-block", background: "#ffffff",
                 color: "#1e2a6e", fontWeight: 700,
@@ -506,7 +507,7 @@ export default function PaymentOptionsPage() {
               }}
             >
               📧 Contact Support
-            </a>
+            </Link>
           </div>
         </div>
       </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 const faqs = [
   {
@@ -409,8 +410,8 @@ export default function FAQPage() {
             >
               Our support team usually replies within a few hours.
             </p>
-            <a
-              href="mailto:support@hardvanta.com"
+            <Link
+              href="/contact"
               style={{
                 display: "inline-block",
                 background: "#ffffff",
@@ -424,7 +425,7 @@ export default function FAQPage() {
               }}
             >
               📧 Contact Support
-            </a>
+            </Link>
           </div>
         </div>
       </div>
