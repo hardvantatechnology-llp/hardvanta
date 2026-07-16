@@ -472,7 +472,6 @@ export default function CartPage() {
                   {[
                     { icon: <ShieldCheck size={16} className="text-green-600" />, text: "100% Secure Checkout" },
                     { icon: <Truck size={16} className="text-royal" />, text: "Free Shipping above ₹999" },
-                    { icon: <RotateCcw size={16} className="text-royal" />, text: "Easy Returns & Refunds" },
                   ].map((badge) => (
                     <div key={badge.text} className="flex items-center gap-3 text-sm text-silver-dark">
                       {badge.icon}
