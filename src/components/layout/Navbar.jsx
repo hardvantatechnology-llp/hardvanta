@@ -29,6 +29,7 @@ import { categories } from "@/lib/data";
 import { useCart } from "@/context/CartContext";
 import { getUserView, setUserView } from "@/lib/viewMode";
 import Logo from "./Logo";
+import SearchBar from "./SearchBar";
 
 // X (Twitter) official SVG — lucide mein Twitter icon nahi hota
 function XIcon({ size = 16 }) {
@@ -194,20 +195,7 @@ export default function Navbar() {
           <Logo size={60} />
 
           {/* Search — inline on all screens */}
-          <form onSubmit={handleSearch}
-            className="flex flex-1 items-center overflow-hidden rounded-full border border-silver bg-white shadow-sm focus-within:border-royal focus-within:ring-2 focus-within:ring-royal/20 transition-all duration-200">
-            <span className="pl-3 md:pl-4 text-silver-dark"><Search size={17} /></span>
-            <input type="text" value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search for Products..."
-              className="w-full px-2 py-2 text-sm text-navy outline-none bg-transparent placeholder:text-silver-dark md:px-3"
-            />
-            <button type="submit" aria-label="Search"
-              className="m-1 rounded-full bg-royal px-3 py-2 text-sm font-semibold text-white hover:bg-royal-dark active:scale-95 transition-all duration-150 md:px-5">
-              <Search size={16} className="md:hidden" />
-              <span className="hidden md:inline">Search</span>
-            </button>
-          </form>
+          <SearchBar />
 
           {/* Desktop action icons */}
           <div className="hidden md:flex items-center gap-5 text-navy">
@@ -354,18 +342,9 @@ export default function Navbar() {
         >
           <div className="px-4 pb-8 pt-3">
 
-            <form onSubmit={handleSearch}
-              className="mb-4 flex items-center overflow-hidden rounded-full border border-silver shadow-sm focus-within:border-royal focus-within:ring-2 focus-within:ring-royal/20 transition-all duration-200">
-              <span className="pl-4 text-silver-dark"><Search size={16} /></span>
-              <input type="text" value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search for Products..."
-                className="w-full px-3 py-2.5 text-sm outline-none bg-transparent"
-              />
-              <button type="submit" className="m-1 rounded-full bg-royal px-4 py-2 text-white hover:bg-royal-dark transition-colors">
-                <Search size={16} />
-              </button>
-            </form>
+            <div className="mb-4">
+  <SearchBar />
+</div>
 
             {/* Nav Links */}
             <div className="mb-4 rounded-xl border border-silver-light overflow-hidden">
