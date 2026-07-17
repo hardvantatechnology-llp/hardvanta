@@ -11,4 +11,4 @@ export function getSupabaseAdmin() {
   });
 }
 
-export const PRODUCT_BUCKET = "uploads";
+export const PRODUCT_BUCKET = "hardvanta technologies";
