@@ -3,7 +3,19 @@
     "allow": [
       "PowerShell(\"ok\")",
       "Bash(node cleanup_tmp.mjs)",
-      "Bash(node -e ' *)"
+      "Bash(node -e ' *)",
+      "Bash(powershell -NoProfile -Command \"Get-Process node -ErrorAction SilentlyContinue | Select-Object Id,ProcessName,StartTime\")",
+      "Bash(curl -s -o /dev/null -w \"PDP check -> %{http_code} in %{time_total}s\\\\n\" http://localhost:3099/products/cmr956oxk001jwpbcsva6z9gk --max-time 30)",
+      "Bash(node -e \"const d=JSON.parse\\(require\\('fs'\\).readFileSync\\(0,'utf8'\\)\\); console.log\\(JSON.stringify\\(d.scripts,null,2\\)\\)\")",
+      "Bash(powershell -NoProfile -Command \"Get-CimInstance Win32_Process -Filter \\\\\"Name='node.exe'\\\\\" | Select-Object ProcessId, CreationDate, CommandLine | Format-List\")",
+      "PowerShell(Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue | Where-Object { $_.OwningProcess -in @\\(22524,9116,20016\\) } | Select-Object LocalPort, OwningProcess)",
+      "PowerShell(Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue | Where-Object { $_.OwningProcess -in @\\(22524,9116,20016,2348,23168\\) } | Select-Object LocalPort, OwningProcess)",
+      "PowerShell(Stop-Process -Id 20016 -Force -Confirm:$false)",
+      "PowerShell(Get-Process -Id 20016 -ErrorAction SilentlyContinue)",
+      "Bash(nohup npm run start)",
+      "Read(//tmp/**)",
+      "PowerShell(Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue | Where-Object { $_.LocalPort -eq 3000 } | Select-Object LocalPort, OwningProcess)",
+      "PowerShell(Stop-Process -Id 23504 -Force -Confirm:$false; Start-Sleep -Milliseconds 500; Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue | Where-Object { $_.LocalPort -eq 3000 })"
     ]
   }
 }

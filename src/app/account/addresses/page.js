@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { getAuthOptions } from "@/lib/auth";
-import { MapPin, Plus, Home, Briefcase, Trash2 } from "lucide-react";
+import { MapPin, Home } from "lucide-react";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -19,27 +19,31 @@ export default async function AddressesPage() {
   });
 
   return (
-    <div className="min-h-screen bg-cloud">
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-graphite to-obsidian">
+      <div className="liquid-blob left-1/4 top-[-20%] h-96 w-96 bg-electric/10" />
+
       {/* Header */}
-      <div className="bg-navy">
+      <div className="relative border-b border-white/10">
         <div className="container-page py-6">
           <div className="flex items-center gap-3">
-            <Link href="/account" className="text-silver hover:text-white text-sm">
+            <Link href="/account" className="text-white/50 hover:text-electric-light text-sm">
               ← My Account
             </Link>
           </div>
           <h1 className="mt-2 text-2xl font-bold text-white">Saved Addresses</h1>
-          <p className="text-sm text-silver/70">Manage your delivery addresses</p>
+          <p className="text-sm text-white/50">Manage your delivery addresses</p>
         </div>
       </div>
 
-      <div className="container-page py-6">
+      <div className="container-page relative py-6">
         {addresses.length === 0 ? (
           /* Empty state */
-          <div className="flex flex-col items-center justify-center rounded-2xl border border-silver-light bg-white py-16 text-center shadow-card">
-            <MapPin size={48} className="mb-4 text-silver" />
-            <h2 className="text-lg font-bold text-navy">No saved addresses</h2>
-            <p className="mt-1 text-sm text-silver-dark">
+          <div className="glass-card flex flex-col items-center justify-center rounded-3xl py-16 text-center">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-electric/20 to-liquid/20 shadow-glow-electric">
+              <MapPin size={30} className="text-electric-light" />
+            </div>
+            <h2 className="mt-4 text-lg font-bold text-white">No saved addresses</h2>
+            <p className="mt-1 text-sm text-white/50">
               Add a delivery address to make checkout faster
             </p>
           </div>
@@ -48,30 +52,30 @@ export default async function AddressesPage() {
             {addresses.map((addr) => (
               <div
                 key={addr.id}
-                className={`relative rounded-2xl border bg-white p-5 shadow-card ${
-                  addr.isDefault ? "border-royal ring-1 ring-royal" : "border-silver-light"
+                className={`glass-card relative rounded-2xl p-5 transition-all hover:shadow-glow-electric ${
+                  addr.isDefault ? "ring-1 ring-electric/50" : ""
                 }`}
               >
                 {addr.isDefault && (
-                  <span className="absolute right-4 top-4 rounded-full bg-royal px-2 py-0.5 text-[11px] font-bold text-white">
+                  <span className="absolute right-4 top-4 rounded-full bg-gradient-to-r from-electric to-liquid px-2 py-0.5 text-[11px] font-bold text-white">
                     Default
                   </span>
                 )}
                 <div className="flex items-start gap-3">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-cloud">
-                    <Home size={18} className="text-royal" />
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/5">
+                    <Home size={18} className="text-electric-light" />
                   </div>
                   <div>
-                    <p className="font-semibold text-navy">{addr.fullName}</p>
-                    <p className="text-sm text-silver-dark">{addr.phone}</p>
-                    <p className="mt-1 text-sm text-silver-dark">
+                    <p className="font-semibold text-white">{addr.fullName}</p>
+                    <p className="text-sm text-white/50">{addr.phone}</p>
+                    <p className="mt-1 text-sm text-white/50">
                       {addr.addressLine1}
                       {addr.addressLine2 && `, ${addr.addressLine2}`}
                     </p>
-                    <p className="text-sm text-silver-dark">
+                    <p className="text-sm text-white/50">
                       {addr.city}, {addr.state} — {addr.postalCode}
                     </p>
-                    <p className="text-sm text-silver-dark">{addr.country}</p>
+                    <p className="text-sm text-white/50">{addr.country}</p>
                   </div>
                 </div>
               </div>
@@ -80,7 +84,7 @@ export default async function AddressesPage() {
         )}
 
         {/* Info note */}
-        <div className="mt-6 rounded-xl border border-blue-100 bg-blue-50 p-4 text-sm text-blue-700">
+        <div className="mt-6 rounded-xl bg-electric/10 border border-electric/20 p-4 text-sm text-electric-light">
           💡 Addresses are automatically saved when you place an order during checkout.
         </div>
       </div>

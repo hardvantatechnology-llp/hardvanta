@@ -39,11 +39,11 @@ export default async function AccountPage() {
     .slice(0, 2);
 
   const statusColor = {
-    PENDING:    { bg: "bg-yellow-50",  text: "text-yellow-700",  border: "border-yellow-200" },
-    PROCESSING: { bg: "bg-blue-50",    text: "text-blue-700",    border: "border-blue-200"   },
-    SHIPPED:    { bg: "bg-purple-50",  text: "text-purple-700",  border: "border-purple-200" },
-    DELIVERED:  { bg: "bg-green-50",   text: "text-green-700",   border: "border-green-200"  },
-    CANCELLED:  { bg: "bg-red-50",     text: "text-red-700",     border: "border-red-200"    },
+    PENDING:    { bg: "bg-amber-500/10",  text: "text-amber-300",  border: "border-amber-500/20" },
+    PROCESSING: { bg: "bg-electric/10",   text: "text-electric-light", border: "border-electric/20"   },
+    SHIPPED:    { bg: "bg-liquid/10",     text: "text-liquid-light",  border: "border-liquid/20" },
+    DELIVERED:  { bg: "bg-cyan/10",       text: "text-cyan",   border: "border-cyan/20"  },
+    CANCELLED:  { bg: "bg-red-500/10",    text: "text-red-400",     border: "border-red-500/20"    },
   };
 
   const menuItems = [
@@ -51,14 +51,14 @@ export default async function AccountPage() {
       group: "My Activities",
       items: [
         {
-          icon: <Package size={20} className="text-royal" />,
+          icon: <Package size={20} className="text-electric-light" />,
           label: "My Orders",
           desc: `${orderCount} order${orderCount !== 1 ? "s" : ""} placed`,
           href: "/orders",
           badge: orderCount > 0 ? orderCount : null,
         },
         {
-          icon: <Heart size={20} className="text-red-500" />,
+          icon: <Heart size={20} className="text-liquid" />,
           label: "My Wishlist",
           desc: `${wishlistCount} item${wishlistCount !== 1 ? "s" : ""} saved`,
           href: "/wishlist",
@@ -70,21 +70,21 @@ export default async function AccountPage() {
       group: "Account Settings",
       items: [
         {
-          icon: <MapPin size={20} className="text-orange-500" />,
+          icon: <MapPin size={20} className="text-amber-400" />,
           label: "Saved Addresses",
           desc: "Manage delivery addresses",
           href: "/account/addresses",
           badge: null,
         },
         {
-          icon: <Shield size={20} className="text-green-600" />,
+          icon: <Shield size={20} className="text-cyan" />,
           label: "Security",
           desc: "Password & login settings",
           href: "/account/security",
           badge: null,
         },
         {
-          icon: <Bell size={20} className="text-purple-500" />,
+          icon: <Bell size={20} className="text-liquid-light" />,
           label: "Notifications",
           desc: "Email & SMS preferences",
           href: "/account/notifications",
@@ -95,14 +95,15 @@ export default async function AccountPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-cloud">
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-graphite to-obsidian">
+      <div className="liquid-blob left-1/4 top-[-20%] h-96 w-96 bg-electric/10" />
+
       {/* Hero Banner */}
-      <div className="bg-navy">
+      <div className="relative border-b border-white/10">
         <div className="container-page py-6">
           <div className="flex items-center gap-4">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-royal text-xl font-bold text-white shadow-lg ring-2 ring-white/20 overflow-hidden">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-electric to-liquid text-xl font-bold text-white shadow-glow-electric ring-2 ring-white/10 overflow-hidden">
               {session.user.image ? (
-                // ✅ <img> → <Image> fix
                 <Image
                   src={session.user.image}
                   alt={session.user.name || "User"}
@@ -115,13 +116,13 @@ export default async function AccountPage() {
               )}
             </div>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-silver/60">
+              <p className="text-xs font-semibold uppercase tracking-wider text-white/40">
                 Welcome back
               </p>
               <h1 className="text-xl font-bold text-white">
                 {session.user.name || "Hardvanta Customer"}
               </h1>
-              <p className="text-sm text-silver">{session.user.email}</p>
+              <p className="text-sm text-white/50">{session.user.email}</p>
             </div>
           </div>
 
@@ -134,53 +135,53 @@ export default async function AccountPage() {
             ].map((s) => (
               <div
                 key={s.label}
-                className="flex flex-col items-center rounded-xl bg-white/10 py-3 backdrop-blur"
+                className="glass-card flex flex-col items-center rounded-xl py-3"
               >
-                <span className="text-silver/70">{s.icon}</span>
+                <span className="text-white/50">{s.icon}</span>
                 <span className="mt-1 text-lg font-bold text-white">{s.value}</span>
-                <span className="text-[11px] text-silver/70">{s.label}</span>
+                <span className="text-[11px] text-white/40">{s.label}</span>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      <div className="container-page py-6">
+      <div className="container-page relative py-6">
         <div className="grid gap-6 lg:grid-cols-3">
           {/* Left: Menu */}
           <div className="space-y-4 lg:col-span-1">
             {menuItems.map((group) => (
               <div
                 key={group.group}
-                className="overflow-hidden rounded-xl border border-silver-light bg-white shadow-card"
+                className="glass-card overflow-hidden rounded-2xl"
               >
-                <p className="border-b border-silver-light bg-cloud px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-silver-dark">
+                <p className="border-b border-white/10 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-white/40">
                   {group.group}
                 </p>
                 <ul>
                   {group.items.map((item, i) => (
                     <li
                       key={item.label}
-                      className={i !== group.items.length - 1 ? "border-b border-silver-light" : ""}
+                      className={i !== group.items.length - 1 ? "border-b border-white/10" : ""}
                     >
                       <Link
                         href={item.href}
-                        className="flex items-center gap-3 px-4 py-3.5 transition-colors hover:bg-cloud"
+                        className="flex items-center gap-3 px-4 py-3.5 transition-colors hover:bg-white/5"
                       >
-                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-cloud">
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/5">
                           {item.icon}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-semibold text-navy">{item.label}</p>
-                          <p className="text-xs text-silver-dark">{item.desc}</p>
+                          <p className="text-sm font-semibold text-white/90">{item.label}</p>
+                          <p className="text-xs text-white/40">{item.desc}</p>
                         </div>
                         <div className="flex items-center gap-2">
                           {item.badge && (
-                            <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-royal px-1.5 text-[10px] font-bold text-white">
+                            <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-gradient-to-r from-electric to-liquid px-1.5 text-[10px] font-bold text-white">
                               {item.badge}
                             </span>
                           )}
-                          <ChevronRight size={16} className="text-silver-dark" />
+                          <ChevronRight size={16} className="text-white/30" />
                         </div>
                       </Link>
                     </li>
@@ -189,36 +190,36 @@ export default async function AccountPage() {
               </div>
             ))}
 
-            <div className="overflow-hidden rounded-xl border border-silver-light bg-white p-4 shadow-card">
+            <div className="glass-card overflow-hidden rounded-2xl p-4">
               <SignOutButton />
             </div>
           </div>
 
           {/* Right: Recent Orders */}
           <div className="lg:col-span-2 space-y-4">
-            <div className="overflow-hidden rounded-xl border border-silver-light bg-white shadow-card">
-              <div className="flex items-center justify-between border-b border-silver-light px-5 py-4">
-                <h2 className="text-base font-bold text-navy">Recent Orders</h2>
-                <Link href="/orders" className="text-xs font-semibold text-royal hover:underline">
+            <div className="glass-card overflow-hidden rounded-2xl">
+              <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
+                <h2 className="text-base font-bold text-white">Recent Orders</h2>
+                <Link href="/orders" className="text-xs font-semibold text-electric-light hover:text-cyan">
                   View all →
                 </Link>
               </div>
 
               {recentOrders.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
-                  <Package size={40} className="mb-3 text-silver" />
-                  <p className="font-semibold text-navy">No orders yet</p>
-                  <p className="mt-1 text-sm text-silver-dark">
+                  <Package size={40} className="mb-3 text-white/20" />
+                  <p className="font-semibold text-white">No orders yet</p>
+                  <p className="mt-1 text-sm text-white/40">
                     Start shopping and your orders will appear here
                   </p>
                   <Link href="/products">
-                    <button className="mt-4 rounded-lg bg-royal px-6 py-2.5 text-sm font-semibold text-white hover:bg-royal-dark transition-colors">
+                    <button className="mt-4 rounded-lg bg-gradient-to-r from-electric to-liquid px-6 py-2.5 text-sm font-semibold text-white shadow-glow-electric hover:brightness-110 transition-all">
                       Shop Now
                     </button>
                   </Link>
                 </div>
               ) : (
-                <ul className="divide-y divide-silver-light">
+                <ul className="divide-y divide-white/10">
                   {recentOrders.map((order) => {
                     const s = statusColor[order.status] || statusColor.PENDING;
                     const firstItem = order.items[0];
@@ -226,10 +227,9 @@ export default async function AccountPage() {
                       <li key={order.id}>
                         <Link
                           href={`/orders/${order.id}`}
-                          className="flex items-center gap-4 px-5 py-4 hover:bg-cloud transition-colors"
+                          className="flex items-center gap-4 px-5 py-4 hover:bg-white/5 transition-colors"
                         >
-                          {/* ✅ <img> → <Image> fix */}
-                          <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg border border-silver-light bg-cloud">
+                          <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-white/5">
                             {firstItem?.product?.image ? (
                               <Image
                                 src={firstItem.product.image}
@@ -240,21 +240,21 @@ export default async function AccountPage() {
                               />
                             ) : (
                               <div className="flex h-full w-full items-center justify-center">
-                                <Package size={20} className="text-silver" />
+                                <Package size={20} className="text-white/20" />
                               </div>
                             )}
                           </div>
 
                           <div className="flex-1 min-w-0">
-                            <p className="truncate text-sm font-semibold text-navy">
+                            <p className="truncate text-sm font-semibold text-white/90">
                               {firstItem?.productName || "Order"}
                               {order.items.length > 1 && (
-                                <span className="ml-1 text-silver-dark font-normal">
+                                <span className="ml-1 text-white/40 font-normal">
                                   +{order.items.length - 1} more
                                 </span>
                               )}
                             </p>
-                            <p className="mt-0.5 text-xs text-silver-dark flex items-center gap-1">
+                            <p className="mt-0.5 text-xs text-white/40 flex items-center gap-1">
                               <Clock size={11} />
                               {new Date(order.createdAt).toLocaleDateString("en-IN", {
                                 day: "numeric", month: "short", year: "numeric",
@@ -265,12 +265,12 @@ export default async function AccountPage() {
                                 <CheckCircle2 size={10} />
                                 {order.status.charAt(0) + order.status.slice(1).toLowerCase()}
                               </span>
-                              <span className="text-xs font-bold text-navy">
+                              <span className="text-xs font-bold text-white">
                                 ₹{order.total.toLocaleString()}
                               </span>
                             </div>
                           </div>
-                          <ChevronRight size={16} className="shrink-0 text-silver-dark" />
+                          <ChevronRight size={16} className="shrink-0 text-white/30" />
                         </Link>
                       </li>
                     );
@@ -280,11 +280,11 @@ export default async function AccountPage() {
             </div>
 
             {/* Quick Actions */}
-            <div className="overflow-hidden rounded-xl border border-silver-light bg-white shadow-card">
-              <p className="border-b border-silver-light bg-cloud px-5 py-3 text-xs font-bold uppercase tracking-wider text-silver-dark">
+            <div className="glass-card overflow-hidden rounded-2xl">
+              <p className="border-b border-white/10 px-5 py-3 text-xs font-bold uppercase tracking-wider text-white/40">
                 Quick Actions
               </p>
-              <div className="grid grid-cols-2 gap-px bg-silver-light sm:grid-cols-4">
+              <div className="grid grid-cols-2 gap-px bg-white/10 sm:grid-cols-4">
                 {[
                   { label: "Shop Now",    href: "/products", icon: "🛍️" },
                   { label: "My Wishlist", href: "/wishlist", icon: "❤️" },
@@ -294,29 +294,29 @@ export default async function AccountPage() {
                   <Link
                     key={a.label}
                     href={a.href}
-                    className="flex flex-col items-center justify-center gap-1.5 bg-white py-4 text-center transition-colors hover:bg-cloud"
+                    className="flex flex-col items-center justify-center gap-1.5 bg-graphite py-4 text-center transition-colors hover:bg-white/5"
                   >
                     <span className="text-2xl">{a.icon}</span>
-                    <span className="text-xs font-semibold text-navy">{a.label}</span>
+                    <span className="text-xs font-semibold text-white/80">{a.label}</span>
                   </Link>
                 ))}
               </div>
             </div>
 
             {/* Help Card */}
-            <div className="rounded-xl border border-royal/20 bg-royal/5 p-5">
+            <div className="glass-card rounded-2xl p-5">
               <div className="flex items-start gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-royal/10 text-royal">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-electric/10 text-electric-light">
                   <Shield size={20} />
                 </div>
                 <div>
-                  <p className="font-semibold text-navy">Need help with your account?</p>
-                  <p className="mt-1 text-sm text-silver-dark">
+                  <p className="font-semibold text-white">Need help with your account?</p>
+                  <p className="mt-1 text-sm text-white/50">
                     Our support team is available Mon–Sat, 9:15 AM to 6:15 PM
                   </p>
                   <a
                     href="tel:+919170546395"
-                    className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-royal bg-white px-4 py-2 text-sm font-semibold text-royal hover:bg-royal hover:text-white transition-colors"
+                    className="mt-3 inline-flex items-center gap-1.5 rounded-lg glass-card px-4 py-2 text-sm font-semibold text-electric-light hover:shadow-glow-electric transition-all"
                   >
                     📞 Call +91 91705 46395
                   </a>

@@ -3,8 +3,11 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Shield, Lock, Eye, EyeOff, CheckCircle2 } from "lucide-react";
+import Button from "@/components/ui/Button";
+import { useToast } from "@/components/ui/Toast";
 
 export default function SecurityPage() {
+  const toast = useToast();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -37,40 +40,44 @@ export default function SecurityPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Something went wrong.");
       setMessage({ type: "success", text: "Password changed successfully!" });
+      toast.success("Password changed successfully!");
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
     } catch (err) {
       setMessage({ type: "error", text: err.message });
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="min-h-screen bg-cloud">
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-graphite to-obsidian">
+      <div className="liquid-blob left-1/4 top-[-20%] h-96 w-96 bg-cyan/10" />
+
       {/* Header */}
-      <div className="bg-navy">
+      <div className="relative border-b border-white/10">
         <div className="container-page py-6">
           <div className="flex items-center gap-3">
-            <Link href="/account" className="text-silver hover:text-white text-sm">
+            <Link href="/account" className="text-white/50 hover:text-electric-light text-sm">
               ← My Account
             </Link>
           </div>
           <h1 className="mt-2 text-2xl font-bold text-white">Security</h1>
-          <p className="text-sm text-silver/70">Manage your password and login settings</p>
+          <p className="text-sm text-white/50">Manage your password and login settings</p>
         </div>
       </div>
 
-      <div className="container-page py-6 max-w-lg">
-        <div className="rounded-2xl border border-silver-light bg-white p-6 shadow-card">
+      <div className="container-page relative py-6 max-w-lg">
+        <div className="glass-strong rounded-3xl p-6">
           <div className="mb-6 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-50">
-              <Shield size={20} className="text-green-600" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan/10">
+              <Shield size={20} className="text-cyan" />
             </div>
             <div>
-              <h2 className="font-bold text-navy">Change Password</h2>
-              <p className="text-xs text-silver-dark">Use a strong password to keep your account safe</p>
+              <h2 className="font-bold text-white">Change Password</h2>
+              <p className="text-xs text-white/40">Use a strong password to keep your account safe</p>
             </div>
           </div>
 
@@ -78,8 +85,8 @@ export default function SecurityPage() {
             <div
               className={`mb-4 flex items-center gap-2 rounded-lg px-4 py-3 text-sm ${
                 message.type === "success"
-                  ? "bg-green-50 text-green-700"
-                  : "bg-red-50 text-red-600"
+                  ? "bg-cyan/10 text-cyan"
+                  : "bg-red-500/10 text-red-400"
               }`}
             >
               {message.type === "success" && <CheckCircle2 size={16} />}
@@ -90,7 +97,7 @@ export default function SecurityPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Current Password */}
             <div>
-              <label className="mb-1 block text-sm font-medium text-navy">
+              <label className="mb-1 block text-sm font-medium text-white/80">
                 Current Password
               </label>
               <div className="relative">
@@ -100,12 +107,12 @@ export default function SecurityPage() {
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
                   placeholder="Enter current password"
-                  className="w-full rounded-lg border border-silver-dark px-3 py-2.5 pr-10 text-sm outline-none focus:border-royal focus:ring-2 focus:ring-royal/30"
+                  className="w-full rounded-lg glass-card px-3 py-2.5 pr-10 text-sm text-white outline-none focus:shadow-glow-electric placeholder:text-white/30"
                 />
                 <button
                   type="button"
                   onClick={() => setShowCurrent((v) => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-silver-dark"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-electric-light"
                 >
                   {showCurrent ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
@@ -114,7 +121,7 @@ export default function SecurityPage() {
 
             {/* New Password */}
             <div>
-              <label className="mb-1 block text-sm font-medium text-navy">
+              <label className="mb-1 block text-sm font-medium text-white/80">
                 New Password
               </label>
               <div className="relative">
@@ -124,12 +131,12 @@ export default function SecurityPage() {
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   placeholder="Min. 8 characters"
-                  className="w-full rounded-lg border border-silver-dark px-3 py-2.5 pr-10 text-sm outline-none focus:border-royal focus:ring-2 focus:ring-royal/30"
+                  className="w-full rounded-lg glass-card px-3 py-2.5 pr-10 text-sm text-white outline-none focus:shadow-glow-electric placeholder:text-white/30"
                 />
                 <button
                   type="button"
                   onClick={() => setShowNew((v) => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-silver-dark"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-electric-light"
                 >
                   {showNew ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
@@ -138,7 +145,7 @@ export default function SecurityPage() {
 
             {/* Confirm Password */}
             <div>
-              <label className="mb-1 block text-sm font-medium text-navy">
+              <label className="mb-1 block text-sm font-medium text-white/80">
                 Confirm New Password
               </label>
               <div className="relative">
@@ -148,30 +155,26 @@ export default function SecurityPage() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Re-enter new password"
-                  className="w-full rounded-lg border border-silver-dark px-3 py-2.5 pr-10 text-sm outline-none focus:border-royal focus:ring-2 focus:ring-royal/30"
+                  className="w-full rounded-lg glass-card px-3 py-2.5 pr-10 text-sm text-white outline-none focus:shadow-glow-electric placeholder:text-white/30"
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirm((v) => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-silver-dark"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-electric-light"
                 >
                   {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
             </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full rounded-lg bg-royal px-4 py-2.5 font-semibold text-white transition-colors hover:bg-royal-dark disabled:opacity-60"
-            >
+            <Button type="submit" variant="gradient" size="lg" className="w-full" disabled={loading}>
               {loading ? "Updating…" : "Update Password"}
-            </button>
+            </Button>
           </form>
         </div>
 
         {/* Info */}
-        <div className="mt-4 rounded-xl border border-blue-100 bg-blue-50 p-4 text-sm text-blue-700">
+        <div className="mt-4 rounded-xl bg-electric/10 border border-electric/20 p-4 text-sm text-electric-light">
           💡 If you signed in with Google, you may not have a password set. Use Google to log in instead.
         </div>
       </div>

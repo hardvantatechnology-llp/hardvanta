@@ -49,35 +49,35 @@ export default function RegisterPage() {
     >
         <button
           onClick={() => signIn("google", { callbackUrl: "/" })}
-          className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg border border-silver-dark bg-white py-2.5 text-sm font-semibold text-navy hover:border-royal hover:text-royal"
+          className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl glass-card py-2.5 text-sm font-semibold text-white hover:shadow-glow-electric transition-all"
         >
           Continue with Google
         </button>
 
-        <div className="my-5 flex items-center gap-3 text-xs text-silver">
-          <span className="h-px flex-1 bg-silver-light" /> OR{" "}
-          <span className="h-px flex-1 bg-silver-light" />
+        <div className="my-5 flex items-center gap-3 text-xs text-white/30">
+          <span className="h-px flex-1 bg-white/10" /> OR{" "}
+          <span className="h-px flex-1 bg-white/10" />
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
-            <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
+            <p className="rounded-lg bg-red-500/10 border border-red-500/20 px-3 py-2 text-sm text-red-400">
               {error}
             </p>
           )}
           <div>
-            <label className="mb-1 block text-sm font-medium text-navy">
+            <label className="mb-1 block text-sm font-medium text-white/80">
               Name
             </label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full rounded-lg border border-silver-dark px-3 py-2.5 text-sm outline-none focus:border-royal focus:ring-2 focus:ring-royal/30"
+              className="w-full rounded-lg glass-card px-3 py-2.5 text-sm text-white outline-none focus:shadow-glow-electric"
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-navy">
+            <label className="mb-1 block text-sm font-medium text-white/80">
               Email
             </label>
             <input
@@ -85,15 +85,15 @@ export default function RegisterPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-lg border border-silver-dark px-3 py-2.5 text-sm outline-none focus:border-royal focus:ring-2 focus:ring-royal/30"
+              className="w-full rounded-lg glass-card px-3 py-2.5 text-sm text-white outline-none focus:shadow-glow-electric"
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-navy">
+            <label className="mb-1 block text-sm font-medium text-white/80">
               Mobile number
             </label>
-            <div className="flex items-center rounded-lg border border-silver-dark focus-within:border-royal focus-within:ring-2 focus-within:ring-royal/30">
-              <span className="pl-3 pr-2 text-sm text-silver-dark">+91</span>
+            <div className="flex items-center rounded-lg glass-card focus-within:shadow-glow-electric">
+              <span className="pl-3 pr-2 text-sm text-white/40">+91</span>
               <input
                 type="tel"
                 inputMode="numeric"
@@ -101,12 +101,12 @@ export default function RegisterPage() {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
                 placeholder="10-digit mobile number"
-                className="w-full rounded-r-lg px-1 py-2.5 text-sm outline-none"
+                className="w-full rounded-r-lg bg-transparent px-1 py-2.5 text-sm text-white outline-none placeholder:text-white/30"
               />
             </div>
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-navy">
+            <label className="mb-1 block text-sm font-medium text-white/80">
               Password
             </label>
             <div className="relative">
@@ -116,26 +116,26 @@ export default function RegisterPage() {
                 minLength={8}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-lg border border-silver-dark px-3 py-2.5 pr-10 text-sm outline-none focus:border-royal focus:ring-2 focus:ring-royal/30"
+                className="w-full rounded-lg glass-card px-3 py-2.5 pr-10 text-sm text-white outline-none focus:shadow-glow-electric"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword((v) => !v)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-silver-dark hover:text-royal"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-electric-light"
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
           </div>
-          <Button type="submit" size="lg" className="w-full" disabled={loading}>
+          <Button type="submit" variant="gradient" size="lg" className="w-full" disabled={loading}>
             {loading ? "Creating account..." : "Create account"}
           </Button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-silver-dark">
+        <p className="mt-6 text-center text-sm text-white/50">
           Already have an account?{" "}
-          <Link href="/login" className="font-semibold text-royal">
+          <Link href="/login" className="font-semibold text-electric-light hover:text-cyan">
             Sign in
           </Link>
         </p>
