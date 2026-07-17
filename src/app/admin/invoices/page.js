@@ -1,22 +1,32 @@
 import { FileText } from "lucide-react";
 import { formatPrice } from "@/utils/formatPrice";
+import Pagination, { parsePage } from "@/components/admin/Pagination";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Invoices — Admin" };
 
-export default async function InvoicesPage() {
+const PAGE_SIZE = 20;
+
+export default async function InvoicesPage({ searchParams }) {
   const { prisma } = await import("@/lib/prisma");
 
-  const invoices = await prisma.invoice.findMany({
-    orderBy: { createdAt: "desc" },
-    include: { order: { include: { user: true } } },
-  });
+  const page = parsePage(searchParams);
+  const [invoices, total] = await Promise.all([
+    prisma.invoice.findMany({
+      orderBy: { createdAt: "desc" },
+      include: { order: { include: { user: true } } },
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+    }),
+    prisma.invoice.count(),
+  ]);
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   return (
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-navy">Invoices</h1>
-        <p className="text-sm text-silver-dark mt-0.5">{invoices.length} total invoices</p>
+        <p className="text-sm text-silver-dark mt-0.5">{total} total invoices</p>
       </div>
 
       <div className="overflow-hidden rounded-xl border border-silver-light bg-white shadow-card">
@@ -56,6 +66,8 @@ export default async function InvoicesPage() {
           </tbody>
         </table>
       </div>
+
+      <Pagination page={page} totalPages={totalPages} basePath="/admin/invoices" />
     </div>
   );
 }

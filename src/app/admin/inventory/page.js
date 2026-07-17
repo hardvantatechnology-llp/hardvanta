@@ -1,39 +1,48 @@
 import { Archive, AlertTriangle } from "lucide-react";
+import Pagination, { parsePage } from "@/components/admin/Pagination";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Inventory — Admin" };
 
-export default async function InventoryPage() {
+const PAGE_SIZE = 20;
+
+export default async function InventoryPage({ searchParams }) {
   const { prisma } = await import("@/lib/prisma");
 
-  const products = await prisma.product.findMany({
-    orderBy: { stock: "asc" },
-    include: { category: true, brand: true },
-  });
-
-  const outOfStock = products.filter((p) => p.stock === 0);
-  const lowStock = products.filter((p) => p.stock > 0 && p.stock <= 5);
+  const page = parsePage(searchParams);
+  const [products, total, outOfStockCount, lowStockCount] = await Promise.all([
+    prisma.product.findMany({
+      orderBy: { stock: "asc" },
+      include: { category: true, brand: true },
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+    }),
+    prisma.product.count(),
+    prisma.product.count({ where: { stock: 0 } }),
+    prisma.product.count({ where: { stock: { gt: 0, lte: 5 } } }),
+  ]);
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   return (
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-navy">Inventory</h1>
-        <p className="text-sm text-silver-dark mt-0.5">{products.length} total products</p>
+        <p className="text-sm text-silver-dark mt-0.5">{total} total products</p>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4 mb-6">
         <div className="rounded-xl border border-silver-light bg-white p-4 shadow-card">
           <p className="text-xs text-silver-dark font-semibold uppercase">Total Products</p>
-          <p className="text-2xl font-bold text-navy mt-1">{products.length}</p>
+          <p className="text-2xl font-bold text-navy mt-1">{total}</p>
         </div>
         <div className="rounded-xl border border-orange-200 bg-orange-50 p-4">
           <p className="text-xs text-orange-600 font-semibold uppercase">Low Stock (≤5)</p>
-          <p className="text-2xl font-bold text-orange-600 mt-1">{lowStock.length}</p>
+          <p className="text-2xl font-bold text-orange-600 mt-1">{lowStockCount}</p>
         </div>
         <div className="rounded-xl border border-red-200 bg-red-50 p-4">
           <p className="text-xs text-red-600 font-semibold uppercase">Out of Stock</p>
-          <p className="text-2xl font-bold text-red-600 mt-1">{outOfStock.length}</p>
+          <p className="text-2xl font-bold text-red-600 mt-1">{outOfStockCount}</p>
         </div>
       </div>
 
@@ -75,6 +84,8 @@ export default async function InventoryPage() {
           </tbody>
         </table>
       </div>
+
+      <Pagination page={page} totalPages={totalPages} basePath="/admin/inventory" />
     </div>
   );
 }

@@ -4,6 +4,10 @@ import { NextResponse } from "next/server";
 import { isAdmin } from "@/lib/admin";
 
 export async function GET() {
+  if (!(await isAdmin())) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   const { prisma } = await import("@/lib/prisma");
   const blogs = await prisma.blog.findMany({ orderBy: { createdAt: "desc" } });
   return NextResponse.json(blogs);

@@ -7,12 +7,12 @@ import {
   Trash2, Plus, Minus, ShoppingBag, ShieldCheck,
   Truck, RotateCcw, Tag, ArrowRight, Zap, Ticket, X
 } from "lucide-react";
-import { useCart } from "@/context/CartContext";
+import { useCart, MAX_QUANTITY } from "@/context/CartContext";
 import { formatPrice } from "@/utils/formatPrice";
 import { imageSrc } from "@/utils/imageSrc";
 
 // ─── Quantity Modal ───────────────────────────────────────────────────────────
-function QuantityModal({ currentQty, onClose, onApply }) {
+function QuantityModal({ currentQty, maxQty, onClose, onApply }) {
   const [inputVal, setInputVal] = useState("");
   const [error, setError] = useState("");
 
@@ -20,6 +20,10 @@ function QuantityModal({ currentQty, onClose, onApply }) {
     const num = parseInt(inputVal, 10);
     if (!inputVal || isNaN(num) || num < 1) {
       setError("Please enter a valid quantity (min 1).");
+      return;
+    }
+    if (num > maxQty) {
+      setError(`Only ${maxQty} available. Please enter ${maxQty} or fewer.`);
       return;
     }
     onApply(num);
@@ -51,6 +55,7 @@ function QuantityModal({ currentQty, onClose, onApply }) {
         {/* Current qty hint */}
         <p className="px-5 text-xs text-silver-dark mb-3">
           Current quantity: <span className="font-semibold text-navy">{currentQty}</span>
+          {" · "}Max: <span className="font-semibold text-navy">{maxQty}</span>
         </p>
 
         {/* Input */}
@@ -58,6 +63,7 @@ function QuantityModal({ currentQty, onClose, onApply }) {
           <input
             type="number"
             min={1}
+            max={maxQty}
             value={inputVal}
             onChange={(e) => { setInputVal(e.target.value); setError(""); }}
             onKeyDown={(e) => e.key === "Enter" && handleApply()}
@@ -135,9 +141,10 @@ export default function CartPage() {
   const grandTotal = subtotal - couponDiscount + shipping;
   const totalSaved = productDiscount + couponDiscount;
 
-  // ── Quantity handler: + always increments by 1 (no limit) ─────────────────
+  // ── Quantity handler: + increments by 1, capped at available stock ────────
   function handleIncrement(item) {
-    updateQuantity(item.id, item.quantity + 1);
+    const maxQty = typeof item.stock === "number" ? Math.min(item.stock, MAX_QUANTITY) : MAX_QUANTITY;
+    updateQuantity(item.id, Math.min(item.quantity + 1, maxQty));
   }
 
   function handleModalApply(itemId, qty) {
@@ -206,6 +213,7 @@ export default function CartPage() {
       {modalItem && (
         <QuantityModal
           currentQty={modalItem.quantity}
+          maxQty={typeof modalItem.stock === "number" ? Math.min(modalItem.stock, MAX_QUANTITY) : MAX_QUANTITY}
           onClose={() => setModalItemId(null)}
           onApply={(qty) => handleModalApply(modalItem.id, qty)}
         />
@@ -233,7 +241,7 @@ export default function CartPage() {
           <div className="lg:col-span-2 space-y-3">
             {items.map((item) => {
               const price = item.salePrice ?? item.price;
-              const hasDiscount = item.salePrice != null;
+              const hasDiscount = item.salePrice != null && item.price > 0;
               const discountPct = hasDiscount
                 ? Math.round(((item.price - item.salePrice) / item.price) * 100)
                 : 0;

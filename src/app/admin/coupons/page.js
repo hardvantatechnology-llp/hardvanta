@@ -1,20 +1,30 @@
 import { Ticket } from "lucide-react";
+import Pagination, { parsePage } from "@/components/admin/Pagination";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Coupons — Admin" };
 
-export default async function CouponsPage() {
+const PAGE_SIZE = 20;
+
+export default async function CouponsPage({ searchParams }) {
   const { prisma } = await import("@/lib/prisma");
 
-  const coupons = await prisma.coupon.findMany({
-    orderBy: { createdAt: "desc" },
-  });
+  const page = parsePage(searchParams);
+  const [coupons, total] = await Promise.all([
+    prisma.coupon.findMany({
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+    }),
+    prisma.coupon.count(),
+  ]);
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   return (
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-navy">Coupons</h1>
-        <p className="text-sm text-silver-dark mt-0.5">{coupons.length} total coupons</p>
+        <p className="text-sm text-silver-dark mt-0.5">{total} total coupons</p>
       </div>
 
       <div className="overflow-hidden rounded-xl border border-silver-light bg-white shadow-card">
@@ -56,6 +66,8 @@ export default async function CouponsPage() {
           </tbody>
         </table>
       </div>
+
+      <Pagination page={page} totalPages={totalPages} basePath="/admin/coupons" />
     </div>
   );
 }

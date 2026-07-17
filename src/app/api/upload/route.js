@@ -10,14 +10,23 @@ import path from "path";
 import { isAdmin } from "@/lib/admin";
 import { getSupabaseAdmin, PRODUCT_BUCKET } from "@/lib/supabase";
 
+// Fixed allowlist of accepted image MIME types → file extension. SVG is
+// deliberately excluded since it can embed executable script content.
+const ALLOWED_TYPES = {
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+  "image/gif": "gif",
+};
+
 async function saveOne(file, supabase) {
-  if (!file.type?.startsWith("image/")) {
-    throw new Error("Only image files are allowed.");
+  const ext = ALLOWED_TYPES[file.type?.toLowerCase()];
+  if (!ext) {
+    throw new Error("Only JPG, PNG, WEBP, or GIF images are allowed.");
   }
   if (file.size > 5 * 1024 * 1024) {
     throw new Error("Each image must be under 5MB.");
   }
-  const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
   const filename = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
   const arrayBuffer = await file.arrayBuffer();
 

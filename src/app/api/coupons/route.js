@@ -21,6 +21,6 @@ export async function GET() {
     return NextResponse.json(coupons);
   } catch (err) {
     console.error("GET /api/coupons error:", err);
-    return NextResponse.json({ error: "Internal server error", details: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

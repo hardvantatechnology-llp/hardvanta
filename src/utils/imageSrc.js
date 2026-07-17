@@ -22,6 +22,20 @@ export function imageSrc(value) {
     }
   }
 
+  // Protocol-relative URL (e.g. "//cdn.example.com/img.png") — this also
+  // starts with "/" but is an external URL, not a /public path. Normalize to
+  // https and validate the same way as the absolute-URL branch above.
+  if (v.startsWith("//")) {
+    const candidate = `https:${v}`;
+    try {
+      const u = new URL(candidate);
+      if (/\s/.test(v) || !u.hostname.includes(".")) return PLACEHOLDER;
+      return candidate;
+    } catch {
+      return PLACEHOLDER;
+    }
+  }
+
   // Root-relative path served from /public.
   if (v.startsWith("/")) return v;
 

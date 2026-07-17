@@ -1,8 +1,13 @@
-// GET /api/products?category=<slug>&featured=true&q=<search>
+// GET /api/products?category=<slug>&featured=true&q=<search>&page=<n>&limit=<n>
 import { NextResponse } from "next/server";
 import { isAdmin } from "@/lib/admin";
 
 export const dynamic = "force-dynamic";
+
+const DEFAULT_LIMIT = 24;
+const MAX_LIMIT = 100;
+const MAX_QUERY_LENGTH = 100;
+const MAX_CATEGORY_LENGTH = 100;
 
 function slugify(str) {
   return str
@@ -14,9 +19,30 @@ function slugify(str) {
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
-  const category = searchParams.get("category");
+  const rawCategory = searchParams.get("category");
   const featured = searchParams.get("featured");
-  const q = searchParams.get("q");
+  const rawQ = searchParams.get("q");
+
+  // Validate/cap category (used as an exact slug match, so just bound its length).
+  const category =
+    typeof rawCategory === "string" && rawCategory.trim()
+      ? rawCategory.trim().slice(0, MAX_CATEGORY_LENGTH)
+      : null;
+
+  // Cap the search term length to keep the insensitive OR scan bounded.
+  const q =
+    typeof rawQ === "string" && rawQ.trim()
+      ? rawQ.trim().slice(0, MAX_QUERY_LENGTH)
+      : null;
+
+  // Pagination — validated with sane caps to avoid unbounded full-table scans.
+  const pageParam = parseInt(searchParams.get("page"), 10);
+  const limitParam = parseInt(searchParams.get("limit"), 10);
+  const page = Number.isFinite(pageParam) && pageParam > 0 ? pageParam : 1;
+  const limit =
+    Number.isFinite(limitParam) && limitParam > 0
+      ? Math.min(limitParam, MAX_LIMIT)
+      : DEFAULT_LIMIT;
 
   const where = {};
   if (category) {
@@ -45,15 +71,29 @@ export async function GET(request) {
   }
 
   const { prisma } = await import("@/lib/prisma");
-  const products = await prisma.product.findMany({
-    where,
-    include: {
-      category: true,
-      brand: true,
+  const [products, total] = await Promise.all([
+    prisma.product.findMany({
+      where,
+      include: {
+        category: { select: { id: true, name: true, slug: true } },
+        brand: { select: { id: true, name: true, slug: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * limit,
+      take: limit,
+    }),
+    prisma.product.count({ where }),
+  ]);
+
+  return NextResponse.json({
+    products,
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages: Math.max(1, Math.ceil(total / limit)),
     },
-    orderBy: { createdAt: "desc" },
   });
-  return NextResponse.json({ products });
 }
 
 // POST /api/products — create a product (admin only).
@@ -95,60 +135,71 @@ export async function POST(request) {
     );
   }
 
-  let slug = slugify(name);
-  // Ensure slug is unique.
   const { prisma } = await import("@/lib/prisma");
-  while (await prisma.product.findUnique({ where: { slug } })) {
-    slug = `${slug}-${Math.floor(Math.random() * 1000)}`;
+
+  let slug = slugify(name);
+  // Best-effort uniqueness pre-check (final safety net is the create() catch below,
+  // which protects against the race between two concurrent requests).
+  let attempts = 0;
+  while ((await prisma.product.findUnique({ where: { slug } })) && attempts < 5) {
+    slug = `${slugify(name)}-${Math.floor(Math.random() * 10000)}`;
+    attempts += 1;
   }
 
-  // Ensure SKU is unique.
-  const existingSku = await prisma.product.findUnique({
-    where: {
-      sku,
-    },
-  });
+  try {
+    const product = await prisma.product.create({
+      data: {
+        slug,
+        sku,
+        name,
+        description,
+        price: Number(price),
+        salePrice:
+          salePrice !== null &&
+          salePrice !== undefined &&
+          salePrice !== ""
+            ? Number(salePrice)
+            : null,
+        stock: Number(stock),
+        image: mainImage,
+        featured: Boolean(featured),
 
-  if (existingSku) {
+        category: {
+          connect: {
+            id: categoryId,
+          },
+        },
+
+        brand: {
+          connect: {
+            id: brandId,
+          },
+        },
+
+        images: {
+          create: gallery.map((imageUrl) => ({ imageUrl })),
+        },
+      },
+    });
+    return NextResponse.json({ product }, { status: 201 });
+  } catch (err) {
+    if (err.code === "P2002") {
+      const target = Array.isArray(err.meta?.target) ? err.meta.target.join(", ") : "field";
+      return NextResponse.json(
+        { error: `A product with this ${target} already exists.` },
+        { status: 409 }
+      );
+    }
+    if (err.code === "P2025" || err.code === "P2003") {
+      return NextResponse.json(
+        { error: "Invalid categoryId or brandId." },
+        { status: 400 }
+      );
+    }
+    console.error("POST /api/products error:", err);
     return NextResponse.json(
-      { error: "SKU already exists" },
-      { status: 400 }
+      { error: "Could not create product." },
+      { status: 500 }
     );
   }
-
-  const product = await prisma.product.create({
-    data: {
-      slug,
-      sku,
-      name,
-      description,
-      price: Number(price),
-      salePrice:
-        salePrice !== null &&
-        salePrice !== undefined &&
-        salePrice !== ""
-          ? Number(salePrice)
-          : null,
-      stock: Number(stock),
-      image: mainImage,
-      featured: Boolean(featured),
-
-      category: {
-        connect: {
-          id: categoryId,
-        },
-      },
-
-      brand: {
-        connect: {
-          id: brandId,
-        },
-      },
-
-      images: {
-        create: gallery.map((imageUrl) => ({ imageUrl })),
-      },
-    },
-  });
-  return NextResponse.json({ product }, { status: 201 });
 }

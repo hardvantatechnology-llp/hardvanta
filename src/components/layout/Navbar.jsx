@@ -25,7 +25,6 @@ import {
   Youtube,
   AlignJustify,
 } from "lucide-react";
-import { categories } from "@/lib/data";
 import { useCart } from "@/context/CartContext";
 import { getUserView, setUserView } from "@/lib/viewMode";
 import Logo from "./Logo";
@@ -86,6 +85,28 @@ export default function Navbar() {
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
+
+  // Live categories — fetched from the DB-backed API route instead of the
+  // legacy mock array, so admin-managed categories show up here.
+  const [categories, setCategories] = useState([]);
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/categories")
+      .then((res) => (res.ok ? res.json() : { categories: [] }))
+      .then((data) => {
+        if (cancelled) return;
+        const list = (data.categories || [])
+          .filter((c) => c.active !== false)
+          .sort((a, b) => a.name.localeCompare(b.name));
+        setCategories(list);
+      })
+      .catch(() => {
+        if (!cancelled) setCategories([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // "User view": when an admin switches to user view, hide admin-only UI.
   const [userViewMode, setUserViewMode] = useState(false);

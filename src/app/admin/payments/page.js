@@ -1,16 +1,26 @@
 import { CreditCard } from "lucide-react";
 import { formatPrice } from "@/utils/formatPrice";
+import Pagination, { parsePage } from "@/components/admin/Pagination";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Payments — Admin" };
 
-export default async function PaymentsPage() {
+const PAGE_SIZE = 20;
+
+export default async function PaymentsPage({ searchParams }) {
   const { prisma } = await import("@/lib/prisma");
 
-  const payments = await prisma.payment.findMany({
-    orderBy: { createdAt: "desc" },
-    include: { order: { include: { user: true } } },
-  });
+  const page = parsePage(searchParams);
+  const [payments, total] = await Promise.all([
+    prisma.payment.findMany({
+      orderBy: { createdAt: "desc" },
+      include: { order: { include: { user: true } } },
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+    }),
+    prisma.payment.count(),
+  ]);
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   const STATUS_STYLES = {
     PENDING: "bg-yellow-50 text-yellow-700",
@@ -23,7 +33,7 @@ export default async function PaymentsPage() {
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-navy">Payments</h1>
-        <p className="text-sm text-silver-dark mt-0.5">{payments.length} total payments</p>
+        <p className="text-sm text-silver-dark mt-0.5">{total} total payments</p>
       </div>
 
       <div className="overflow-hidden rounded-xl border border-silver-light bg-white shadow-card">
@@ -67,6 +77,8 @@ export default async function PaymentsPage() {
           </tbody>
         </table>
       </div>
+
+      <Pagination page={page} totalPages={totalPages} basePath="/admin/payments" />
     </div>
   );
 }

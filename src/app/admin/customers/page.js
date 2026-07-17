@@ -1,22 +1,32 @@
 import { Users } from "lucide-react";
+import Pagination, { parsePage } from "@/components/admin/Pagination";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Customers — Admin" };
 
-export default async function CustomersPage() {
+const PAGE_SIZE = 20;
+
+export default async function CustomersPage({ searchParams }) {
   const { prisma } = await import("@/lib/prisma");
 
-  const customers = await prisma.user.findMany({
-    where: { role: "USER" },
-    orderBy: { createdAt: "desc" },
-    include: { _count: { select: { orders: true } } },
-  });
+  const page = parsePage(searchParams);
+  const [customers, total] = await Promise.all([
+    prisma.user.findMany({
+      where: { role: "USER" },
+      orderBy: { createdAt: "desc" },
+      include: { _count: { select: { orders: true } } },
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+    }),
+    prisma.user.count({ where: { role: "USER" } }),
+  ]);
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   return (
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-navy">Customers</h1>
-        <p className="text-sm text-silver-dark mt-0.5">{customers.length} total customers</p>
+        <p className="text-sm text-silver-dark mt-0.5">{total} total customers</p>
       </div>
 
       <div className="overflow-hidden rounded-xl border border-silver-light bg-white shadow-card">
@@ -58,6 +68,8 @@ export default async function CustomersPage() {
           </tbody>
         </table>
       </div>
+
+      <Pagination page={page} totalPages={totalPages} basePath="/admin/customers" />
     </div>
   );
 }

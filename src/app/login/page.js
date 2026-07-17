@@ -32,7 +32,6 @@ function LoginForm() {
   const [forgotNewPassword, setForgotNewPassword] = useState("");
   const [forgotError, setForgotError] = useState("");
   const [forgotInfo, setForgotInfo] = useState("");
-  const [forgotDevCode, setForgotDevCode] = useState("");
   const [forgotLoading, setForgotLoading] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
 
@@ -49,12 +48,7 @@ function LoginForm() {
     setLoading(false);
     if (!res.ok) { setError(data.error || "Invalid email or password."); return; }
     setStep("otp");
-    if (data.demo && data.devCode) {
-      setOtp(data.devCode);
-      setInfo(`Demo mode: your code is ${data.devCode}`);
-    } else {
-      setInfo(`We have emailed a 6-digit code to ${email}.`);
-    }
+    setInfo(`We have emailed a 6-digit code to ${email}.`);
   }
 
   async function handleOtpSubmit(e) {
@@ -76,9 +70,8 @@ function LoginForm() {
     });
     const data = await res.json().catch(() => ({}));
     setLoading(false);
-    if (!res.ok) { setError("Could not resend the code."); return; }
-    if (data.demo && data.devCode) { setOtp(data.devCode); setInfo(`Demo mode: your code is ${data.devCode}`); }
-    else { setInfo(`A new code was sent to ${email}.`); }
+    if (!res.ok) { setError(data.error || "Could not resend the code."); return; }
+    setInfo(`A new code was sent to ${email}.`);
   }
 
   async function handleForgotPassword(e) {
@@ -98,14 +91,7 @@ function LoginForm() {
       return;
     }
     setForgotStage("reset");
-    if (data.demo && data.devCode) {
-      setForgotCode(data.devCode);
-      setForgotDevCode(data.devCode);
-      setForgotInfo("");
-    } else {
-      setForgotDevCode("");
-      setForgotInfo(`If an account exists for ${forgotEmail}, a 6-digit code is on its way.`);
-    }
+    setForgotInfo(`If an account exists for ${forgotEmail}, a 6-digit code is on its way.`);
   }
 
   async function handleResendCode() {
@@ -122,13 +108,7 @@ function LoginForm() {
       setForgotError(data.error || "Could not resend the code.");
       return;
     }
-    if (data.demo && data.devCode) {
-      setForgotCode(data.devCode);
-      setForgotDevCode(data.devCode);
-      setForgotInfo("");
-    } else {
-      setForgotInfo(`A new code was sent to ${forgotEmail}.`);
-    }
+    setForgotInfo(`A new code was sent to ${forgotEmail}.`);
   }
 
   async function handleResetConfirm(e) {
@@ -211,13 +191,6 @@ function LoginForm() {
                   <span className="font-semibold text-navy">{forgotEmail}</span> and choose a new password.
                 </p>
 
-                {forgotDevCode && (
-                  <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-center text-sm text-amber-800">
-                    Email isn&apos;t set up yet, so here&apos;s your code:{" "}
-                    <span className="font-bold tracking-widest">{forgotDevCode}</span>
-                  </div>
-                )}
-
                 <form onSubmit={handleResetConfirm} className="space-y-4">
                   <input
                     type="text" inputMode="numeric" maxLength={6} required autoFocus
@@ -229,10 +202,10 @@ function LoginForm() {
                   <div className="relative">
                     <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-silver-dark" />
                     <input
-                      type={showNewPassword ? "text" : "password"} required minLength={6}
+                      type={showNewPassword ? "text" : "password"} required minLength={8}
                       value={forgotNewPassword}
                       onChange={(e) => setForgotNewPassword(e.target.value)}
-                      placeholder="New password (min 6 characters)"
+                      placeholder="New password (min 8 characters)"
                       className="w-full rounded-xl border border-silver pl-9 pr-10 py-2.5 text-sm outline-none focus:border-royal focus:ring-2 focus:ring-royal/20"
                     />
                     <button type="button" onClick={() => setShowNewPassword((v) => !v)}

@@ -14,7 +14,7 @@ import {
   RotateCcw,
   MonitorSmartphone,
 } from "lucide-react";
-import { categories } from "@/lib/data";
+import { getCategories } from "@/lib/queries";
 
 const iconMap = {
   Cpu,
@@ -50,7 +50,8 @@ const palette = [
   { box: "bg-pink-50 border-pink-100", chip: "bg-pink-500 text-white" },
 ];
 
-export default function CategoryTiles() {
+export default async function CategoryTiles() {
+  const categories = await getCategories();
   return (
     <section className="container-page py-12">
       <div className="mb-8 flex items-center justify-between">

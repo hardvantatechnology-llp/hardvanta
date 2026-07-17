@@ -29,7 +29,7 @@ export default async function ProductDetailPage({ params }) {
   const related = await getRelatedProducts(product.category.slug, product.id, 4);
 
   const price = product.salePrice ?? product.price;
-  const hasDiscount = product.salePrice != null;
+  const hasDiscount = product.salePrice != null && product.price > 0;
   const discountPct = hasDiscount
     ? Math.round(((product.price - product.salePrice) / product.price) * 100)
     : 0;

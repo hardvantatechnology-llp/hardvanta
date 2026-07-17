@@ -28,20 +28,27 @@ export default function ProductCard({ product }) {
   const { addItem } = useCart();
   const { wishlistIds, toggleWishlist } = useWishlist();
   const [added, setAdded] = useState(false);
+  const [addError, setAddError] = useState(false);
 
   const wished = wishlistIds?.has?.(product.id);
   const price = product.salePrice ?? product.price;
-  const hasDiscount = product.salePrice != null;
+  const hasDiscount = product.salePrice != null && product.price > 0;
   const discountPct = hasDiscount
     ? Math.round(((product.price - product.salePrice) / product.price) * 100)
     : 0;
   const outOfStock = product.inStock === false;
 
-  function handleAdd() {
+  async function handleAdd() {
     if (outOfStock) return;
-    addItem(product);
-    setAdded(true);
-    setTimeout(() => setAdded(false), 1500);
+    try {
+      await addItem(product);
+      setAdded(true);
+      setTimeout(() => setAdded(false), 1500);
+    } catch (e) {
+      console.error("add to cart failed", e);
+      setAddError(true);
+      setTimeout(() => setAddError(false), 2000);
+    }
   }
 
   return (
@@ -77,7 +84,7 @@ export default function ProductCard({ product }) {
         <button
           type="button"
           onClick={() => toggleWishlist(product.id)}
-          aria-label="Add to wishlist"
+          aria-label={wished ? "Remove from wishlist" : "Add to wishlist"}
           className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white text-navy shadow-md transition-colors hover:text-red-500"
         >
           <Heart size={15} className={wished ? "fill-red-500 text-red-500" : ""} />
@@ -120,13 +127,17 @@ export default function ProductCard({ product }) {
           className={`mt-auto flex h-11 w-full items-center justify-center gap-2 rounded-xl text-sm font-semibold transition-all duration-300 active:scale-[0.98] ${
             outOfStock
               ? "cursor-not-allowed bg-silver-light text-silver-dark"
-              : added
-                ? "bg-green-600 text-white"
-                : "bg-royal text-white hover:bg-royal-dark"
+              : addError
+                ? "bg-red-600 text-white"
+                : added
+                  ? "bg-green-600 text-white"
+                  : "bg-royal text-white hover:bg-royal-dark"
           }`}
         >
           {outOfStock ? (
             "Out of stock"
+          ) : addError ? (
+            "Couldn't add — retry"
           ) : added ? (
             <><Check size={16} /> Added</>
           ) : (

@@ -1,24 +1,33 @@
 import { Users, Shield, User } from "lucide-react";
+import Pagination, { parsePage } from "@/components/admin/Pagination";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Users — Admin" };
 
-export default async function UsersPage() {
+const PAGE_SIZE = 20;
+
+export default async function UsersPage({ searchParams }) {
   const { prisma } = await import("@/lib/prisma");
 
-  const users = await prisma.user.findMany({
-    orderBy: { createdAt: "desc" },
-    include: { _count: { select: { orders: true } } },
-  });
-
-  const admins = users.filter((u) => u.role === "ADMIN");
-  const customers = users.filter((u) => u.role === "USER");
+  const page = parsePage(searchParams);
+  const [users, total, adminCount, customerCount] = await Promise.all([
+    prisma.user.findMany({
+      orderBy: { createdAt: "desc" },
+      include: { _count: { select: { orders: true } } },
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+    }),
+    prisma.user.count(),
+    prisma.user.count({ where: { role: "ADMIN" } }),
+    prisma.user.count({ where: { role: "USER" } }),
+  ]);
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   return (
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-navy">Users</h1>
-        <p className="text-sm text-silver-dark mt-0.5">{users.length} total users</p>
+        <p className="text-sm text-silver-dark mt-0.5">{total} total users</p>
       </div>
 
       {/* Stats */}
@@ -29,7 +38,7 @@ export default async function UsersPage() {
           </div>
           <div>
             <p className="text-xs text-silver-dark font-semibold uppercase">Admins</p>
-            <p className="text-2xl font-bold text-navy">{admins.length}</p>
+            <p className="text-2xl font-bold text-navy">{adminCount}</p>
           </div>
         </div>
         <div className="rounded-xl border border-silver-light bg-white p-4 shadow-card flex items-center gap-3">
@@ -38,7 +47,7 @@ export default async function UsersPage() {
           </div>
           <div>
             <p className="text-xs text-silver-dark font-semibold uppercase">Customers</p>
-            <p className="text-2xl font-bold text-navy">{customers.length}</p>
+            <p className="text-2xl font-bold text-navy">{customerCount}</p>
           </div>
         </div>
       </div>
@@ -88,6 +97,8 @@ export default async function UsersPage() {
           </tbody>
         </table>
       </div>
+
+      <Pagination page={page} totalPages={totalPages} basePath="/admin/users" />
     </div>
   );
 }

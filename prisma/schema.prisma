@@ -64,14 +64,20 @@ model VerificationToken {
 }
 
 model LoginOtp {
-  id        String   @id @default(cuid())
+  id        String     @id @default(cuid())
   email     String
   code      String
+  purpose   OtpPurpose @default(LOGIN)
   expires   DateTime
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 
-  @@index([email])
+  @@index([email, purpose])
+}
+
+enum OtpPurpose {
+  LOGIN
+  RESET
 }
 
 model Category {
@@ -132,6 +138,8 @@ model Product {
   @@index([categoryId])
   @@index([brandId])
   @@index([featured])
+  @@index([active])
+  @@index([active, featured, createdAt])
 }
 
 model ProductImage {

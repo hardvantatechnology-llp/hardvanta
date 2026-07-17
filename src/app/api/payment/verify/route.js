@@ -26,7 +26,14 @@ export async function POST(request) {
     .update(`${razorpay_order_id}|${razorpay_payment_id}`)
     .digest("hex");
 
-  if (expected !== razorpay_signature) {
+  // Constant-time comparison to avoid a timing side-channel on the signature check.
+  const expectedBuf = Buffer.from(expected);
+  const givenBuf = Buffer.from(String(razorpay_signature || ""));
+  const signatureValid =
+    expectedBuf.length === givenBuf.length &&
+    crypto.timingSafeEqual(expectedBuf, givenBuf);
+
+  if (!signatureValid) {
     return NextResponse.json(
       { error: "Payment verification failed." },
       { status: 400 }
@@ -58,33 +65,64 @@ export async function POST(request) {
 
   const invoiceNumber = `INV-${new Date().getFullYear()}-${order.id.slice(-8).toUpperCase()}`;
 
-  const completedOrder = await prisma.$transaction(async (tx) => {
-    const updated = await tx.order.update({
-      where: { id: order.id },
-      data: {
-        status: "PROCESSING",
-        paymentMethod: "ONLINE",
-        paymentId: razorpay_payment_id,
-        razorpayOrderId: razorpay_order_id,
-        razorpaySignature,
-        invoiceNumber,
-        address: address ?? order.address ?? {},
-      },
-      include: { items: true },
+  let completedOrder;
+  try {
+    completedOrder = await prisma.$transaction(async (tx) => {
+      const updated = await tx.order.update({
+        where: { id: order.id },
+        data: {
+          status: "PROCESSING",
+          paymentMethod: "ONLINE",
+          paymentId: razorpay_payment_id,
+          razorpayOrderId: razorpay_order_id,
+          razorpaySignature: razorpay_signature,
+          invoiceNumber,
+          address: address ?? order.address ?? {},
+        },
+        include: { items: true },
+      });
+
+      await Promise.all(
+        updated.items.map((item) =>
+          tx.product.update({
+            where: { id: item.productId },
+            data: { stock: { decrement: item.quantity } },
+          })
+        )
+      );
+
+      // Mirror the COD flow's Payment record — the online path never had one before.
+      await tx.payment.upsert({
+        where: { orderId: order.id },
+        create: {
+          orderId: order.id,
+          method: "ONLINE",
+          transactionId: razorpay_payment_id,
+          razorpayOrderId: razorpay_order_id,
+          razorpayPaymentId: razorpay_payment_id,
+          razorpaySignature: razorpay_signature,
+          amount: updated.total,
+          status: "SUCCESS",
+        },
+        update: {
+          transactionId: razorpay_payment_id,
+          razorpayOrderId: razorpay_order_id,
+          razorpayPaymentId: razorpay_payment_id,
+          razorpaySignature: razorpay_signature,
+          status: "SUCCESS",
+        },
+      });
+
+      await tx.cartItem.deleteMany({ where: { userId } });
+      return updated;
     });
-
-    await Promise.all(
-      updated.items.map((item) =>
-        tx.product.update({
-          where: { id: item.productId },
-          data: { stock: { decrement: item.quantity } },
-        })
-      )
+  } catch (err) {
+    console.error("[payment/verify] transaction failed:", err?.message || err);
+    return NextResponse.json(
+      { error: "Could not complete the order. Please contact support with your payment ID." },
+      { status: 500 }
     );
-
-    await tx.cartItem.deleteMany({ where: { userId } });
-    return updated;
-  });
+  }
 
   if (session.user?.email) {
     try {

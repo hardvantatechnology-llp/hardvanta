@@ -18,7 +18,7 @@ export async function GET() {
     return NextResponse.json(wishlist);
   } catch (err) {
     console.error("Wishlist GET error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -40,7 +40,7 @@ export async function POST(req) {
     return NextResponse.json(item, { status: 201 });
   } catch (err) {
     console.error("Wishlist POST error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -59,6 +59,6 @@ export async function DELETE(req) {
     return NextResponse.json({ message: "Removed" });
   } catch (err) {
     console.error("Wishlist DELETE error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

@@ -1,19 +1,29 @@
 
 import { formatPrice } from "@/utils/formatPrice";
 import OrderStatusSelect from "@/components/admin/OrderStatusSelect";
+import Pagination, { parsePage } from "@/components/admin/Pagination";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminOrdersPage() {
+const PAGE_SIZE = 20;
+
+export default async function AdminOrdersPage({ searchParams }) {
   const { prisma } = await import("@/lib/prisma");
-  const orders = await prisma.order.findMany({
-    orderBy: { createdAt: "desc" },
-    include: { items: true, user: { select: { email: true, name: true } } },
-  });
+  const page = parsePage(searchParams);
+  const [orders, total] = await Promise.all([
+    prisma.order.findMany({
+      orderBy: { createdAt: "desc" },
+      include: { items: true, user: { select: { email: true, name: true } } },
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+    }),
+    prisma.order.count(),
+  ]);
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold text-navy">Orders ({orders.length})</h1>
+      <h1 className="mb-6 text-2xl font-bold text-navy">Orders ({total})</h1>
 
       {orders.length === 0 ? (
         <p className="rounded-xl border border-silver-light bg-white py-12 text-center text-silver-dark">
@@ -76,6 +86,8 @@ export default async function AdminOrdersPage() {
           ))}
         </div>
       )}
+
+      <Pagination page={page} totalPages={totalPages} basePath="/admin/orders" />
     </div>
   );
 }

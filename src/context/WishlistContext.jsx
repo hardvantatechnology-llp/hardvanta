@@ -16,11 +16,14 @@ export function WishlistProvider({ children }) {
       return;
     }
     fetch("/api/wishlist")
-      .then((r) => r.json())
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error("Failed to load wishlist"))))
       .then((data) => {
         if (Array.isArray(data)) {
           setWishlistIds(new Set(data.map((i) => i.productId)));
         }
+      })
+      .catch((e) => {
+        console.error("wishlist fetch failed", e);
       });
   }, [session]);
 
@@ -35,27 +38,33 @@ export function WishlistProvider({ children }) {
       const isInWishlist = wishlistIds.has(productId);
       setLoading(true);
 
-      if (isInWishlist) {
+      // Optimistic update — reverted in the catch block if the request fails.
+      setWishlistIds((prev) => {
+        const next = new Set(prev);
+        if (isInWishlist) next.delete(productId);
+        else next.add(productId);
+        return next;
+      });
+
+      try {
+        const res = await fetch("/api/wishlist", {
+          method: isInWishlist ? "DELETE" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ productId }),
+        });
+        if (!res.ok) throw new Error("Could not update wishlist. Please try again.");
+      } catch (e) {
+        console.error("toggleWishlist failed", e);
+        // Roll back the optimistic update since the server never confirmed it.
         setWishlistIds((prev) => {
           const next = new Set(prev);
-          next.delete(productId);
+          if (isInWishlist) next.add(productId);
+          else next.delete(productId);
           return next;
         });
-        await fetch("/api/wishlist", {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ productId }),
-        });
-      } else {
-        setWishlistIds((prev) => new Set(prev).add(productId));
-        await fetch("/api/wishlist", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ productId }),
-        });
+      } finally {
+        setLoading(false);
       }
-
-      setLoading(false);
     },
     [session, wishlistIds]
   );
@@ -68,5 +77,7 @@ export function WishlistProvider({ children }) {
 }
 
 export function useWishlist() {
-  return useContext(WishlistContext);
+  const ctx = useContext(WishlistContext);
+  if (!ctx) throw new Error("useWishlist must be used within WishlistProvider");
+  return ctx;
 }

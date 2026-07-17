@@ -1,13 +1,52 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+// Best-effort in-memory rate limiter (per server instance) to slow down
+// brute-force/enumeration of coupon codes on this public endpoint.
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAX = 20;
+const rateLimitHits = new Map();
+
+function isRateLimited(key) {
+  const now = Date.now();
+  const entry = rateLimitHits.get(key);
+  if (!entry || now > entry.resetAt) {
+    rateLimitHits.set(key, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return false;
+  }
+  entry.count += 1;
+  return entry.count > RATE_LIMIT_MAX;
+}
+
+function getClientKey(req) {
+  return (
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    req.headers.get("x-real-ip") ||
+    "unknown"
+  );
+}
+
 export async function POST(req) {
   try {
+    if (isRateLimited(getClientKey(req))) {
+      return NextResponse.json(
+        { valid: false, message: "Too many attempts. Please try again later." },
+        { status: 429 }
+      );
+    }
+
     const { code, subtotal } = await req.json();
 
     if (!code) {
       return NextResponse.json(
         { valid: false, message: "Please enter a coupon code." },
+        { status: 400 }
+      );
+    }
+
+    if (!Number.isFinite(subtotal) || subtotal < 0) {
+      return NextResponse.json(
+        { valid: false, message: "Invalid order subtotal." },
         { status: 400 }
       );
     }

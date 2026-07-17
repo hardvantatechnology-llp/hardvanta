@@ -3,19 +3,29 @@ import Image from "next/image";
 import { Plus } from "lucide-react";
 import { imageSrc } from "@/utils/imageSrc";
 import DeleteBlogButton from "@/components/admin/DeleteBlogButton";
+import Pagination, { parsePage } from "@/components/admin/Pagination";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminBlogsPage() {
+const PAGE_SIZE = 20;
+
+export default async function AdminBlogsPage({ searchParams }) {
   const { prisma } = await import("@/lib/prisma");
-  const blogs = await prisma.blog.findMany({
-    orderBy: { createdAt: "desc" },
-  });
+  const page = parsePage(searchParams);
+  const [blogs, total] = await Promise.all([
+    prisma.blog.findMany({
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+    }),
+    prisma.blog.count(),
+  ]);
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-navy">Blogs ({blogs.length})</h1>
+        <h1 className="text-2xl font-bold text-navy">Blogs ({total})</h1>
         <Link
           href="/admin/blogs/new"
           className="inline-flex items-center gap-2 rounded-lg bg-royal px-4 py-2 text-sm font-semibold text-white hover:bg-royal-dark"
@@ -75,6 +85,8 @@ export default async function AdminBlogsPage() {
           </tbody>
         </table>
       </div>
+
+      <Pagination page={page} totalPages={totalPages} basePath="/admin/blogs" />
     </div>
   );
 }

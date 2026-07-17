@@ -30,6 +30,14 @@ const TRENDING = [
 
 const RECENT_KEY = "hv_recent_searches";
 
+// Escape HTML entities so untrusted text (product/brand names) can never be
+// interpreted as markup when injected via dangerouslySetInnerHTML.
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, (c) => (
+    { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]
+  ));
+}
+
 export default function SearchBar() {
   const router = useRouter();
   const inputRef  = useRef(null);
@@ -245,8 +253,8 @@ export default function SearchBar() {
                           <span
                             className="text-sm text-navy"
                             dangerouslySetInnerHTML={{
-                              __html: s.label.replace(
-                                new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi"),
+                              __html: escapeHtml(s.label).replace(
+                                new RegExp(`(${escapeHtml(query).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi"),
                                 "<strong class='text-royal'>$1</strong>"
                               ),
                             }}

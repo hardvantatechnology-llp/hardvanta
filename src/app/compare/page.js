@@ -39,9 +39,9 @@ export default function ComparePage() {
   const rows = [
     { label: "Price", render: (p) => <span className="font-bold text-navy">{formatPrice(p.salePrice ?? p.price)}</span> },
     { label: "M.R.P.", render: (p) => (p.salePrice ? <span className="text-silver-dark line-through">{formatPrice(p.price)}</span> : "—") },
-    { label: "Brand", render: (p) => p.brand || "—" },
+    { label: "Brand", render: (p) => p.brand?.name || "—" },
     { label: "Rating", render: (p) => (<span className="inline-flex items-center gap-1"><Star size={14} className="fill-yellow-400 text-yellow-400" />{p.rating} ({p.reviewCount})</span>) },
-    { label: "Category", render: (p) => p.category || "—" },
+    { label: "Category", render: (p) => p.category?.name || "—" },
     { label: "Availability", render: (p) => (p.stock > 0 ? <span className="font-semibold text-green-600">In stock</span> : <span className="font-semibold text-red-500">Out of stock</span>) },
   ];
 

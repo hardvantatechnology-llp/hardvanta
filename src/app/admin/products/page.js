@@ -6,25 +6,35 @@ import { formatPrice } from "@/utils/formatPrice";
 import { imageSrc } from "@/utils/imageSrc";
 import { Plus } from "lucide-react";
 import DeleteProductButton from "@/components/admin/DeleteProductButton";
+import Pagination, { parsePage } from "@/components/admin/Pagination";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminProductsPage() {
-  const products = await prisma.product.findMany({
-    include: {
-      category: true,
-      brand: true,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+const PAGE_SIZE = 20;
+
+export default async function AdminProductsPage({ searchParams }) {
+  const page = parsePage(searchParams);
+  const [products, total] = await Promise.all([
+    prisma.product.findMany({
+      include: {
+        category: true,
+        brand: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+    }),
+    prisma.product.count(),
+  ]);
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold text-navy">
-          Products ({products.length})
+          Products ({total})
         </h1>
 
         <Link
@@ -109,6 +119,8 @@ export default async function AdminProductsPage() {
           </tbody>
         </table>
       </div>
+
+      <Pagination page={page} totalPages={totalPages} basePath="/admin/products" />
     </div>
   );
 }

@@ -277,8 +277,9 @@ export default function CheckoutPage() {
 
           <div className="grid gap-4 sm:grid-cols-3">
             <div>
-              <label className="mb-1 block text-sm font-medium text-navy">Pincode</label>
+              <label htmlFor="checkout-pincode" className="mb-1 block text-sm font-medium text-navy">Pincode</label>
               <input
+                id="checkout-pincode"
                 type="text" inputMode="numeric" required value={form.pincode}
                 onChange={(e) => handlePincode(e.target.value)} placeholder="6-digit PIN"
                 className={`w-full rounded-lg border px-3 py-2.5 text-sm outline-none focus:ring-2 ${
@@ -453,12 +454,14 @@ function PayOption({ active, onClick, title, desc, disabled }) {
 }
 
 function Field({ label, value, onChange, required, type = "text", inputMode, placeholder, minLength, maxLength }) {
+  const id = `checkout-${label.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")}`;
   return (
     <div>
-      <label className="mb-1 block text-sm font-medium text-navy">
+      <label htmlFor={id} className="mb-1 block text-sm font-medium text-navy">
         {label}{required && <span className="ml-0.5 text-royal">*</span>}
       </label>
       <input
+        id={id}
         type={type} inputMode={inputMode} required={required}
         minLength={minLength} maxLength={maxLength} value={value}
         onChange={(e) => onChange(e.target.value)} placeholder={placeholder}

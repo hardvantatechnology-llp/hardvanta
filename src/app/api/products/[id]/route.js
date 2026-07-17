@@ -106,8 +106,18 @@ export async function PUT(request, { params }) {
     });
     return NextResponse.json({ product });
   } catch (err) {
+    if (err.code === "P2002") {
+      const target = Array.isArray(err.meta?.target) ? err.meta.target.join(", ") : "field";
+      return NextResponse.json(
+        { error: `A product with this ${target} already exists.` },
+        { status: 409 }
+      );
+    }
+    if (err.code === "P2025") {
+      return NextResponse.json({ error: "Product not found." }, { status: 404 });
+    }
     console.error(err);
-    return NextResponse.json({ error: "Product not found." }, { status: 404 });
+    return NextResponse.json({ error: "Could not update product." }, { status: 500 });
   }
 }
 
