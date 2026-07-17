@@ -2,6 +2,7 @@
 
 import { useState, useRef, useTransition } from "react";
 import { Plus } from "lucide-react";
+import Button from "@/components/ui/Button";
 
 /** Quick "add category / add brand" form driven by a bound Server Action. */
 export default function NewCatalogEntityForm({ label, onCreate }) {
@@ -33,18 +34,14 @@ export default function NewCatalogEntityForm({ label, onCreate }) {
         <input
           name="name"
           placeholder={`New ${label} name`}
-          className="rounded-lg border border-silver-dark px-3 py-2 text-sm outline-none focus:border-royal"
+          className="rounded-lg glass-card px-3 py-2 text-sm text-white outline-none focus:shadow-glow-electric placeholder:text-white/30"
           disabled={pending}
         />
-        {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
+        {error && <p className="mt-1 text-xs text-red-400">{error}</p>}
       </div>
-      <button
-        type="submit"
-        disabled={pending}
-        className="inline-flex items-center gap-2 rounded-lg bg-royal px-4 py-2 text-sm font-semibold text-white hover:bg-royal-dark disabled:opacity-60"
-      >
+      <Button type="submit" variant="gradient" disabled={pending}>
         <Plus size={16} /> {pending ? "Adding…" : `Add ${label}`}
-      </button>
+      </Button>
     </form>
   );
 }

@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/Toast";
 
 const STATUSES = ["PENDING", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED"];
 
 export default function OrderStatusSelect({ id, status }) {
   const router = useRouter();
+  const toast = useToast();
   const [value, setValue] = useState(status);
   const [busy, setBusy] = useState(false);
 
@@ -22,10 +24,11 @@ export default function OrderStatusSelect({ id, status }) {
     });
     setBusy(false);
     if (res.ok) {
+      toast.success(`Order status updated to ${next}.`);
       router.refresh();
     } else {
       setValue(prev); // revert on failure
-      alert("Could not update status.");
+      toast.error("Could not update status.");
     }
   }
 
@@ -34,10 +37,10 @@ export default function OrderStatusSelect({ id, status }) {
       value={value}
       onChange={handleChange}
       disabled={busy}
-      className="rounded-lg border border-silver-dark px-3 py-1.5 text-sm font-semibold text-navy outline-none focus:border-royal disabled:opacity-50"
+      className="rounded-lg glass-card bg-graphite px-3 py-1.5 text-sm font-semibold text-white outline-none focus:shadow-glow-electric disabled:opacity-50"
     >
       {STATUSES.map((s) => (
-        <option key={s} value={s}>{s}</option>
+        <option key={s} value={s} className="bg-graphite text-white">{s}</option>
       ))}
     </select>
   );

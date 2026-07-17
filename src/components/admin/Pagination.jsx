@@ -2,44 +2,77 @@ import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 /**
- * Simple prev/next + page-count pagination for admin list pages.
- * Server-renderable (no client hooks) — just builds `?page=n` links.
+ * Numbered pagination for admin list pages.
+ * Server-renderable (no client hooks) — just builds `?page=n` links,
+ * preserving any other current search params (e.g. a search query).
  */
-export default function Pagination({ page, totalPages, basePath }) {
+export default function Pagination({ page, totalPages, basePath, searchParams = {} }) {
   if (totalPages <= 1) return null;
 
-  const prevHref = `${basePath}?page=${Math.max(1, page - 1)}`;
-  const nextHref = `${basePath}?page=${Math.min(totalPages, page + 1)}`;
+  function hrefFor(p) {
+    const params = new URLSearchParams(searchParams);
+    if (p <= 1) params.delete("page");
+    else params.set("page", String(p));
+    const qs = params.toString();
+    return `${basePath}${qs ? `?${qs}` : ""}`;
+  }
+
+  const pages = [];
+  const start = Math.max(1, page - 2);
+  const end = Math.min(totalPages, start + 4);
+  for (let i = start; i <= end; i++) pages.push(i);
+
+  const pillClass = (active) =>
+    `flex h-9 min-w-9 items-center justify-center rounded-full px-2 text-sm font-medium transition-all ${
+      active
+        ? "bg-gradient-to-r from-electric to-liquid text-white shadow-glow-electric"
+        : "glass text-white/70 hover:text-white hover:shadow-glow-electric"
+    }`;
+
+  const disabledClass = "flex h-9 w-9 items-center justify-center rounded-full glass text-white/20 cursor-not-allowed";
 
   return (
-    <div className="mt-4 flex items-center justify-between text-sm">
-      <p className="text-silver-dark">
+    <div className="mt-4 flex items-center justify-between gap-4">
+      <p className="text-sm text-white/40">
         Page {page} of {totalPages}
       </p>
-      <div className="flex gap-2">
-        <Link
-          href={prevHref}
-          aria-disabled={page <= 1}
-          className={`flex items-center gap-1 rounded-lg border border-silver-light px-3 py-1.5 font-medium ${
-            page <= 1
-              ? "pointer-events-none text-silver"
-              : "text-navy hover:border-royal hover:text-royal"
-          }`}
-        >
-          <ChevronLeft size={14} /> Prev
-        </Link>
-        <Link
-          href={nextHref}
-          aria-disabled={page >= totalPages}
-          className={`flex items-center gap-1 rounded-lg border border-silver-light px-3 py-1.5 font-medium ${
-            page >= totalPages
-              ? "pointer-events-none text-silver"
-              : "text-navy hover:border-royal hover:text-royal"
-          }`}
-        >
-          Next <ChevronRight size={14} />
-        </Link>
-      </div>
+      <nav aria-label="Pagination" className="flex items-center gap-1.5">
+        {page > 1 ? (
+          <Link href={hrefFor(page - 1)} className={pillClass(false)} aria-label="Previous page">
+            <ChevronLeft size={15} />
+          </Link>
+        ) : (
+          <span className={disabledClass} aria-hidden="true"><ChevronLeft size={15} /></span>
+        )}
+
+        {start > 1 && (
+          <>
+            <Link href={hrefFor(1)} className={pillClass(false)}>1</Link>
+            {start > 2 && <span className="px-1 text-white/30">…</span>}
+          </>
+        )}
+
+        {pages.map((p) => (
+          <Link key={p} href={hrefFor(p)} className={pillClass(p === page)}>
+            {p}
+          </Link>
+        ))}
+
+        {end < totalPages && (
+          <>
+            {end < totalPages - 1 && <span className="px-1 text-white/30">…</span>}
+            <Link href={hrefFor(totalPages)} className={pillClass(false)}>{totalPages}</Link>
+          </>
+        )}
+
+        {page < totalPages ? (
+          <Link href={hrefFor(page + 1)} className={pillClass(false)} aria-label="Next page">
+            <ChevronRight size={15} />
+          </Link>
+        ) : (
+          <span className={disabledClass} aria-hidden="true"><ChevronRight size={15} /></span>
+        )}
+      </nav>
     </div>
   );
 }

@@ -28,45 +28,47 @@ export default async function BrandsPage({ searchParams }) {
     <div>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-navy">Brands</h1>
-          <p className="text-sm text-silver-dark mt-0.5">{total} total brands</p>
+          <h1 className="text-2xl font-bold text-white">Brands</h1>
+          <p className="text-sm text-white/40 mt-0.5">{total} total brands</p>
         </div>
         <NewCatalogEntityForm label="brand" onCreate={createBrand} />
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-silver-light bg-white shadow-card">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-silver-light bg-cloud text-left text-xs font-bold uppercase tracking-wider text-silver-dark">
-              <th className="px-5 py-3">Name</th>
-              <th className="px-5 py-3">Slug</th>
-              <th className="px-5 py-3">Products</th>
-              <th className="px-5 py-3">Status</th>
-              <th className="px-5 py-3 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-silver-light">
-            {brands.length === 0 ? (
-              <tr>
-                <td colSpan={5} className="px-5 py-12 text-center text-silver-dark">
-                  <Tag size={32} className="mx-auto mb-2 text-silver" />
-                  No brands found
-                </td>
+      <div className="overflow-hidden rounded-2xl glass-card">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-white/10 bg-white/[0.03] text-left text-xs font-bold uppercase tracking-wider text-white/40">
+                <th className="px-5 py-3">Name</th>
+                <th className="px-5 py-3">Slug</th>
+                <th className="px-5 py-3">Products</th>
+                <th className="px-5 py-3">Status</th>
+                <th className="px-5 py-3 text-right">Actions</th>
               </tr>
-            ) : (
-              brands.map((brand) => (
-                <CatalogEntityRow
-                  key={brand.id}
-                  item={brand}
-                  productCount={brand._count.products}
-                  onUpdate={updateBrand}
-                  onToggleActive={toggleBrandActive}
-                  onDelete={deleteBrand}
-                />
-              ))
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-white/10">
+              {brands.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-5 py-12 text-center text-white/50">
+                    <Tag size={32} className="mx-auto mb-2 text-white/20" />
+                    No brands found
+                  </td>
+                </tr>
+              ) : (
+                brands.map((brand) => (
+                  <CatalogEntityRow
+                    key={brand.id}
+                    item={brand}
+                    productCount={brand._count.products}
+                    onUpdate={updateBrand}
+                    onToggleActive={toggleBrandActive}
+                    onDelete={deleteBrand}
+                  />
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <Pagination page={page} totalPages={totalPages} basePath="/admin/brands" />

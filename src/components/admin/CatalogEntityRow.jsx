@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Pencil, Check, X, Trash2 } from "lucide-react";
+import { Pencil, Check, X } from "lucide-react";
+import AdminDeleteButton from "./AdminDeleteButton";
 
 /**
  * One editable table row shared by the Categories and Brands admin pages.
@@ -51,21 +52,9 @@ export default function CatalogEntityRow({ item, productCount, onUpdate, onToggl
     });
   }
 
-  function handleDelete() {
-    if (!confirm(`Delete "${item.name}"? This cannot be undone.`)) return;
-    setError("");
-    startTransition(async () => {
-      try {
-        await onDelete(item.id);
-      } catch (err) {
-        setError(err?.message || "Could not delete.");
-      }
-    });
-  }
-
   return (
-    <tr className="hover:bg-cloud transition-colors">
-      <td className="px-5 py-3 font-semibold text-navy">
+    <tr className="hover:bg-white/5 transition-colors">
+      <td className="px-5 py-3 font-semibold text-white/90">
         {editing ? (
           <div className="flex items-center gap-2">
             <input
@@ -76,14 +65,14 @@ export default function CatalogEntityRow({ item, productCount, onUpdate, onToggl
                 if (e.key === "Enter") saveEdit();
                 if (e.key === "Escape") cancelEdit();
               }}
-              className="w-full rounded-lg border border-silver-dark px-2 py-1 text-sm outline-none focus:border-royal"
+              className="w-full rounded-lg glass-card px-2 py-1 text-sm text-white outline-none focus:shadow-glow-electric"
               disabled={pending}
             />
             <button
               type="button"
               onClick={saveEdit}
               disabled={pending}
-              className="text-green-600 hover:text-green-700 disabled:opacity-50"
+              className="text-cyan hover:text-cyan/80 disabled:opacity-50"
               aria-label="Save"
             >
               <Check size={16} />
@@ -92,7 +81,7 @@ export default function CatalogEntityRow({ item, productCount, onUpdate, onToggl
               type="button"
               onClick={cancelEdit}
               disabled={pending}
-              className="text-silver-dark hover:text-red-500 disabled:opacity-50"
+              className="text-white/40 hover:text-red-400 disabled:opacity-50"
               aria-label="Cancel"
             >
               <X size={16} />
@@ -101,10 +90,10 @@ export default function CatalogEntityRow({ item, productCount, onUpdate, onToggl
         ) : (
           item.name
         )}
-        {error && <p className="mt-1 text-xs font-normal text-red-600">{error}</p>}
+        {error && <p className="mt-1 text-xs font-normal text-red-400">{error}</p>}
       </td>
-      <td className="px-5 py-3 text-silver-dark">{item.slug}</td>
-      <td className="px-5 py-3 text-silver-dark">{productCount}</td>
+      <td className="px-5 py-3 text-white/40">{item.slug}</td>
+      <td className="px-5 py-3 text-white/40">{productCount}</td>
       <td className="px-5 py-3">
         <button
           type="button"
@@ -112,8 +101,8 @@ export default function CatalogEntityRow({ item, productCount, onUpdate, onToggl
           disabled={pending}
           className={`rounded-full px-2.5 py-1 text-xs font-semibold transition-colors disabled:opacity-50 ${
             item.active
-              ? "bg-green-50 text-green-700 hover:bg-green-100"
-              : "bg-red-50 text-red-600 hover:bg-red-100"
+              ? "bg-cyan/10 text-cyan hover:bg-cyan/20"
+              : "bg-red-500/10 text-red-400 hover:bg-red-500/20"
           }`}
           title="Click to toggle"
         >
@@ -126,23 +115,19 @@ export default function CatalogEntityRow({ item, productCount, onUpdate, onToggl
             <button
               type="button"
               onClick={() => setEditing(true)}
-              className="text-silver-dark hover:text-royal"
+              className="text-white/40 hover:text-electric-light"
               aria-label="Edit"
               title="Edit"
             >
               <Pencil size={16} />
             </button>
           )}
-          <button
-            type="button"
-            onClick={handleDelete}
+          <AdminDeleteButton
+            onDelete={() => onDelete(item.id)}
+            label={item.name}
             disabled={pending || productCount > 0}
-            className="text-silver-dark hover:text-red-500 disabled:opacity-30"
-            aria-label="Delete"
-            title={productCount > 0 ? "Cannot delete — still has products" : "Delete"}
-          >
-            <Trash2 size={16} />
-          </button>
+            disabledTitle={productCount > 0 ? "Cannot delete — still has products" : undefined}
+          />
         </div>
       </td>
     </tr>

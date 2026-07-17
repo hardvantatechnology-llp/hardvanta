@@ -1,6 +1,7 @@
-import { Store, Package, TrendingUp } from "lucide-react";
+import { Store, Package, IndianRupee, Boxes } from "lucide-react";
 import { formatPrice } from "@/utils/formatPrice";
 import Pagination, { parsePage } from "@/components/admin/Pagination";
+import AdminStatCard from "@/components/admin/AdminStatCard";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Sellers — Admin" };
@@ -72,83 +73,74 @@ export default async function SellersPage({ searchParams }) {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-navy">Sellers</h1>
-        <p className="text-sm text-silver-dark mt-0.5">{totalBrands} total sellers/brands</p>
+        <h1 className="text-2xl font-bold text-white">Sellers</h1>
+        <p className="text-sm text-white/40 mt-0.5">{totalBrands} total sellers/brands</p>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="rounded-xl border border-silver-light bg-white p-4 shadow-card">
-          <p className="text-xs text-silver-dark font-semibold uppercase">Total Sellers</p>
-          <p className="text-2xl font-bold text-navy mt-1">{totalBrands}</p>
-        </div>
-        <div className="rounded-xl border border-silver-light bg-white p-4 shadow-card">
-          <p className="text-xs text-silver-dark font-semibold uppercase">Total Products</p>
-          <p className="text-2xl font-bold text-navy mt-1">{totalProductCount}</p>
-        </div>
-        <div className="rounded-xl border border-silver-light bg-white p-4 shadow-card">
-          <p className="text-xs text-silver-dark font-semibold uppercase">Revenue (this page)</p>
-          <p className="text-2xl font-bold text-navy mt-1">
-            {formatPrice(pageRevenue)}
-          </p>
-        </div>
+        <AdminStatCard label="Total Sellers" value={totalBrands} icon={<Store size={17} />} glow="electric" />
+        <AdminStatCard label="Total Products" value={totalProductCount} icon={<Boxes size={17} />} glow="purple" delay={0.05} />
+        <AdminStatCard label="Revenue (this page)" value={formatPrice(pageRevenue)} icon={<IndianRupee size={17} />} glow="cyan" delay={0.1} />
       </div>
 
       {/* Sellers Table */}
-      <div className="overflow-hidden rounded-xl border border-silver-light bg-white shadow-card">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-silver-light bg-cloud text-left text-xs font-bold uppercase tracking-wider text-silver-dark">
-              <th className="px-5 py-3">Brand / Seller</th>
-              <th className="px-5 py-3">Products</th>
-              <th className="px-5 py-3">Units Sold</th>
-              <th className="px-5 py-3">Revenue</th>
-              <th className="px-5 py-3">Status</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-silver-light">
-            {sellersData.length === 0 ? (
-              <tr>
-                <td colSpan={5} className="px-5 py-12 text-center text-silver-dark">
-                  <Store size={32} className="mx-auto mb-2 text-silver" />
-                  No sellers found
-                </td>
+      <div className="overflow-hidden rounded-2xl glass-card">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-white/10 bg-white/[0.03] text-left text-xs font-bold uppercase tracking-wider text-white/40">
+                <th className="px-5 py-3">Brand / Seller</th>
+                <th className="px-5 py-3">Products</th>
+                <th className="px-5 py-3">Units Sold</th>
+                <th className="px-5 py-3">Revenue</th>
+                <th className="px-5 py-3">Status</th>
               </tr>
-            ) : (
-              sellersData.map((seller) => (
-                <tr key={seller.id} className="hover:bg-cloud transition-colors">
-                  <td className="px-5 py-3">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-cloud border border-silver-light">
-                        <Store size={16} className="text-royal" />
-                      </div>
-                      <div>
-                        <p className="font-semibold text-navy">{seller.name}</p>
-                        <p className="text-xs text-silver-dark">{seller.slug}</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-5 py-3">
-                    <span className="inline-flex items-center gap-1 text-silver-dark">
-                      <Package size={13} /> {seller.totalProducts}
-                    </span>
-                  </td>
-                  <td className="px-5 py-3 text-silver-dark">{seller.totalSold} units</td>
-                  <td className="px-5 py-3 font-bold text-navy">{formatPrice(seller.totalRevenue)}</td>
-                  <td className="px-5 py-3">
-                    <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
-                      seller.active
-                        ? "bg-green-50 text-green-700"
-                        : "bg-red-50 text-red-600"
-                    }`}>
-                      {seller.active ? "Active" : "Inactive"}
-                    </span>
+            </thead>
+            <tbody className="divide-y divide-white/10">
+              {sellersData.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-5 py-12 text-center text-white/50">
+                    <Store size={32} className="mx-auto mb-2 text-white/20" />
+                    No sellers found
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : (
+                sellersData.map((seller) => (
+                  <tr key={seller.id} className="hover:bg-white/5 transition-colors">
+                    <td className="px-5 py-3">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/5">
+                          <Store size={16} className="text-electric-light" />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-white/90">{seller.name}</p>
+                          <p className="text-xs text-white/40">{seller.slug}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-5 py-3">
+                      <span className="inline-flex items-center gap-1 text-white/50">
+                        <Package size={13} /> {seller.totalProducts}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3 text-white/50">{seller.totalSold} units</td>
+                    <td className="px-5 py-3 font-bold text-white">{formatPrice(seller.totalRevenue)}</td>
+                    <td className="px-5 py-3">
+                      <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
+                        seller.active
+                          ? "bg-cyan/10 text-cyan"
+                          : "bg-red-500/10 text-red-400"
+                      }`}>
+                        {seller.active ? "Active" : "Inactive"}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <Pagination page={page} totalPages={totalPages} basePath="/admin/sellers" />
