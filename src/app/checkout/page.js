@@ -10,6 +10,8 @@ import { formatPrice } from "@/utils/formatPrice";
 import { lookupPincode } from "@/utils/pincode";
 import Button from "@/components/ui/Button";
 
+const COD_LIMIT = 10000;
+
 export default function CheckoutPage() {
   const router = useRouter();
   const { status } = useSession();
@@ -59,6 +61,11 @@ export default function CheckoutPage() {
   const shipping = (subtotal - couponDiscount) >= 999 ? 0 : 49;
   const grandTotal = subtotal - couponDiscount + shipping;
   const totalSaved = productDiscount + couponDiscount;
+  const codBlocked = grandTotal > COD_LIMIT;
+
+  useEffect(() => {
+    if (codBlocked && payMethod === "COD") setPayMethod("ONLINE");
+  }, [codBlocked, payMethod]);
 
   // Coupon functions
   async function applyCoupon() {
@@ -199,6 +206,10 @@ export default function CheckoutPage() {
       setError("Please enter a valid Indian PIN code before placing the order.");
       return;
     }
+    if (payMethod === "COD" && codBlocked) {
+      setError(`Cash on Delivery is available only for orders up to ${formatPrice(COD_LIMIT)}. Please pay online.`);
+      return;
+    }
     setLoading(true);
     try {
       if (payMethod === "ONLINE") await handleOnlinePayment();
@@ -291,8 +302,17 @@ export default function CheckoutPage() {
             <h3 className="mb-2 text-sm font-semibold text-navy">Payment Method</h3>
             <div className="grid gap-3 sm:grid-cols-2">
               <PayOption active={payMethod === "ONLINE"} onClick={() => setPayMethod("ONLINE")} title="Pay Online" desc="UPI, Cards, Netbanking" />
-              <PayOption active={payMethod === "COD"} onClick={() => setPayMethod("COD")} title="Cash on Delivery" desc="Pay when it arrives" />
+              <PayOption
+                active={payMethod === "COD"} onClick={() => setPayMethod("COD")}
+                title="Cash on Delivery" desc="Pay when it arrives"
+                disabled={codBlocked}
+              />
             </div>
+            {codBlocked && (
+              <p className="mt-2 text-xs text-red-500">
+                Cash on Delivery is available only for orders up to {formatPrice(COD_LIMIT)}. Please pay online for this order.
+              </p>
+            )}
           </div>
 
           <Button type="submit" size="lg" className="w-full" disabled={loading}>
@@ -412,12 +432,13 @@ export default function CheckoutPage() {
   );
 }
 
-function PayOption({ active, onClick, title, desc }) {
+function PayOption({ active, onClick, title, desc, disabled }) {
   return (
     <button
-      type="button" onClick={onClick}
+      type="button" onClick={disabled ? undefined : onClick} disabled={disabled}
       className={`flex items-start gap-3 rounded-lg border p-3 text-left transition-colors ${
-        active ? "border-royal bg-royal/5 ring-1 ring-royal" : "border-silver-dark hover:border-royal"
+        disabled ? "cursor-not-allowed border-silver-dark opacity-50"
+        : active ? "border-royal bg-royal/5 ring-1 ring-royal" : "border-silver-dark hover:border-royal"
       }`}
     >
       <span className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border ${active ? "border-royal" : "border-silver-dark"}`}>

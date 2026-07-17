@@ -50,6 +50,14 @@ export async function POST(request) {
   const shipping = subtotal >= 999 ? 0 : 49;
   const total = subtotal + shipping;
 
+  const COD_LIMIT = 10000;
+  if (total > COD_LIMIT) {
+    return NextResponse.json(
+      { error: `Cash on Delivery is available only for orders up to ₹${COD_LIMIT.toLocaleString("en-IN")}. Please pay online instead.` },
+      { status: 400 }
+    );
+  }
+
   let order;
   try {
     order = await prisma.$transaction(
