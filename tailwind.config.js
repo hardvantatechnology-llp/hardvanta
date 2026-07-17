@@ -26,6 +26,38 @@ module.exports = {
         },
         cloud: "#f4f7fb", // light grey background
         ink: "#0a1f44",
+
+        // Premium dark-first palette (glass/liquid design system)
+        obsidian: {
+          DEFAULT: "#05060a",
+          light: "#0a0c14",
+          dark: "#020308",
+        },
+        graphite: {
+          DEFAULT: "#0d0f16",
+          light: "#14161f",
+          dark: "#08090e",
+        },
+        midnight: {
+          DEFAULT: "#0a1128",
+          light: "#101a3a",
+          dark: "#060a18",
+        },
+        electric: {
+          DEFAULT: "#3b82f6",
+          light: "#60a5fa",
+          dark: "#2563eb",
+        },
+        cyan: {
+          DEFAULT: "#22d3ee",
+          light: "#67e8f9",
+          dark: "#0891b2",
+        },
+        liquid: {
+          DEFAULT: "#a855f7",
+          light: "#c084fc",
+          dark: "#8b5cf6",
+        },
       },
       fontFamily: {
         sans: ["var(--font-geist-sans)", "system-ui", "sans-serif"],
@@ -33,6 +65,48 @@ module.exports = {
       boxShadow: {
         card: "0 2px 12px rgba(10, 31, 68, 0.08)",
         "card-hover": "0 8px 28px rgba(10, 31, 68, 0.16)",
+        "glow-electric": "0 0 40px -8px rgba(59, 130, 246, 0.45)",
+        "glow-cyan": "0 0 40px -8px rgba(34, 211, 238, 0.45)",
+        "glow-purple": "0 0 40px -8px rgba(168, 85, 247, 0.45)",
+        glass: "0 8px 32px -8px rgba(0, 0, 0, 0.45), inset 0 1px 0 0 rgba(255, 255, 255, 0.08)",
+        "glass-hover": "0 16px 48px -12px rgba(0, 0, 0, 0.55), inset 0 1px 0 0 rgba(255, 255, 255, 0.12)",
+      },
+      backdropBlur: {
+        xs: "2px",
+      },
+      borderRadius: {
+        "3xl": "1.75rem",
+        "4xl": "2.25rem",
+      },
+      keyframes: {
+        float: {
+          "0%, 100%": { transform: "translateY(0) translateX(0)" },
+          "50%": { transform: "translateY(-14px) translateX(6px)" },
+        },
+        blob: {
+          "0%, 100%": { transform: "translate(0, 0) scale(1)" },
+          "33%": { transform: "translate(4%, -6%) scale(1.08)" },
+          "66%": { transform: "translate(-3%, 4%) scale(0.94)" },
+        },
+        shimmer: {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(100%)" },
+        },
+        "gradient-x": {
+          "0%, 100%": { backgroundPosition: "0% 50%" },
+          "50%": { backgroundPosition: "100% 50%" },
+        },
+        ripple: {
+          "0%": { transform: "scale(0)", opacity: "0.45" },
+          "100%": { transform: "scale(2.5)", opacity: "0" },
+        },
+      },
+      animation: {
+        float: "float 6s ease-in-out infinite",
+        blob: "blob 14s ease-in-out infinite",
+        shimmer: "shimmer 2.5s linear infinite",
+        "gradient-x": "gradient-x 8s ease infinite",
+        ripple: "ripple 0.6s ease-out forwards",
       },
     },
   },

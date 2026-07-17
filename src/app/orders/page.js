@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { formatPrice } from "@/utils/formatPrice";
 import OrderTracker from "@/components/orders/OrderTracker";
+import OrderSuccessBanner from "@/components/orders/OrderSuccessBanner";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "My Orders — Hardvanta" };
@@ -44,11 +45,7 @@ export default async function OrdersPage({ searchParams }) {
           </Link>
         </div>
 
-        {justPlaced && (
-          <div className="mb-6 flex items-center gap-3 rounded-xl bg-green-50 border border-green-200 px-4 py-3 text-sm font-medium text-green-700">
-            Order placed successfully! We will deliver it soon.
-          </div>
-        )}
+        {justPlaced && <OrderSuccessBanner />}
 
         {orders.length === 0 ? (
           <div className="flex flex-col items-center py-24 text-center bg-white rounded-2xl border border-gray-200">

@@ -34,7 +34,13 @@ export async function POST(request) {
   }
 
   const hashed = await bcrypt.hash(password, 10);
-  await prisma.user.update({ where: { email: normalized }, data: { password: hashed } });
+  // Stamping passwordChangedAt lets any already-issued JWT session be
+  // invalidated on its next periodic re-check (see the jwt callback in
+  // src/lib/auth.js) instead of remaining valid for the rest of its lifetime.
+  await prisma.user.update({
+    where: { email: normalized },
+    data: { password: hashed, passwordChangedAt: new Date() },
+  });
   await prisma.loginOtp.deleteMany({ where: { email: normalized, purpose: "RESET" } });
 
   return NextResponse.json({ ok: true });

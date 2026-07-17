@@ -5,7 +5,6 @@ import {
   ChevronRight,
   Truck,
   ShieldCheck,
-  RotateCcw,
   BadgeCheck,
   Headphones,
 } from "lucide-react";
@@ -14,6 +13,9 @@ import { formatPrice } from "@/utils/formatPrice";
 import ProductGallery from "@/components/products/ProductGallery";
 import ProductGrid from "@/components/products/ProductGrid";
 import AddToCart from "@/components/products/AddToCart";
+import WishlistToggleButton from "@/components/products/WishlistToggleButton";
+import ShareButton from "@/components/products/ShareButton";
+import RecentlyViewed from "@/components/products/RecentlyViewed";
 
 export const dynamic = "force-dynamic";
 
@@ -49,125 +51,143 @@ export default async function ProductDetailPage({ params }) {
     ["Availability", product.inStock !== false ? "In stock" : "Out of stock"],
   ];
 
+  const trustBadges = [
+    [Truck, "Fast delivery"],
+    [ShieldCheck, "100% Genuine"],
+    [BadgeCheck, "Quality Checked"],
+    [Headphones, "Expert Support"],
+  ];
+
   return (
-    <div className="container-page py-8">
-      {/* Breadcrumb */}
-      <nav className="mb-6 flex flex-wrap items-center gap-1 text-sm text-silver-dark">
-        <Link href="/" className="hover:text-royal">Home</Link>
-        <ChevronRight size={14} />
-        <Link href="/products" className="hover:text-royal">Products</Link>
-        <ChevronRight size={14} />
-        <Link
-          href={`/products?category=${product.category?.slug}`}
-          className="capitalize hover:text-royal"
-        >
-          {product.category?.name}
-        </Link>
-      </nav>
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-graphite to-obsidian">
+      <div className="liquid-blob left-1/4 top-[-15%] h-96 w-96 bg-electric/10" />
+      <div className="container-page relative py-8">
+        {/* Breadcrumb */}
+        <nav className="mb-6 flex flex-wrap items-center gap-1 text-sm text-white/40">
+          <Link href="/" className="hover:text-electric-light">Home</Link>
+          <ChevronRight size={14} />
+          <Link href="/products" className="hover:text-electric-light">Products</Link>
+          <ChevronRight size={14} />
+          <Link
+            href={`/products?category=${product.category?.slug}`}
+            className="capitalize hover:text-electric-light"
+          >
+            {product.category?.name}
+          </Link>
+        </nav>
 
-      <div className="grid gap-10 lg:grid-cols-2">
-        {/* Image gallery */}
-        <ProductGallery images={galleryImages} alt={product.name} discountPct={discountPct} />
+        <div className="grid gap-10 lg:grid-cols-2">
+          {/* Image gallery */}
+          <ProductGallery images={galleryImages} alt={product.name} discountPct={discountPct} />
 
-        {/* Buy box */}
-        <div>
-          <span className="text-xs font-semibold uppercase tracking-wide text-royal">
-            {product.brand?.name}
-          </span>
-          <h1 className="mt-1 text-2xl font-bold text-navy sm:text-3xl">
-            {product.name}
-          </h1>
-
-          <div className="mt-3 flex items-center gap-2 text-sm">
-            <span className="inline-flex items-center gap-1 rounded bg-green-50 px-2 py-0.5 font-semibold text-green-700">
-              <Star size={14} className="fill-green-600 text-green-600" />
-              {product.rating}
-            </span>
-            <span className="text-silver-dark">{product.reviewCount} ratings</span>
-          </div>
-
-          {/* Price */}
-          <div className="mt-5 rounded-2xl border border-silver-light bg-cloud p-5">
-            <div className="flex flex-wrap items-end gap-3">
-              <span className="text-3xl font-extrabold text-navy">
-                {formatPrice(price)}
-              </span>
-              {hasDiscount && (
-                <>
-                  <span className="mb-1 text-lg text-silver-dark line-through">
-                    {formatPrice(product.price)}
-                  </span>
-                  <span className="mb-1 text-sm font-bold text-green-600">
-                    Save {formatPrice(savings)}
-                  </span>
-                </>
-              )}
-            </div>
-            <p className="mt-1 text-xs text-silver-dark">Inclusive of all taxes</p>
-
-            {/* ✅ FIXED: inStock field se check */}
-            <p className="mt-3 text-sm font-medium">
-              {product.inStock !== false ? (
-                <span className="text-green-600">● In stock — ready to ship</span>
-              ) : (
-                <span className="text-red-500">● Out of stock</span>
-              )}
-            </p>
-
-            <div className="mt-4">
-              <AddToCart product={product} />
-            </div>
-          </div>
-
-          {/* Trust badges */}
-          <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
-            {[
-              [Truck, "Fast delivery"],
-              [BadgeCheck, "Genuine"],
-              
-              [Headphones, "Support"],
-            ].map(([Icon, label], i) => (
-              <div
-                key={i}
-                className="flex flex-col items-center gap-1.5 rounded-xl border border-silver-light bg-white p-3 text-center text-xs font-medium text-navy"
-              >
-                <Icon size={20} className="text-royal" />
-                {label}
+          {/* Buy box */}
+          <div>
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <span className="text-xs font-semibold uppercase tracking-wide text-electric-light">
+                  {product.brand?.name}
+                </span>
+                <h1 className="mt-1 text-2xl font-bold text-white sm:text-3xl">
+                  {product.name}
+                </h1>
               </div>
-            ))}
-          </div>
+              <div className="flex shrink-0 gap-2">
+                <WishlistToggleButton productId={product.id} />
+                <ShareButton title={product.name} />
+              </div>
+            </div>
 
-          {/* Description */}
-          <div className="mt-8">
-            <h2 className="mb-2 text-lg font-bold text-navy">About this product</h2>
-            <p className="leading-relaxed text-ink/75">{product.description}</p>
-          </div>
+            <div className="mt-3 flex items-center gap-2 text-sm">
+              <span className="inline-flex items-center gap-1 rounded bg-gradient-to-r from-electric to-liquid px-2 py-0.5 font-semibold text-white">
+                <Star size={14} className="fill-white text-white" />
+                {product.rating}
+              </span>
+              <span className="text-white/40">{product.reviewCount} ratings</span>
+            </div>
 
-          {/* Specifications */}
-          <div className="mt-8">
-            <h2 className="mb-3 text-lg font-bold text-navy">Specifications</h2>
-            <dl className="overflow-hidden rounded-xl border border-silver-light">
-              {specs.map(([k, v], i) => (
+            {/* Price */}
+            <div className="glass-card mt-5 rounded-3xl p-5">
+              <div className="flex flex-wrap items-end gap-3">
+                <span className="text-3xl font-extrabold text-white">
+                  {formatPrice(price)}
+                </span>
+                {hasDiscount && (
+                  <>
+                    <span className="mb-1 text-lg text-white/40 line-through">
+                      {formatPrice(product.price)}
+                    </span>
+                    <span className="mb-1 text-sm font-bold text-cyan">
+                      Save {formatPrice(savings)}
+                    </span>
+                  </>
+                )}
+              </div>
+              <p className="mt-1 text-xs text-white/40">Inclusive of all taxes</p>
+
+              {/* ✅ FIXED: inStock field se check */}
+              <p className="mt-3 text-sm font-medium">
+                {product.inStock !== false ? (
+                  <span className="text-cyan">● In stock — ready to ship</span>
+                ) : (
+                  <span className="text-red-400">● Out of stock</span>
+                )}
+              </p>
+
+              <div className="mt-4">
+                <AddToCart product={product} />
+              </div>
+            </div>
+
+            {/* Trust badges */}
+            <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
+              {trustBadges.map(([Icon, label], i) => (
                 <div
-                  key={k}
-                  className={`grid grid-cols-3 text-sm ${i % 2 ? "bg-white" : "bg-cloud"}`}
+                  key={i}
+                  className="glass-card flex flex-col items-center gap-1.5 rounded-xl p-3 text-center text-xs font-medium text-white/80"
                 >
-                  <dt className="px-4 py-3 font-medium text-silver-dark">{k}</dt>
-                  <dd className="col-span-2 px-4 py-3 capitalize text-navy">{v}</dd>
+                  <Icon size={20} className="text-electric-light" />
+                  {label}
                 </div>
               ))}
-            </dl>
+            </div>
+
+            {/* Description */}
+            <div className="mt-8">
+              <h2 className="mb-2 text-lg font-bold text-white">About this product</h2>
+              <p className="leading-relaxed text-white/60">{product.description}</p>
+            </div>
+
+            {/* Specifications */}
+            <div className="mt-8">
+              <h2 className="mb-3 text-lg font-bold text-white">Specifications</h2>
+              <dl className="glass-card overflow-hidden rounded-xl">
+                {specs.map(([k, v], i) => (
+                  <div
+                    key={k}
+                    className={`grid grid-cols-3 text-sm ${i % 2 ? "bg-white/[0.03]" : ""}`}
+                  >
+                    <dt className="px-4 py-3 font-medium text-white/40">{k}</dt>
+                    <dd className="col-span-2 px-4 py-3 capitalize text-white/85">{v}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Related */}
-      {related.length > 0 && (
-        <section className="mt-16">
-          <h2 className="heading-accent mb-8">You may also like</h2>
-          <ProductGrid products={related} />
-        </section>
-      )}
+        {/* Related */}
+        {related.length > 0 && (
+          <section className="mt-16">
+            <h2 className="relative mb-8 inline-block text-2xl font-bold text-white after:absolute after:-bottom-2 after:left-0 after:h-1 after:w-12 after:rounded-full after:bg-gradient-to-r after:from-electric after:to-liquid">
+              You may also like
+            </h2>
+            <ProductGrid products={related} />
+          </section>
+        )}
+
+        {/* Recently viewed */}
+        <RecentlyViewed excludeId={product.id} />
+      </div>
     </div>
   );
 }

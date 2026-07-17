@@ -4,16 +4,16 @@
 //
 // Drop-in replacement for the <form> search in Navbar.jsx
 // Behaviour:
-//   • Click the trigger bar  → full-screen Flipkart-style overlay opens
+//   • Click the trigger bar  → full-screen glass overlay opens
 //   • Type                   → live suggestions from /api/products?q=
 //   • Enter / "Search" btn   → navigates to /search?q=<term>
 //   • Escape / backdrop click → closes overlay
 //
-// Requires: lucide-react (already installed), next/navigation, Tailwind (all
-//           colour tokens match the rest of Hardvanta — navy, royal, silver-*, cloud)
+// Requires: lucide-react, framer-motion, next/navigation (all already installed)
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Search, X, TrendingUp, Clock } from "lucide-react";
 
 // ─── Static trending terms (update as you like) ──────────────────────────────
@@ -40,6 +40,7 @@ function escapeHtml(str) {
 
 export default function SearchBar() {
   const router = useRouter();
+  const reduce = useReducedMotion();
   const inputRef  = useRef(null);
   const panelRef  = useRef(null);
 
@@ -147,7 +148,6 @@ export default function SearchBar() {
     <>
       {/* ══════════════════════════════════════════════════
           TRIGGER BAR — sits exactly where the old <form> was.
-          Copy the same Tailwind classes Navbar uses for its search bar.
          ══════════════════════════════════════════════════ */}
       <div
         role="button"
@@ -155,13 +155,13 @@ export default function SearchBar() {
         aria-label="Open search"
         onClick={openOverlay}
         onKeyDown={(e) => e.key === "Enter" && openOverlay()}
-        className="flex w-full min-w-0 items-center overflow-hidden rounded-full border border-silver bg-white shadow-sm hover:border-royal hover:ring-2 hover:ring-royal/20 cursor-text select-none transition-all duration-200"
+        className="glass flex w-full min-w-0 items-center overflow-hidden rounded-full cursor-text select-none transition-all duration-200 hover:shadow-glow-electric"
       >
-        <span className="pl-3 md:pl-4 text-silver-dark"><Search size={17} /></span>
-        <span className="flex-1 truncate px-2 py-2 text-sm text-silver-dark md:px-3">
+        <span className="pl-3 md:pl-4 text-white/50"><Search size={17} /></span>
+        <span className="flex-1 truncate px-2 py-2 text-sm text-white/50 md:px-3">
   Search for Products...
 </span>
-        <span className="m-1 rounded-full bg-royal px-3 py-2 text-sm font-semibold text-white md:px-5">
+        <span className="m-1 rounded-full bg-gradient-to-r from-electric to-liquid px-3 py-2 text-sm font-semibold text-white md:px-5">
           <Search size={16} className="md:hidden" />
           <span className="hidden md:inline">Search</span>
         </span>
@@ -170,187 +170,198 @@ export default function SearchBar() {
       {/* ══════════════════════════════════════════════════
           FULL-SCREEN OVERLAY
          ══════════════════════════════════════════════════ */}
-      {isOpen && (
-        <div className="fixed inset-0 z-[200] flex flex-col">
-
-          {/* Backdrop */}
-          <div className="absolute inset-0 bg-navy/50 backdrop-blur-[2px]" />
-
-          {/* Panel */}
-          <div
-            ref={panelRef}
-            className="relative z-10 w-full bg-white shadow-2xl"
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: reduce ? 0 : 0.2 }}
+            className="fixed inset-0 z-[200] flex flex-col"
           >
-            {/* ── Input row (royal bg, like Flipkart) ── */}
-            <div className="flex items-center gap-2 bg-royal px-3 py-3 md:px-6">
-              <Search size={18} className="shrink-0 text-white" />
+            {/* Backdrop */}
+            <div className="absolute inset-0 bg-obsidian/70 backdrop-blur-md" />
 
-              <input
-                ref={inputRef}
-                type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                onKeyDown={onKeyDown}
-                placeholder="Search for products, brands and more"
-                autoComplete="off"
-                spellCheck={false}
-                className="flex-1 bg-transparent text-base text-white placeholder:text-white/60 outline-none"
-              />
+            {/* Panel */}
+            <motion.div
+              ref={panelRef}
+              initial={{ y: reduce ? 0 : -24, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: reduce ? 0 : -24, opacity: 0 }}
+              transition={{ duration: reduce ? 0 : 0.25, ease: [0.22, 1, 0.36, 1] }}
+              className="glass-strong relative z-10 w-full"
+            >
+              {/* ── Input row ── */}
+              <div className="flex items-center gap-2 bg-gradient-to-r from-electric to-liquid px-3 py-3 md:px-6">
+                <Search size={18} className="shrink-0 text-white" />
 
-              {/* Clear button */}
-              {query && (
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  onKeyDown={onKeyDown}
+                  placeholder="Search for products, brands and more"
+                  autoComplete="off"
+                  spellCheck={false}
+                  className="flex-1 bg-transparent text-base text-white placeholder:text-white/60 outline-none"
+                />
+
+                {/* Clear button */}
+                {query && (
+                  <button
+                    onClick={() => { setQuery(""); inputRef.current?.focus(); }}
+                    aria-label="Clear"
+                    className="rounded-full p-1 text-white/80 hover:bg-white/20 hover:text-white transition-colors"
+                  >
+                    <X size={16} />
+                  </button>
+                )}
+
+                {/* Search button */}
                 <button
-                  onClick={() => { setQuery(""); inputRef.current?.focus(); }}
-                  aria-label="Clear"
-                  className="rounded-full p-1 text-white/80 hover:bg-white/20 hover:text-white transition-colors"
+                  onClick={() => doSearch()}
+                  className="rounded-md bg-white px-4 py-1.5 text-sm font-bold text-electric-dark
+                             hover:bg-white/90 transition-colors whitespace-nowrap"
                 >
-                  <X size={16} />
+                  Search
                 </button>
-              )}
 
-              {/* Search button */}
-              <button
-                onClick={() => doSearch()}
-                className="rounded-md bg-white px-4 py-1.5 text-sm font-bold text-royal
-                           hover:bg-cloud transition-colors whitespace-nowrap"
-              >
-                Search
-              </button>
+                {/* Close */}
+                <button
+                  onClick={closeOverlay}
+                  aria-label="Close search"
+                  className="ml-1 rounded-full p-1 text-white/80 hover:bg-white/20 hover:text-white transition-colors"
+                >
+                  <X size={20} />
+                </button>
+              </div>
 
-              {/* Close */}
-              <button
-                onClick={closeOverlay}
-                aria-label="Close search"
-                className="ml-1 rounded-full p-1 text-white/80 hover:bg-white/20 hover:text-white transition-colors"
-              >
-                <X size={20} />
-              </button>
-            </div>
+              {/* ── Dropdown ── */}
+              <div className="max-h-[70vh] overflow-y-auto overscroll-contain bg-obsidian/95">
 
-            {/* ── Dropdown ── */}
-            <div className="max-h-[70vh] overflow-y-auto overscroll-contain bg-white">
+                {/* Loading shimmer */}
+                {loading && (
+                  <div className="flex items-center gap-3 px-5 py-4 text-sm text-white/50 animate-pulse">
+                    <Search size={14} /> Searching…
+                  </div>
+                )}
 
-              {/* Loading shimmer */}
-              {loading && (
-                <div className="flex items-center gap-3 px-5 py-4 text-sm text-silver-dark animate-pulse">
-                  <Search size={14} /> Searching…
-                </div>
-              )}
+                {/* Live suggestions */}
+                {showHits && !loading && suggestions.length > 0 && (
+                  <ul>
+                    {suggestions.map((s, i) => (
+                      <li key={i}>
+                        <button
+                          onClick={() => doSearch(s.label)}
+                          className="flex w-full items-center gap-3 px-5 py-3 text-left
+                                     hover:bg-white/5 transition-colors"
+                        >
+                          <Search size={14} className="shrink-0 text-white/40" />
+                          <div className="flex flex-col">
+                            {/* Bold the matched part */}
+                            <span
+                              className="text-sm text-white/85"
+                              dangerouslySetInnerHTML={{
+                                __html: escapeHtml(s.label).replace(
+                                  new RegExp(`(${escapeHtml(query).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi"),
+                                  "<strong class='text-electric-light'>$1</strong>"
+                                ),
+                              }}
+                            />
+                            {s.sub && (
+                              <span className="text-xs text-white/40">
+                                in {s.sub}
+                              </span>
+                            )}
+                          </div>
+                        </button>
+                      </li>
+                    ))}
 
-              {/* Live suggestions */}
-              {showHits && !loading && suggestions.length > 0 && (
-                <ul>
-                  {suggestions.map((s, i) => (
-                    <li key={i}>
+                    {/* "See all results" footer */}
+                    <li className="border-t border-white/10">
                       <button
-                        onClick={() => doSearch(s.label)}
-                        className="flex w-full items-center gap-3 px-5 py-3 text-left
-                                   hover:bg-cloud transition-colors"
+                        onClick={() => doSearch()}
+                        className="flex w-full items-center gap-2 px-5 py-3 text-sm font-semibold
+                                   text-electric-light hover:bg-white/5 transition-colors"
                       >
-                        <Search size={14} className="shrink-0 text-silver-dark" />
-                        <div className="flex flex-col">
-                          {/* Bold the matched part */}
-                          <span
-                            className="text-sm text-navy"
-                            dangerouslySetInnerHTML={{
-                              __html: escapeHtml(s.label).replace(
-                                new RegExp(`(${escapeHtml(query).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi"),
-                                "<strong class='text-royal'>$1</strong>"
-                              ),
-                            }}
-                          />
-                          {s.sub && (
-                            <span className="text-xs text-silver-dark">
-                              in {s.sub}
-                            </span>
-                          )}
-                        </div>
+                        <Search size={14} />
+                        See all results for &quot;{query}&quot;
                       </button>
                     </li>
-                  ))}
+                  </ul>
+                )}
 
-                  {/* "See all results" footer */}
-                  <li className="border-t border-silver-light">
+                {/* No results */}
+                {showHits && !loading && suggestions.length === 0 && (
+                  <div className="px-5 py-6 text-center text-sm text-white/50">
+                    No products found for &quot;<span className="font-semibold text-white">{query}</span>&quot;
                     <button
                       onClick={() => doSearch()}
-                      className="flex w-full items-center gap-2 px-5 py-3 text-sm font-semibold
-                                 text-royal hover:bg-cloud transition-colors"
+                      className="mt-3 block w-full rounded-xl border border-white/10 py-2.5
+                                 text-sm font-semibold text-electric-light hover:bg-white/5 transition-colors"
                     >
-                      <Search size={14} />
-                      See all results for &quot;{query}&quot;
+                      Search anyway
                     </button>
-                  </li>
-                </ul>
-              )}
+                  </div>
+                )}
 
-              {/* No results */}
-              {showHits && !loading && suggestions.length === 0 && (
-                <div className="px-5 py-6 text-center text-sm text-silver-dark">
-                  No products found for &quot;<span className="font-semibold text-navy">{query}</span>&quot;
-                  <button
-                    onClick={() => doSearch()}
-                    className="mt-3 block w-full rounded-xl border border-silver-light py-2.5
-                               text-sm font-semibold text-royal hover:bg-cloud transition-colors"
-                  >
-                    Search anyway
-                  </button>
-                </div>
-              )}
+                {/* Empty state: recent + trending */}
+                {showEmpty && (
+                  <>
+                    {/* Recent searches */}
+                    {recent.length > 0 && (
+                      <div>
+                        <p className="flex items-center gap-1.5 px-5 pt-4 pb-2 text-[11px] font-bold
+                                      uppercase tracking-wider text-white/40">
+                          <Clock size={12} /> Recent Searches
+                        </p>
+                        <ul>
+                          {recent.map((r, i) => (
+                            <li key={i}>
+                              <button
+                                onClick={() => doSearch(r)}
+                                className="flex w-full items-center gap-3 px-5 py-2.5 text-left
+                                           hover:bg-white/5 transition-colors"
+                              >
+                                <Clock size={14} className="shrink-0 text-white/40" />
+                                <span className="text-sm text-white/85">{r}</span>
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
 
-              {/* Empty state: recent + trending */}
-              {showEmpty && (
-                <>
-                  {/* Recent searches */}
-                  {recent.length > 0 && (
+                    {/* Trending */}
                     <div>
                       <p className="flex items-center gap-1.5 px-5 pt-4 pb-2 text-[11px] font-bold
-                                    uppercase tracking-wider text-silver-dark">
-                        <Clock size={12} /> Recent Searches
+                                    uppercase tracking-wider text-white/40">
+                        <TrendingUp size={12} /> Trending Searches
                       </p>
-                      <ul>
-                        {recent.map((r, i) => (
+                      <ul className="pb-4">
+                        {TRENDING.map((t, i) => (
                           <li key={i}>
                             <button
-                              onClick={() => doSearch(r)}
+                              onClick={() => doSearch(t)}
                               className="flex w-full items-center gap-3 px-5 py-2.5 text-left
-                                         hover:bg-cloud transition-colors"
+                                         hover:bg-white/5 transition-colors"
                             >
-                              <Clock size={14} className="shrink-0 text-silver-dark" />
-                              <span className="text-sm text-navy">{r}</span>
+                              <TrendingUp size={14} className="shrink-0 text-electric-light" />
+                              <span className="text-sm text-white/85">{t}</span>
                             </button>
                           </li>
                         ))}
                       </ul>
                     </div>
-                  )}
-
-                  {/* Trending */}
-                  <div>
-                    <p className="flex items-center gap-1.5 px-5 pt-4 pb-2 text-[11px] font-bold
-                                  uppercase tracking-wider text-silver-dark">
-                      <TrendingUp size={12} /> Trending Searches
-                    </p>
-                    <ul className="pb-4">
-                      {TRENDING.map((t, i) => (
-                        <li key={i}>
-                          <button
-                            onClick={() => doSearch(t)}
-                            className="flex w-full items-center gap-3 px-5 py-2.5 text-left
-                                       hover:bg-cloud transition-colors"
-                          >
-                            <TrendingUp size={14} className="shrink-0 text-royal" />
-                            <span className="text-sm text-navy">{t}</span>
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+                  </>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }

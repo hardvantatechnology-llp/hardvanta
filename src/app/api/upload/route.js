@@ -19,6 +19,30 @@ const ALLOWED_TYPES = {
   "image/gif": "gif",
 };
 
+// Verify the file's actual magic bytes match the declared/allowed type,
+// since the browser-supplied `file.type` can be spoofed by the client.
+function matchesSignature(bytes, ext) {
+  const b = (i) => bytes[i];
+  switch (ext) {
+    case "jpg":
+      return b(0) === 0xff && b(1) === 0xd8 && b(2) === 0xff;
+    case "png":
+      return (
+        b(0) === 0x89 && b(1) === 0x50 && b(2) === 0x4e && b(3) === 0x47 &&
+        b(4) === 0x0d && b(5) === 0x0a && b(6) === 0x1a && b(7) === 0x0a
+      );
+    case "gif":
+      return b(0) === 0x47 && b(1) === 0x49 && b(2) === 0x46 && b(3) === 0x38;
+    case "webp":
+      return (
+        b(0) === 0x52 && b(1) === 0x49 && b(2) === 0x46 && b(3) === 0x46 &&
+        b(8) === 0x57 && b(9) === 0x45 && b(10) === 0x42 && b(11) === 0x50
+      );
+    default:
+      return false;
+  }
+}
+
 async function saveOne(file, supabase) {
   const ext = ALLOWED_TYPES[file.type?.toLowerCase()];
   if (!ext) {
@@ -27,8 +51,12 @@ async function saveOne(file, supabase) {
   if (file.size > 5 * 1024 * 1024) {
     throw new Error("Each image must be under 5MB.");
   }
-  const filename = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
   const arrayBuffer = await file.arrayBuffer();
+  const header = new Uint8Array(arrayBuffer.slice(0, 12));
+  if (!matchesSignature(header, ext)) {
+    throw new Error("File content does not match a valid image format.");
+  }
+  const filename = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
 
   if (supabase) {
     const { error } = await supabase.storage

@@ -5,10 +5,12 @@
 //
 // • Server component — fetches products directly via Prisma (no extra API hop)
 // • Uses your existing <ProductCard> and <ProductGrid> exactly as-is
-// • Tailwind classes match the rest of Hardvanta (navy, royal, silver-*, cloud)
+// • Tailwind classes match the premium dark glass design system
 
 import { prisma }      from "@/lib/prisma";
 import ProductCard     from "@/components/products/ProductCard";
+import SortDropdown    from "@/components/products/SortDropdown";
+import { sortProducts } from "@/utils/sortProducts";
 import { Search }      from "lucide-react";
 import Link            from "next/link";
 
@@ -47,30 +49,37 @@ async function searchProducts(q) {
 // ── Page component ────────────────────────────────────────────────────────────
 export default async function SearchPage({ searchParams }) {
   const query    = searchParams?.q?.trim() || "";
-  const products = await searchProducts(query);
+  const sort     = searchParams?.sort;
+  const raw      = await searchProducts(query);
+  const products = sortProducts(raw, sort);
 
   return (
-    <main className="min-h-screen bg-silver-light/40">
+    <main className="min-h-screen bg-gradient-to-b from-graphite to-obsidian">
 
       {/* ── Header bar ── */}
-      <div className="sticky top-0 z-10 border-b border-silver-light bg-white shadow-sm">
+      <div className="sticky top-0 z-10 border-b border-white/10 bg-obsidian/80 backdrop-blur-xl">
         <div className="container-page flex flex-wrap items-center justify-between gap-3 py-3">
           {query ? (
-            <p className="text-sm text-navy">
-              <span className="font-bold text-navy">{products.length}</span>
-              <span className="text-silver-dark"> results for </span>
-              <span className="font-semibold text-royal">&quot;{query}&quot;</span>
+            <p className="text-sm text-white/70">
+              <span className="font-bold text-white">{products.length}</span>
+              <span className="text-white/40"> results for </span>
+              <span className="font-semibold text-electric-light">&quot;{query}&quot;</span>
             </p>
           ) : (
-            <p className="text-sm text-silver-dark">Enter a search term above</p>
+            <p className="text-sm text-white/40">Enter a search term above</p>
           )}
 
-          <Link
-            href="/products"
-            className="text-xs font-medium text-royal underline-offset-2 hover:underline"
-          >
-            Browse all products →
-          </Link>
+          <div className="flex items-center gap-3">
+            {products.length > 0 && (
+              <SortDropdown current={sort || "relevance"} searchParams={searchParams} basePath="/search" />
+            )}
+            <Link
+              href="/products"
+              className="text-xs font-medium text-electric-light underline-offset-2 hover:underline"
+            >
+              Browse all products →
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -96,8 +105,8 @@ export default async function SearchPage({ searchParams }) {
                 <Link
                   key={s}
                   href={`/search?q=${encodeURIComponent(s)}`}
-                  className="rounded-full border border-silver bg-white px-3 py-1.5 text-xs
-                             font-medium text-navy hover:border-royal hover:text-royal transition-colors"
+                  className="glass rounded-full px-3 py-1.5 text-xs
+                             font-medium text-white/70 hover:text-white hover:shadow-glow-electric transition-all"
                 >
                   {s}
                 </Link>
@@ -123,11 +132,11 @@ export default async function SearchPage({ searchParams }) {
 function EmptyState({ title, body, children }) {
   return (
     <div className="mx-auto flex max-w-md flex-col items-center py-20 text-center">
-      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-silver-light">
-        <Search size={28} className="text-silver-dark" />
+      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-electric/20 to-liquid/20 shadow-glow-electric">
+        <Search size={28} className="text-electric-light" />
       </div>
-      <h2 className="mb-2 text-lg font-bold text-navy">{title}</h2>
-      <p className="text-sm text-silver-dark">{body}</p>
+      <h2 className="mb-2 text-lg font-bold text-white">{title}</h2>
+      <p className="text-sm text-white/50">{body}</p>
       {children}
     </div>
   );

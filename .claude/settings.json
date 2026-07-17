@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "PowerShell(\"ok\")",
-      "Bash(node cleanup_tmp.mjs)"
+      "Bash(node cleanup_tmp.mjs)",
+      "Bash(node -e ' *)"
     ]
   }
 }

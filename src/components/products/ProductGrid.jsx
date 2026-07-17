@@ -21,10 +21,12 @@ export default function ProductGrid({ products, loading = false }) {
 
   if (!products?.length) {
     return (
-      <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-silver py-16 text-center">
-        <PackageSearch size={40} className="text-silver-dark" />
-        <p className="font-semibold text-navy">No products found</p>
-        <p className="text-sm text-silver-dark">
+      <div className="glass-card flex flex-col items-center gap-3 rounded-3xl py-16 text-center">
+        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-electric/20 to-liquid/20 shadow-glow-electric">
+          <PackageSearch size={30} className="text-electric-light" />
+        </div>
+        <p className="font-semibold text-white">No products found</p>
+        <p className="text-sm text-white/50">
           Try a different category or search term.
         </p>
       </div>

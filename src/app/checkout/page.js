@@ -3,12 +3,12 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
-import { Ticket, X, Tag, Truck } from "lucide-react";
+import { Ticket, X, Tag, Truck, Wifi, Banknote } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { formatPrice } from "@/utils/formatPrice";
 import { lookupPincode } from "@/utils/pincode";
 import Button from "@/components/ui/Button";
+import CheckoutStepper from "@/components/checkout/CheckoutStepper";
 
 const COD_LIMIT = 10000;
 
@@ -221,233 +221,241 @@ export default function CheckoutPage() {
   }
 
   if (status === "loading") {
-    return <div className="container-page py-24 text-center text-silver-dark">Loading…</div>;
+    return <div className="container-page min-h-screen py-24 text-center text-white/50 bg-gradient-to-b from-graphite to-obsidian">Loading…</div>;
   }
 
   if (count === 0) {
     return (
-      <div className="container-page flex flex-col items-center py-24 text-center">
-        <h1 className="text-2xl font-bold text-navy">Your cart is empty</h1>
-        <Link href="/products" className="mt-6 rounded-lg bg-royal px-6 py-3 font-semibold text-white hover:bg-royal-dark">
+      <div className="min-h-[70vh] bg-gradient-to-b from-graphite to-obsidian container-page flex flex-col items-center justify-center py-24 text-center">
+        <h1 className="text-2xl font-bold text-white">Your cart is empty</h1>
+        <Button href="/products" variant="gradient" className="mt-6">
           Browse Products
-        </Link>
+        </Button>
       </div>
     );
   }
 
   return (
-    <div className="container-page py-8">
-      <h1 className="heading-accent mb-8">Checkout</h1>
-      <div className="grid gap-8 lg:grid-cols-3">
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-graphite to-obsidian">
+      <div className="liquid-blob left-1/3 top-[-15%] h-96 w-96 bg-liquid/10" />
+      <div className="container-page relative py-8">
+        <h1 className="mb-2 text-center text-2xl font-bold text-white">Checkout</h1>
+        <CheckoutStepper step={2} />
+        <div className="grid gap-8 lg:grid-cols-3">
 
-        {/* Address + Payment form */}
-        <form
-          onSubmit={handleSubmit}
-          className="space-y-4 rounded-2xl border border-silver-light bg-white p-6 shadow-card lg:col-span-2"
-        >
-          <h2 className="text-lg font-bold text-navy">Shipping Address</h2>
-          {error && (
-            <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>
-          )}
+          {/* Address + Payment form */}
+          <form
+            onSubmit={handleSubmit}
+            className="space-y-4 glass-strong rounded-3xl p-6 lg:col-span-2"
+          >
+            <h2 className="text-lg font-bold text-white">Shipping Address</h2>
+            {error && (
+              <p className="rounded-lg bg-red-500/10 border border-red-500/20 px-3 py-2 text-sm text-red-400">{error}</p>
+            )}
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Full name" value={form.fullName} onChange={(v) => update("fullName", v)} required />
-            <Field
-              label="Phone" value={form.phone} type="tel" inputMode="numeric"
-              placeholder="10-digit mobile number" minLength={10} maxLength={10}
-              onChange={(v) => update("phone", v.replace(/\D/g, "").slice(0, 10))} required
-            />
-          </div>
-
-          <Field
-            label="Flat / House No / Building Name" value={form.flatHouse}
-            onChange={(v) => update("flatHouse", v)} required
-            placeholder="e.g. Flat 302, Shree Residency"
-          />
-          <Field
-            label="Area / Sector / Locality" value={form.area}
-            onChange={(v) => update("area", v)} required
-            placeholder="e.g. Sector 62, Near City Mall"
-          />
-          <Field
-            label="Landmark (optional)" value={form.landmark}
-            onChange={(v) => update("landmark", v)}
-            placeholder="e.g. Opposite HDFC Bank"
-          />
-
-          <div className="grid gap-4 sm:grid-cols-3">
-            <div>
-              <label htmlFor="checkout-pincode" className="mb-1 block text-sm font-medium text-navy">Pincode</label>
-              <input
-                id="checkout-pincode"
-                type="text" inputMode="numeric" required value={form.pincode}
-                onChange={(e) => handlePincode(e.target.value)} placeholder="6-digit PIN"
-                className={`w-full rounded-lg border px-3 py-2.5 text-sm outline-none focus:ring-2 ${
-                  pinStatus === "error" ? "border-red-400 focus:border-red-400 focus:ring-red-200"
-                  : pinStatus === "ok" ? "border-green-500 focus:border-green-500 focus:ring-green-200"
-                  : "border-silver-dark focus:border-royal focus:ring-royal/30"
-                }`}
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field label="Full name" value={form.fullName} onChange={(v) => update("fullName", v)} required />
+              <Field
+                label="Phone" value={form.phone} type="tel" inputMode="numeric"
+                placeholder="10-digit mobile number" minLength={10} maxLength={10}
+                onChange={(v) => update("phone", v.replace(/\D/g, "").slice(0, 10))} required
               />
-              {pinMessage && (
-                <p className={`mt-1 text-xs ${pinStatus === "error" ? "text-red-600" : pinStatus === "ok" ? "text-green-600" : "text-silver-dark"}`}>
-                  {pinStatus === "ok" ? "✓ " : pinStatus === "error" ? "✕ " : ""}{pinMessage}
+            </div>
+
+            <Field
+              label="Flat / House No / Building Name" value={form.flatHouse}
+              onChange={(v) => update("flatHouse", v)} required
+              placeholder="e.g. Flat 302, Shree Residency"
+            />
+            <Field
+              label="Area / Sector / Locality" value={form.area}
+              onChange={(v) => update("area", v)} required
+              placeholder="e.g. Sector 62, Near City Mall"
+            />
+            <Field
+              label="Landmark (optional)" value={form.landmark}
+              onChange={(v) => update("landmark", v)}
+              placeholder="e.g. Opposite HDFC Bank"
+            />
+
+            <div className="grid gap-4 sm:grid-cols-3">
+              <div>
+                <label htmlFor="checkout-pincode" className="mb-1 block text-sm font-medium text-white/80">Pincode</label>
+                <input
+                  id="checkout-pincode"
+                  type="text" inputMode="numeric" required value={form.pincode}
+                  onChange={(e) => handlePincode(e.target.value)} placeholder="6-digit PIN"
+                  className={`w-full rounded-lg glass-card px-3 py-2.5 text-sm text-white outline-none placeholder:text-white/30 ${
+                    pinStatus === "error" ? "ring-1 ring-red-400"
+                    : pinStatus === "ok" ? "ring-1 ring-cyan"
+                    : "focus:shadow-glow-electric"
+                  }`}
+                />
+                {pinMessage && (
+                  <p className={`mt-1 text-xs ${pinStatus === "error" ? "text-red-400" : pinStatus === "ok" ? "text-cyan" : "text-white/40"}`}>
+                    {pinStatus === "ok" ? "✓ " : pinStatus === "error" ? "✕ " : ""}{pinMessage}
+                  </p>
+                )}
+              </div>
+              <Field label="City" value={form.city} onChange={(v) => update("city", v)} required />
+              <Field label="State" value={form.state} onChange={(v) => update("state", v)} required />
+            </div>
+
+            {/* Payment method */}
+            <div className="pt-2">
+              <h3 className="mb-2 text-sm font-semibold text-white/80">Payment Method</h3>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <PayOption
+                  active={payMethod === "ONLINE"} onClick={() => setPayMethod("ONLINE")}
+                  title="Pay Online" desc="UPI, Cards, Netbanking" Icon={Wifi}
+                />
+                <PayOption
+                  active={payMethod === "COD"} onClick={() => setPayMethod("COD")}
+                  title="Cash on Delivery" desc="Pay when it arrives" Icon={Banknote}
+                  disabled={codBlocked}
+                />
+              </div>
+              {codBlocked && (
+                <p className="mt-2 text-xs text-red-400">
+                  Cash on Delivery is available only for orders up to {formatPrice(COD_LIMIT)}. Please pay online for this order.
                 </p>
               )}
             </div>
-            <Field label="City" value={form.city} onChange={(v) => update("city", v)} required />
-            <Field label="State" value={form.state} onChange={(v) => update("state", v)} required />
-          </div>
 
-          {/* Payment method */}
-          <div className="pt-2">
-            <h3 className="mb-2 text-sm font-semibold text-navy">Payment Method</h3>
-            <div className="grid gap-3 sm:grid-cols-2">
-              <PayOption active={payMethod === "ONLINE"} onClick={() => setPayMethod("ONLINE")} title="Pay Online" desc="UPI, Cards, Netbanking" />
-              <PayOption
-                active={payMethod === "COD"} onClick={() => setPayMethod("COD")}
-                title="Cash on Delivery" desc="Pay when it arrives"
-                disabled={codBlocked}
-              />
-            </div>
-            {codBlocked && (
-              <p className="mt-2 text-xs text-red-500">
-                Cash on Delivery is available only for orders up to {formatPrice(COD_LIMIT)}. Please pay online for this order.
-              </p>
-            )}
-          </div>
+            <Button type="submit" variant="gradient" size="lg" className="w-full" disabled={loading}>
+              {loading ? "Processing…" : payMethod === "ONLINE" ? `Pay ${formatPrice(grandTotal)}` : `Place Order · ${formatPrice(grandTotal)}`}
+            </Button>
+            <p className="text-center text-xs text-white/40">
+              {payMethod === "ONLINE" ? "Secured by Razorpay. Test mode — use a test card/UPI." : "No payment now — pay in cash on delivery."}
+            </p>
+          </form>
 
-          <Button type="submit" size="lg" className="w-full" disabled={loading}>
-            {loading ? "Processing…" : payMethod === "ONLINE" ? `Pay ${formatPrice(grandTotal)}` : `Place Order · ${formatPrice(grandTotal)}`}
-          </Button>
-          <p className="text-center text-xs text-silver-dark">
-            {payMethod === "ONLINE" ? "Secured by Razorpay. Test mode — use a test card/UPI." : "No payment now — pay in cash on delivery."}
-          </p>
-        </form>
+          {/* Order Summary */}
+          <div className="sticky top-24 h-fit space-y-4">
+            <div className="glass-strong rounded-3xl p-6">
+              <h2 className="mb-4 text-lg font-bold text-white">Order Summary</h2>
 
-        {/* Order Summary */}
-        <div className="sticky top-24 h-fit space-y-4">
-          <div className="rounded-2xl border border-silver-light bg-white p-6 shadow-card">
-            <h2 className="mb-4 text-lg font-bold text-navy">Order Summary</h2>
-
-            {/* Items list */}
-            <div className="space-y-3">
-              {items.map((item) => (
-                <div key={item.id} className="flex justify-between text-sm">
-                  <span className="mr-2 line-clamp-1 text-silver-dark">
-                    {item.name} × {item.quantity}
-                  </span>
-                  <span className="shrink-0 font-semibold">
-                    {formatPrice((item.salePrice ?? item.price) * item.quantity)}
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            <div className="my-4 border-t border-silver-light" />
-
-            {/* Price breakdown */}
-            <div className="space-y-2 text-sm">
-
-              <div className="flex justify-between">
-                <span className="text-silver-dark">Total MRP</span>
-                <span className="font-semibold">{formatPrice(mrpTotal)}</span>
+              {/* Items list */}
+              <div className="space-y-3">
+                {items.map((item) => (
+                  <div key={item.id} className="flex justify-between text-sm">
+                    <span className="mr-2 line-clamp-1 text-white/50">
+                      {item.name} × {item.quantity}
+                    </span>
+                    <span className="shrink-0 font-semibold text-white">
+                      {formatPrice((item.salePrice ?? item.price) * item.quantity)}
+                    </span>
+                  </div>
+                ))}
               </div>
 
-              {productDiscount > 0 && (
-                <div className="flex justify-between text-green-600">
-                  <span className="flex items-center gap-1.5"><Tag size={13} /> Discount on MRP</span>
-                  <span className="font-semibold">-{formatPrice(productDiscount)}</span>
-                </div>
-              )}
+              <div className="my-4 border-t border-white/10" />
 
-              {coupon && (
-                <div className="flex justify-between text-green-600">
-                  <span className="flex items-center gap-1.5"><Ticket size={13} /> Coupon ({coupon.code})</span>
-                  <span className="font-semibold">-{formatPrice(couponDiscount)}</span>
-                </div>
-              )}
+              {/* Price breakdown */}
+              <div className="space-y-2 text-sm">
 
-              <div className="flex justify-between">
-                <span className="text-silver-dark flex items-center gap-1.5"><Truck size={13} /> Shipping</span>
-                <span className={`font-semibold ${shipping === 0 ? "text-green-600" : ""}`}>
-                  {shipping === 0 ? "FREE" : formatPrice(shipping)}
-                </span>
+                <div className="flex justify-between">
+                  <span className="text-white/50">Total MRP</span>
+                  <span className="font-semibold text-white">{formatPrice(mrpTotal)}</span>
+                </div>
+
+                {productDiscount > 0 && (
+                  <div className="flex justify-between text-cyan">
+                    <span className="flex items-center gap-1.5"><Tag size={13} /> Discount on MRP</span>
+                    <span className="font-semibold">-{formatPrice(productDiscount)}</span>
+                  </div>
+                )}
+
+                {coupon && (
+                  <div className="flex justify-between text-cyan">
+                    <span className="flex items-center gap-1.5"><Ticket size={13} /> Coupon ({coupon.code})</span>
+                    <span className="font-semibold">-{formatPrice(couponDiscount)}</span>
+                  </div>
+                )}
+
+                <div className="flex justify-between">
+                  <span className="text-white/50 flex items-center gap-1.5"><Truck size={13} /> Shipping</span>
+                  <span className={`font-semibold ${shipping === 0 ? "text-cyan" : "text-white"}`}>
+                    {shipping === 0 ? "FREE" : formatPrice(shipping)}
+                  </span>
+                </div>
               </div>
-            </div>
 
-            <div className="my-4 border-t border-dashed border-silver-light" />
+              <div className="my-4 border-t border-dashed border-white/10" />
 
-            {/* Grand total */}
-            <div className="flex justify-between text-base font-bold text-navy">
-              <span>Amount Payable</span>
-              <div className="text-right">
-                <span className="text-xl">{formatPrice(grandTotal)}</span>
-                {totalSaved > 0 && (
-                  <p className="text-xs text-green-600 font-medium mt-0.5">🎉 You save {formatPrice(totalSaved)}</p>
+              {/* Grand total */}
+              <div className="flex justify-between text-base font-bold text-white">
+                <span>Amount Payable</span>
+                <div className="text-right">
+                  <span className="text-xl">{formatPrice(grandTotal)}</span>
+                  {totalSaved > 0 && (
+                    <p className="text-xs text-cyan font-medium mt-0.5">🎉 You save {formatPrice(totalSaved)}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Coupon input */}
+              <div className="mt-4">
+                <p className="mb-2 text-sm font-semibold text-white/80">Have a coupon?</p>
+                {coupon ? (
+                  <div className="flex items-center justify-between rounded-xl border border-cyan/30 bg-cyan/10 px-3 py-2.5">
+                    <div className="flex items-center gap-2 text-sm text-cyan font-semibold">
+                      <Ticket size={15} />
+                      {coupon.code} applied!
+                    </div>
+                    <button type="button" onClick={removeCoupon} className="text-cyan hover:text-red-400 transition-colors">
+                      <X size={16} />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={couponCode}
+                      onChange={(e) => { setCouponCode(e.target.value.toUpperCase()); setCouponError(""); }}
+                      onKeyDown={(e) => e.key === "Enter" && applyCoupon()}
+                      placeholder="Enter coupon code"
+                      className="flex-1 rounded-xl glass-card px-3 py-2 text-sm text-white outline-none focus:shadow-glow-electric uppercase placeholder:normal-case placeholder:text-white/30"
+                    />
+                    <button
+                      type="button"
+                      onClick={applyCoupon}
+                      disabled={couponLoading || !couponCode.trim()}
+                      className="rounded-xl bg-gradient-to-r from-electric to-liquid px-4 py-2 text-sm font-semibold text-white shadow-glow-electric hover:brightness-110 disabled:opacity-50 disabled:shadow-none transition-all"
+                    >
+                      {couponLoading ? "..." : "Apply"}
+                    </button>
+                  </div>
+                )}
+                {couponError && (
+                  <p className="mt-1.5 text-xs text-red-400">{couponError}</p>
                 )}
               </div>
             </div>
-
-            {/* Coupon input */}
-            <div className="mt-4">
-              <p className="mb-2 text-sm font-semibold text-navy">Have a coupon?</p>
-              {coupon ? (
-                <div className="flex items-center justify-between rounded-xl border border-green-300 bg-green-50 px-3 py-2.5">
-                  <div className="flex items-center gap-2 text-sm text-green-700 font-semibold">
-                    <Ticket size={15} />
-                    {coupon.code} applied!
-                  </div>
-                  <button type="button" onClick={removeCoupon} className="text-green-600 hover:text-red-500 transition-colors">
-                    <X size={16} />
-                  </button>
-                </div>
-              ) : (
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={couponCode}
-                    onChange={(e) => { setCouponCode(e.target.value.toUpperCase()); setCouponError(""); }}
-                    onKeyDown={(e) => e.key === "Enter" && applyCoupon()}
-                    placeholder="Enter coupon code"
-                    className="flex-1 rounded-xl border border-silver-dark px-3 py-2 text-sm outline-none focus:border-royal focus:ring-2 focus:ring-royal/20 uppercase placeholder:normal-case"
-                  />
-                  <button
-                    type="button"
-                    onClick={applyCoupon}
-                    disabled={couponLoading || !couponCode.trim()}
-                    className="rounded-xl bg-royal px-4 py-2 text-sm font-semibold text-white hover:bg-royal-dark disabled:opacity-50 transition-colors"
-                  >
-                    {couponLoading ? "..." : "Apply"}
-                  </button>
-                </div>
-              )}
-              {couponError && (
-                <p className="mt-1.5 text-xs text-red-500">{couponError}</p>
-              )}
-            </div>
           </div>
-        </div>
 
+        </div>
       </div>
     </div>
   );
 }
 
-function PayOption({ active, onClick, title, desc, disabled }) {
+function PayOption({ active, onClick, title, desc, disabled, Icon }) {
   return (
     <button
       type="button" onClick={disabled ? undefined : onClick} disabled={disabled}
-      className={`flex items-start gap-3 rounded-lg border p-3 text-left transition-colors ${
-        disabled ? "cursor-not-allowed border-silver-dark opacity-50"
-        : active ? "border-royal bg-royal/5 ring-1 ring-royal" : "border-silver-dark hover:border-royal"
+      className={`flex items-start gap-3 rounded-2xl p-3 text-left transition-all ${
+        disabled ? "cursor-not-allowed glass-card opacity-40"
+        : active ? "glass-card shadow-glow-electric ring-1 ring-electric/50" : "glass-card hover:shadow-glow-electric"
       }`}
     >
-      <span className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border ${active ? "border-royal" : "border-silver-dark"}`}>
-        {active && <span className="h-2 w-2 rounded-full bg-royal" />}
+      {Icon && <Icon size={18} className={active ? "text-electric-light" : "text-white/40"} />}
+      <span className="flex-1">
+        <span className="block text-sm font-semibold text-white">{title}</span>
+        <span className="block text-xs text-white/40">{desc}</span>
       </span>
-      <span>
-        <span className="block text-sm font-semibold text-navy">{title}</span>
-        <span className="block text-xs text-silver-dark">{desc}</span>
+      <span className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border ${active ? "border-electric-light" : "border-white/20"}`}>
+        {active && <span className="h-2 w-2 rounded-full bg-gradient-to-r from-electric to-liquid" />}
       </span>
     </button>
   );
@@ -457,15 +465,15 @@ function Field({ label, value, onChange, required, type = "text", inputMode, pla
   const id = `checkout-${label.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")}`;
   return (
     <div>
-      <label htmlFor={id} className="mb-1 block text-sm font-medium text-navy">
-        {label}{required && <span className="ml-0.5 text-royal">*</span>}
+      <label htmlFor={id} className="mb-1 block text-sm font-medium text-white/80">
+        {label}{required && <span className="ml-0.5 text-electric-light">*</span>}
       </label>
       <input
         id={id}
         type={type} inputMode={inputMode} required={required}
         minLength={minLength} maxLength={maxLength} value={value}
         onChange={(e) => onChange(e.target.value)} placeholder={placeholder}
-        className="w-full rounded-lg border border-silver-dark px-3 py-2.5 text-sm outline-none placeholder:text-silver-dark/60 focus:border-royal focus:ring-2 focus:ring-royal/30"
+        className="w-full rounded-lg glass-card px-3 py-2.5 text-sm text-white outline-none placeholder:text-white/30 focus:shadow-glow-electric"
       />
     </div>
   );

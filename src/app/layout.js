@@ -4,6 +4,7 @@ import Providers from "@/components/Providers";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
+import PageTransition from "@/components/ui/PageTransition";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -30,7 +31,9 @@ export default function RootLayout({ children }) {
       >
         <Providers>
           <Navbar />
-          <main className="min-h-screen bg-cloud">{children}</main>
+          <main className="min-h-screen bg-cloud">
+            <PageTransition>{children}</PageTransition>
+          </main>
           <Footer />
           <WhatsAppButton />
         </Providers>

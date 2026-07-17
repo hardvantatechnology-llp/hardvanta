@@ -1,17 +1,35 @@
 import { TrendingUp, Download } from "lucide-react";
 import { formatPrice } from "@/utils/formatPrice";
+import Pagination, { parsePage } from "@/components/admin/Pagination";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Reports — Admin" };
 
-export default async function ReportsPage() {
+const PAGE_SIZE = 20;
+
+export default async function ReportsPage({ searchParams }) {
   const { prisma } = await import("@/lib/prisma");
 
-  const [orders, topProducts] = await Promise.all([
+  const page = parsePage(searchParams);
+
+  const [
+    orders,
+    totalOrderCount,
+    revenueAgg,
+    deliveredAgg,
+    cancelledCount,
+    topProducts,
+  ] = await Promise.all([
     prisma.order.findMany({
       include: { items: true, user: true },
       orderBy: { createdAt: "desc" },
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
     }),
+    prisma.order.count(),
+    prisma.order.aggregate({ _sum: { total: true } }),
+    prisma.order.aggregate({ where: { status: "DELIVERED" }, _sum: { total: true }, _count: true }),
+    prisma.order.count({ where: { status: "CANCELLED" } }),
     prisma.orderItem.groupBy({
       by: ["productId", "productName"],
       _sum: { quantity: true, price: true },
@@ -19,11 +37,10 @@ export default async function ReportsPage() {
       take: 10,
     }),
   ]);
+  const totalPages = Math.max(1, Math.ceil(totalOrderCount / PAGE_SIZE));
 
-  const totalRevenue = orders.reduce((sum, o) => sum + o.total, 0);
-  const deliveredOrders = orders.filter((o) => o.status === "DELIVERED");
-  const deliveredRevenue = deliveredOrders.reduce((sum, o) => sum + o.total, 0);
-  const cancelledOrders = orders.filter((o) => o.status === "CANCELLED");
+  const totalRevenue = revenueAgg._sum.total || 0;
+  const deliveredRevenue = deliveredAgg._sum.total || 0;
 
   return (
     <div>
@@ -37,8 +54,8 @@ export default async function ReportsPage() {
         {[
           { label: "Total Revenue", value: formatPrice(totalRevenue), color: "text-navy" },
           { label: "Delivered Revenue", value: formatPrice(deliveredRevenue), color: "text-green-600" },
-          { label: "Total Orders", value: orders.length, color: "text-royal" },
-          { label: "Cancelled", value: cancelledOrders.length, color: "text-red-600" },
+          { label: "Total Orders", value: totalOrderCount, color: "text-royal" },
+          { label: "Cancelled", value: cancelledCount, color: "text-red-600" },
         ].map((s) => (
           <div key={s.label} className="rounded-xl border border-silver-light bg-white p-4 shadow-card">
             <p className="text-xs text-silver-dark font-semibold uppercase">{s.label}</p>
@@ -80,7 +97,7 @@ export default async function ReportsPage() {
       <div className="rounded-xl border border-silver-light bg-white shadow-card overflow-hidden">
         <div className="px-5 py-4 border-b border-silver-light bg-cloud flex items-center justify-between">
           <p className="text-xs font-bold uppercase tracking-wider text-royal">All Orders</p>
-          <span className="text-xs text-silver-dark">{orders.length} orders</span>
+          <span className="text-xs text-silver-dark">{totalOrderCount} orders</span>
         </div>
         <table className="w-full text-sm">
           <thead>
@@ -119,6 +136,8 @@ export default async function ReportsPage() {
           </tbody>
         </table>
       </div>
+
+      <Pagination page={page} totalPages={totalPages} basePath="/admin/reports" />
     </div>
   );
 }

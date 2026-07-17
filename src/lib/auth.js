@@ -65,11 +65,13 @@ export async function getAuthOptions() {
     ],
 
     callbacks: {
-      
+
       async jwt({ token, user, account }) {
         if (user) {
           token.id = user.id;
           token.role = user.role ?? "USER";
+          token.pwdChangedAt = user.passwordChangedAt ? new Date(user.passwordChangedAt).getTime() : 0;
+          token.validatedAt = Date.now();
         }
 
         // Google OAuth: pehli baar login pe DB se user fetch karo
@@ -80,7 +82,24 @@ export async function getAuthOptions() {
           if (dbUser) {
             token.id = dbUser.id;
             token.role = dbUser.role ?? "USER";
+            token.pwdChangedAt = dbUser.passwordChangedAt ? new Date(dbUser.passwordChangedAt).getTime() : 0;
+            token.validatedAt = Date.now();
           }
+        }
+
+        // Periodically re-sync against the DB so a revoked/downgraded role,
+        // a deleted account, or a password reset invalidates an
+        // already-issued JWT well before its maxAge expires, instead of
+        // silently keeping stale privileges for the full session lifetime.
+        const REVALIDATE_INTERVAL_MS = 15 * 60 * 1000; // 15 minutes
+        if (!user && token.id && (!token.validatedAt || Date.now() - token.validatedAt > REVALIDATE_INTERVAL_MS)) {
+          const dbUser = await prisma.user.findUnique({ where: { id: token.id } });
+          if (!dbUser) return {}; // account deleted — drop the session
+          const dbPwdChangedAt = dbUser.passwordChangedAt ? new Date(dbUser.passwordChangedAt).getTime() : 0;
+          if (dbPwdChangedAt !== (token.pwdChangedAt || 0)) return {}; // password changed since this token was issued
+          token.role = dbUser.role ?? "USER";
+          token.pwdChangedAt = dbPwdChangedAt;
+          token.validatedAt = Date.now();
         }
 
         return token;

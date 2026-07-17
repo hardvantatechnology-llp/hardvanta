@@ -1,4 +1,8 @@
 import ProductGrid from "@/components/products/ProductGrid";
+import CategoryPills from "@/components/products/CategoryPills";
+import SortDropdown from "@/components/products/SortDropdown";
+import Pagination from "@/components/products/Pagination";
+import { sortProducts } from "@/utils/sortProducts";
 import {
   getAllProducts,
   getProductsByCategory,
@@ -9,21 +13,49 @@ import {
 export const metadata = { title: "All Products — hardvanta" };
 export const dynamic = "force-dynamic";
 
+const PAGE_SIZE = 24;
+const FETCH_BOUND = 500;
+
 export default async function ProductsPage({ searchParams }) {
   const activeCat = searchParams?.category;
   const q = searchParams?.q?.trim();
-  const [list] = await Promise.all([
+  const sort = searchParams?.sort;
+  const page = Math.max(1, parseInt(searchParams?.page, 10) || 1);
+
+  const [rawList, categories] = await Promise.all([
     q
-      ? searchProducts(q)
+      ? searchProducts(q, { limit: FETCH_BOUND })
       : activeCat
-        ? getProductsByCategory(activeCat)
-        : getAllProducts(),
+        ? getProductsByCategory(activeCat, { limit: FETCH_BOUND })
+        : getAllProducts({ limit: FETCH_BOUND }),
     getCategories(),
   ]);
 
+  const sorted = sortProducts(rawList, sort);
+  const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
+  const safePage = Math.min(page, totalPages);
+  const list = sorted.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+
   return (
-    <div className="container-page py-8">
-      <ProductGrid products={list} />
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-graphite to-obsidian">
+      <div className="liquid-blob left-1/3 top-[-200px] h-96 w-96 bg-electric/10" />
+      <div className="container-page relative py-8">
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-bold text-white">
+              {q ? `Results for "${q}"` : "All Products"}
+            </h1>
+            <p className="mt-1 text-sm text-white/40">{sorted.length} products</p>
+          </div>
+          <SortDropdown current={sort || "relevance"} searchParams={searchParams} basePath="/products" />
+        </div>
+
+        <CategoryPills categories={categories} activeCat={activeCat} />
+
+        <ProductGrid products={list} />
+
+        <Pagination page={safePage} totalPages={totalPages} basePath="/products" searchParams={searchParams} />
+      </div>
     </div>
   );
 }

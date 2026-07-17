@@ -5,11 +5,8 @@ import { useSession } from "next-auth/react";
 
 const CartContext = createContext(null);
 const STORAGE_KEY = "hardvanta_cart";
-export const MAX_QUANTITY = 99;
-
-export function clampQuantity(quantity, stock) {
-  const ceiling = typeof stock === "number" ? Math.min(stock, MAX_QUANTITY) : MAX_QUANTITY;
-  return Math.max(1, Math.min(quantity, ceiling));
+export function clampQuantity(quantity) {
+  return Math.max(1, quantity);
 }
 
 export function CartProvider({ children }) {
@@ -102,11 +99,11 @@ const mergedRef = useRef(false);
       if (existing) {
         return prev.map((i) =>
           i.id === product.id
-            ? { ...i, quantity: clampQuantity(i.quantity + quantity, i.stock) }
+            ? { ...i, quantity: clampQuantity(i.quantity + quantity) }
             : i
         );
       }
-      return [...prev, { ...product, quantity: clampQuantity(quantity, product.stock) }];
+      return [...prev, { ...product, quantity: clampQuantity(quantity) }];
     });
   }
 
@@ -151,7 +148,7 @@ const mergedRef = useRef(false);
       return;
     }
     setItems((prev) =>
-      prev.map((i) => (i.id === id ? { ...i, quantity: clampQuantity(quantity, i.stock) } : i))
+      prev.map((i) => (i.id === id ? { ...i, quantity: clampQuantity(quantity) } : i))
     );
   }
 

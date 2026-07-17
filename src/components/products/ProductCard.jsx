@@ -1,13 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Star, ShoppingCart, Heart, Check } from "lucide-react";
+import { Star, ShoppingCart, Heart, Check, Repeat, Eye } from "lucide-react";
 import { formatPrice } from "@/utils/formatPrice";
 import { imageSrc } from "@/utils/imageSrc";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
+import GlassCard from "@/components/ui/GlassCard";
+import Button from "@/components/ui/Button";
+import QuickViewModal from "./QuickViewModal";
+
+const COMPARE_KEY = "hv_compare_ids";
+const COMPARE_MAX = 4;
+const COMPARE_EVENT = "hv-compare-change";
+const NEW_WINDOW_DAYS = 14;
+
+function readCompareIds() {
+  try {
+    return JSON.parse(localStorage.getItem(COMPARE_KEY) || "[]");
+  } catch {
+    return [];
+  }
+}
 
 function Stars({ rating = 0 }) {
   const rounded = Math.round(rating);
@@ -17,7 +33,7 @@ function Stars({ rating = 0 }) {
         <Star
           key={i}
           size={12}
-          className={i <= rounded ? "fill-amber-400 text-amber-400" : "fill-silver-light text-silver-light"}
+          className={i <= rounded ? "fill-amber-400 text-amber-400" : "fill-white/10 text-white/10"}
         />
       ))}
     </span>
@@ -29,6 +45,33 @@ export default function ProductCard({ product }) {
   const { wishlistIds, toggleWishlist } = useWishlist();
   const [added, setAdded] = useState(false);
   const [addError, setAddError] = useState(false);
+  const [compared, setCompared] = useState(false);
+  const [quickView, setQuickView] = useState(false);
+
+  useEffect(() => {
+    setCompared(readCompareIds().includes(product.id));
+    const sync = () => setCompared(readCompareIds().includes(product.id));
+    window.addEventListener(COMPARE_EVENT, sync);
+    return () => window.removeEventListener(COMPARE_EVENT, sync);
+  }, [product.id]);
+
+  const toggleCompare = useCallback(
+    (e) => {
+      e.preventDefault();
+      const ids = readCompareIds();
+      const isIn = ids.includes(product.id);
+      let next;
+      if (isIn) {
+        next = ids.filter((id) => id !== product.id);
+      } else {
+        if (ids.length >= COMPARE_MAX) return;
+        next = [...ids, product.id];
+      }
+      localStorage.setItem(COMPARE_KEY, JSON.stringify(next));
+      window.dispatchEvent(new Event(COMPARE_EVENT));
+    },
+    [product.id]
+  );
 
   const wished = wishlistIds?.has?.(product.id);
   const price = product.salePrice ?? product.price;
@@ -37,6 +80,9 @@ export default function ProductCard({ product }) {
     ? Math.round(((product.price - product.salePrice) / product.price) * 100)
     : 0;
   const outOfStock = product.inStock === false;
+  const isNew =
+    product.createdAt &&
+    Date.now() - new Date(product.createdAt).getTime() < NEW_WINDOW_DAYS * 24 * 60 * 60 * 1000;
 
   async function handleAdd() {
     if (outOfStock) return;
@@ -52,99 +98,124 @@ export default function ProductCard({ product }) {
   }
 
   return (
-    <div className="group flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-[0_1px_4px_rgba(10,31,68,0.08)] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_12px_28px_rgba(10,31,68,0.16)]">
-      {/* Image — 1:1, contain, lazy */}
-      <div className="relative">
-        <Link href={`/products/${product.id}`} className="block">
-          <div className="relative aspect-square overflow-hidden bg-white">
-            <Image
-              src={imageSrc(product.image)}
-              alt={product.name}
-              fill
-              loading="lazy"
-              sizes="(max-width: 1024px) 50vw, 25vw"
-              className="object-contain p-3 transition-transform duration-300 group-hover:scale-105"
-            />
+    <>
+      <GlassCard opaque glow="electric" className="group flex h-full flex-col overflow-hidden">
+        {/* Image */}
+        <div className="relative">
+          <Link href={`/products/${product.id}`} className="block">
+            <div className="relative aspect-square overflow-hidden bg-white/5">
+              <Image
+                src={imageSrc(product.image)}
+                alt={product.name}
+                fill
+                loading="lazy"
+                sizes="(max-width: 1024px) 50vw, 25vw"
+                className="object-contain p-3 transition-transform duration-500 ease-out group-hover:scale-110"
+              />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-obsidian/40 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+            </div>
+          </Link>
+
+          {/* Badges — top-left */}
+          <div className="absolute left-3 top-3 flex flex-col gap-1.5">
+            {hasDiscount && (
+              <span className="rounded-md bg-gradient-to-r from-electric to-liquid px-1.5 py-0.5 text-[10px] font-bold text-white shadow-glow-electric">
+                -{discountPct}%
+              </span>
+            )}
+            {isNew && !outOfStock && (
+              <span className="rounded-md bg-gradient-to-r from-cyan to-electric px-1.5 py-0.5 text-[10px] font-bold text-obsidian">
+                NEW
+              </span>
+            )}
+            {outOfStock && (
+              <span className="rounded-md bg-obsidian/80 px-1.5 py-0.5 text-[10px] font-bold text-white/70">
+                Out of stock
+              </span>
+            )}
           </div>
-        </Link>
 
-        {/* Discount badge — top-left */}
-        {hasDiscount && (
-          <span className="absolute left-3 top-3 rounded-md bg-royal px-1.5 py-0.5 text-[10px] font-bold text-white shadow-sm">
-            -{discountPct}%
-          </span>
-        )}
-        {outOfStock && (
-          <span className="absolute left-3 top-3 rounded-md bg-navy/80 px-1.5 py-0.5 text-[10px] font-bold text-white">
-            Out of stock
-          </span>
-        )}
-
-        {/* Wishlist — circular top-right */}
-        <button
-          type="button"
-          onClick={() => toggleWishlist(product.id)}
-          aria-label={wished ? "Remove from wishlist" : "Add to wishlist"}
-          className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white text-navy shadow-md transition-colors hover:text-red-500"
-        >
-          <Heart size={15} className={wished ? "fill-red-500 text-red-500" : ""} />
-        </button>
-      </div>
-
-      {/* Content — 16px padding, tight spacing */}
-      <div className="flex flex-1 flex-col p-4">
-        <span className="truncate text-[11px] font-medium uppercase tracking-wide text-gray-400">
-          {product.brand?.name || " "}
-        </span>
-
-        <Link href={`/products/${product.id}`}>
-          <h3 className="mt-0.5 line-clamp-2 min-h-[2.5rem] text-sm font-medium leading-snug text-navy transition-colors hover:text-royal">
-            {product.name}
-          </h3>
-        </Link>
-
-        {/* Rating beside stars */}
-        <div className="mt-1.5 flex items-center gap-1.5">
-          <Stars rating={product.rating} />
-          <span className="text-xs font-medium text-navy">{product.rating || 0}</span>
-          <span className="text-xs text-gray-400">({product.reviewCount || 0})</span>
+          {/* Action icons — top-right */}
+          <div className="absolute right-3 top-3 flex flex-col gap-1.5">
+            <button
+              type="button"
+              onClick={() => toggleWishlist(product.id)}
+              aria-label={wished ? "Remove from wishlist" : "Add to wishlist"}
+              className="flex h-8 w-8 items-center justify-center rounded-full glass text-white/80 transition-all hover:shadow-glow-purple"
+            >
+              <Heart size={15} className={wished ? "fill-liquid text-liquid" : ""} />
+            </button>
+            <button
+              type="button"
+              onClick={toggleCompare}
+              aria-label={compared ? "Remove from compare" : "Add to compare"}
+              className="flex h-8 w-8 items-center justify-center rounded-full glass text-white/80 transition-all hover:shadow-glow-cyan"
+            >
+              <Repeat size={14} className={compared ? "text-cyan" : ""} />
+            </button>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                setQuickView(true);
+              }}
+              aria-label="Quick view"
+              className="flex h-8 w-8 items-center justify-center rounded-full glass text-white/80 opacity-0 transition-all group-hover:opacity-100 hover:shadow-glow-electric"
+            >
+              <Eye size={14} />
+            </button>
+          </div>
         </div>
 
-        {/* Price */}
-        <div className="mt-1.5 flex items-baseline gap-2">
-          <span className="text-xl font-bold text-navy">{formatPrice(price)}</span>
-          {hasDiscount && (
-            <span className="text-xs text-gray-400 line-through">
-              {formatPrice(product.price)}
-            </span>
-          )}
-        </div>
+        {/* Content */}
+        <div className="flex flex-1 flex-col p-4">
+          <span className="truncate text-[11px] font-medium uppercase tracking-wide text-white/40">
+            {product.brand?.name || " "}
+          </span>
 
-        {/* Add to cart — compact, 44px */}
-        <button
-          onClick={handleAdd}
-          disabled={outOfStock}
-          className={`mt-auto flex h-11 w-full items-center justify-center gap-2 rounded-xl text-sm font-semibold transition-all duration-300 active:scale-[0.98] ${
-            outOfStock
-              ? "cursor-not-allowed bg-silver-light text-silver-dark"
-              : addError
-                ? "bg-red-600 text-white"
-                : added
-                  ? "bg-green-600 text-white"
-                  : "bg-royal text-white hover:bg-royal-dark"
-          }`}
-        >
-          {outOfStock ? (
-            "Out of stock"
-          ) : addError ? (
-            "Couldn't add — retry"
-          ) : added ? (
-            <><Check size={16} /> Added</>
-          ) : (
-            <><ShoppingCart size={16} /> Add to Cart</>
-          )}
-        </button>
-      </div>
-    </div>
+          <Link href={`/products/${product.id}`}>
+            <h3 className="mt-0.5 line-clamp-2 min-h-[2.5rem] text-sm font-medium leading-snug text-white/90 transition-colors hover:text-electric-light">
+              {product.name}
+            </h3>
+          </Link>
+
+          <div className="mt-1.5 flex items-center gap-1.5">
+            <Stars rating={product.rating} />
+            <span className="text-xs font-medium text-white/80">{product.rating || 0}</span>
+            <span className="text-xs text-white/40">({product.reviewCount || 0})</span>
+          </div>
+
+          <div className="mt-1.5 flex items-baseline gap-2">
+            <span className="text-xl font-bold text-white">{formatPrice(price)}</span>
+            {hasDiscount && (
+              <span className="text-xs text-white/40 line-through">
+                {formatPrice(product.price)}
+              </span>
+            )}
+          </div>
+
+          <Button
+            onClick={handleAdd}
+            disabled={outOfStock}
+            variant={addError ? "primary" : added ? "glass" : "gradient"}
+            className={`mt-auto h-11 w-full ${outOfStock ? "!bg-white/5 !text-white/30 !shadow-none" : ""}`}
+          >
+            {outOfStock ? (
+              "Out of stock"
+            ) : addError ? (
+              "Couldn't add — retry"
+            ) : added ? (
+              <><Check size={16} /> Added</>
+            ) : (
+              <><ShoppingCart size={16} /> Add to Cart</>
+            )}
+          </Button>
+        </div>
+      </GlassCard>
+
+      {quickView && (
+        <QuickViewModal product={product} onClose={() => setQuickView(false)} />
+      )}
+    </>
   );
 }

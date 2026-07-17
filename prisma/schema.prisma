@@ -15,6 +15,7 @@ model User {
   phone         String?
   emailVerified DateTime?
   password      String?
+  passwordChangedAt DateTime?
   role          Role           @default(USER)
   image         String?
   createdAt     DateTime       @default(now())

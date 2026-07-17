@@ -33,6 +33,14 @@ export default function ComparePage() {
     setSelected((s) => s.filter((p) => p.id !== id));
   }
 
+  async function handleAddToCart(p) {
+    try {
+      await addItem(p);
+    } catch (e) {
+      console.error("add to cart failed", e);
+    }
+  }
+
   const available = all.filter((p) => !selected.find((s) => s.id === p.id));
 
   // Rows of the comparison table.
@@ -134,7 +142,7 @@ export default function ComparePage() {
                 {selected.map((p) => (
                   <td key={p.id} className="p-3 text-center">
                     <button
-                      onClick={() => addItem(p)}
+                      onClick={() => handleAddToCart(p)}
                       disabled={p.stock <= 0}
                       className="inline-flex items-center gap-2 rounded-lg bg-royal px-4 py-2 text-sm font-semibold text-white hover:bg-royal-dark disabled:opacity-50"
                     >

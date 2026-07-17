@@ -7,8 +7,6 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 
-const MAX_QUANTITY = 99;
-
 async function requireUser() {
   const { getAuthOptions } = await import("@/lib/auth");
   const authOptions = await getAuthOptions();
@@ -86,12 +84,10 @@ export async function POST(request) {
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
-    const ceiling = Math.min(product.stock, MAX_QUANTITY);
-
     const existing = await prisma.cartItem.findUnique({
       where: { userId_productId: { userId, productId } },
     });
-    const newQuantity = Math.max(1, Math.min((existing?.quantity ?? 0) + quantity, ceiling));
+    const newQuantity = Math.max(1, (existing?.quantity ?? 0) + quantity);
 
     await prisma.cartItem.upsert({
       where: {
@@ -164,7 +160,7 @@ export async function PATCH(request) {
       if (!product) {
         return NextResponse.json({ error: "Product not found" }, { status: 404 });
       }
-      const clampedQuantity = Math.min(quantity, product.stock, MAX_QUANTITY);
+      const clampedQuantity = Math.max(1, quantity);
       const existing = await prisma.cartItem.findUnique({
         where: { userId_productId: { userId, productId } },
       });

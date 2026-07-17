@@ -1,60 +1,95 @@
 import { Store, Package, TrendingUp } from "lucide-react";
 import { formatPrice } from "@/utils/formatPrice";
+import Pagination, { parsePage } from "@/components/admin/Pagination";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Sellers — Admin" };
 
-export default async function SellersPage() {
+const PAGE_SIZE = 20;
+
+export default async function SellersPage({ searchParams }) {
   const { prisma } = await import("@/lib/prisma");
 
-  // Sellers = brands with their product counts and revenue
-  const brands = await prisma.brand.findMany({
-    orderBy: { name: "asc" },
-    include: {
-      products: {
-        include: {
-          orderItems: true,
-        },
-      },
-    },
-  });
+  const page = parsePage(searchParams);
+
+  // Sellers = brands with their product counts and revenue.
+  // Paginate the brand list, and compute revenue/units-sold with DB-side
+  // aggregation scoped only to the brands shown on this page, instead of
+  // loading every brand's full product + order-item history into memory.
+  const [brands, totalBrands, totalProductCount] = await Promise.all([
+    prisma.brand.findMany({
+      orderBy: { name: "asc" },
+      include: { _count: { select: { products: true } } },
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+    }),
+    prisma.brand.count(),
+    prisma.product.count(),
+  ]);
+  const totalPages = Math.max(1, Math.ceil(totalBrands / PAGE_SIZE));
+
+  const brandIds = brands.map((b) => b.id);
+  const productLinks = brandIds.length
+    ? await prisma.product.findMany({
+        where: { brandId: { in: brandIds } },
+        select: { id: true, brandId: true },
+      })
+    : [];
+  const productToBrand = new Map(productLinks.map((p) => [p.id, p.brandId]));
+  const productIds = productLinks.map((p) => p.id);
+
+  // Only the order items for products belonging to the brands on this page —
+  // bounded by pagination rather than the whole store's order history.
+  const orderItems = productIds.length
+    ? await prisma.orderItem.findMany({
+        where: { productId: { in: productIds } },
+        select: { productId: true, price: true, quantity: true },
+      })
+    : [];
+
+  const totalsByBrand = new Map();
+  for (const oi of orderItems) {
+    const brandId = productToBrand.get(oi.productId);
+    if (!brandId) continue;
+    const cur = totalsByBrand.get(brandId) || { totalSold: 0, totalRevenue: 0 };
+    cur.totalSold += oi.quantity;
+    cur.totalRevenue += oi.price * oi.quantity;
+    totalsByBrand.set(brandId, cur);
+  }
 
   const sellersData = brands.map((brand) => {
-    const totalProducts = brand.products.length;
-    const totalSold = brand.products.reduce(
-      (sum, p) => sum + p.orderItems.reduce((s, oi) => s + oi.quantity, 0),
-      0
-    );
-    const totalRevenue = brand.products.reduce(
-      (sum, p) => sum + p.orderItems.reduce((s, oi) => s + oi.price * oi.quantity, 0),
-      0
-    );
-    return { ...brand, totalProducts, totalSold, totalRevenue };
+    const totals = totalsByBrand.get(brand.id) || { totalSold: 0, totalRevenue: 0 };
+    return {
+      ...brand,
+      totalProducts: brand._count.products,
+      totalSold: totals.totalSold,
+      totalRevenue: totals.totalRevenue,
+    };
   });
+
+  const pageRevenue = sellersData.reduce((sum, s) => sum + s.totalRevenue, 0);
 
   return (
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-navy">Sellers</h1>
-        <p className="text-sm text-silver-dark mt-0.5">{brands.length} total sellers/brands</p>
+        <p className="text-sm text-silver-dark mt-0.5">{totalBrands} total sellers/brands</p>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4 mb-6">
         <div className="rounded-xl border border-silver-light bg-white p-4 shadow-card">
           <p className="text-xs text-silver-dark font-semibold uppercase">Total Sellers</p>
-          <p className="text-2xl font-bold text-navy mt-1">{brands.length}</p>
+          <p className="text-2xl font-bold text-navy mt-1">{totalBrands}</p>
         </div>
         <div className="rounded-xl border border-silver-light bg-white p-4 shadow-card">
           <p className="text-xs text-silver-dark font-semibold uppercase">Total Products</p>
-          <p className="text-2xl font-bold text-navy mt-1">
-            {sellersData.reduce((sum, s) => sum + s.totalProducts, 0)}
-          </p>
+          <p className="text-2xl font-bold text-navy mt-1">{totalProductCount}</p>
         </div>
         <div className="rounded-xl border border-silver-light bg-white p-4 shadow-card">
-          <p className="text-xs text-silver-dark font-semibold uppercase">Total Revenue</p>
+          <p className="text-xs text-silver-dark font-semibold uppercase">Revenue (this page)</p>
           <p className="text-2xl font-bold text-navy mt-1">
-            {formatPrice(sellersData.reduce((sum, s) => sum + s.totalRevenue, 0))}
+            {formatPrice(pageRevenue)}
           </p>
         </div>
       </div>
@@ -115,6 +150,8 @@ export default async function SellersPage() {
           </tbody>
         </table>
       </div>
+
+      <Pagination page={page} totalPages={totalPages} basePath="/admin/sellers" />
     </div>
   );
 }
