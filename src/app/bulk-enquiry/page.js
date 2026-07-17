@@ -152,24 +152,26 @@ export default function BulkEnquiryPage() {
   }
 
   return (
-    <div>
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-graphite to-obsidian">
+      <div className="liquid-blob left-1/4 top-[-15%] h-96 w-96 bg-electric/10" />
+
       {/* Hero */}
-      <div className="bg-navy text-white">
+      <div className="relative bg-gradient-to-r from-obsidian via-midnight to-obsidian text-white">
         <div className="container-page py-10">
-          <nav className="mb-6 flex items-center gap-1 text-sm text-silver">
-            <Link href="/" className="hover:text-royal-light">Home</Link>
+          <nav className="mb-6 flex items-center gap-1 text-sm text-white/50">
+            <Link href="/" className="hover:text-electric-light">Home</Link>
             <ChevronRight size={14} />
             <span className="text-white">Bulk Enquiry</span>
           </nav>
 
-          <div className="flex items-center gap-2 text-royal-light">
+          <div className="flex items-center gap-2 text-electric-light">
             <Building2 size={18} />
             <span className="text-xs font-semibold uppercase tracking-wider">Hardvanta B2B</span>
           </div>
           <h1 className="mt-2 text-3xl font-bold sm:text-4xl">
             Bulk & Educational Orders
           </h1>
-          <p className="mt-3 max-w-2xl text-silver">
+          <p className="mt-3 max-w-2xl text-white/60">
             Special pricing for schools, colleges, makerspaces, resellers and
             corporates. Tell us what you need and our team will get back to
             you with a custom quote within 24 hours.
@@ -177,25 +179,25 @@ export default function BulkEnquiryPage() {
         </div>
       </div>
 
-      <div className="container-page py-12">
+      <div className="container-page relative py-12">
 
         {/* Benefits */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {benefits.map(({ Icon, title, desc }) => (
-            <div key={title} className="rounded-xl border border-silver-light bg-white p-5">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-cloud text-royal">
+            <div key={title} className="rounded-xl glass-card p-5">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-electric/10 text-electric-light">
                 <Icon size={20} />
               </div>
-              <h3 className="mt-3 font-bold text-navy">{title}</h3>
-              <p className="mt-1 text-sm leading-relaxed text-ink/70">{desc}</p>
+              <h3 className="mt-3 font-bold text-white">{title}</h3>
+              <p className="mt-1 text-sm leading-relaxed text-white/60">{desc}</p>
             </div>
           ))}
         </div>
 
         {/* Pricing tiers */}
         <div className="mt-14">
-          <h2 className="text-2xl font-bold text-navy">Volume Pricing</h2>
-          <p className="mt-1 text-sm text-ink/70">
+          <h2 className="text-2xl font-bold text-white">Volume Pricing</h2>
+          <p className="mt-1 text-sm text-white/60">
             Indicative discount tiers based on order value. Final pricing is
             confirmed in your custom quote.
           </p>
@@ -204,24 +206,24 @@ export default function BulkEnquiryPage() {
             {tiers.map((tier) => (
               <div
                 key={tier.name}
-                className={`rounded-2xl border p-6 ${
+                className={`rounded-2xl glass-card p-6 ${
                   tier.highlight
-                    ? "border-royal bg-cloud shadow-md"
-                    : "border-silver-light bg-white"
+                    ? "border-electric/40 shadow-glow-electric"
+                    : ""
                 }`}
               >
                 {tier.highlight && (
-                  <span className="mb-3 inline-block rounded-full bg-royal px-3 py-1 text-xs font-semibold text-white">
+                  <span className="mb-3 inline-block rounded-full bg-gradient-to-r from-electric to-liquid px-3 py-1 text-xs font-semibold text-white">
                     Most Popular
                   </span>
                 )}
-                <h3 className="text-lg font-bold text-navy">{tier.name}</h3>
-                <p className="mt-1 text-sm text-ink/70">{tier.range}</p>
-                <p className="mt-3 text-2xl font-extrabold text-royal">{tier.discount}</p>
+                <h3 className="text-lg font-bold text-white">{tier.name}</h3>
+                <p className="mt-1 text-sm text-white/60">{tier.range}</p>
+                <p className="mt-3 text-2xl font-extrabold text-electric-light">{tier.discount}</p>
                 <ul className="mt-5 space-y-2.5">
                   {tier.features.map((f) => (
-                    <li key={f} className="flex items-start gap-2 text-sm text-ink/80">
-                      <CheckCircle2 size={16} className="mt-0.5 shrink-0 text-royal" />
+                    <li key={f} className="flex items-start gap-2 text-sm text-white/70">
+                      <CheckCircle2 size={16} className="mt-0.5 shrink-0 text-electric-light" />
                       {f}
                     </li>
                   ))}
@@ -235,15 +237,15 @@ export default function BulkEnquiryPage() {
         <div className="mt-16 grid grid-cols-1 gap-10 lg:grid-cols-5">
 
           <div className="lg:col-span-2">
-            <h2 className="text-2xl font-bold text-navy">Get a Custom Quote</h2>
-            <p className="mt-2 text-sm leading-relaxed text-ink/70">
+            <h2 className="text-2xl font-bold text-white">Get a Custom Quote</h2>
+            <p className="mt-2 text-sm leading-relaxed text-white/60">
               Fill in the form and our B2B team will reach out with pricing,
               lead times, and availability for your requirement.
             </p>
 
-            <div className="mt-6 flex items-center gap-3 rounded-xl border border-silver-light bg-cloud p-4">
-              <GraduationCap size={22} className="shrink-0 text-royal" />
-              <p className="text-sm text-ink/80">
+            <div className="mt-6 flex items-center gap-3 rounded-xl glass-card p-4">
+              <GraduationCap size={22} className="shrink-0 text-electric-light" />
+              <p className="text-sm text-white/70">
                 Schools and colleges get additional education pricing — mention
                 your institution name in the form below.
               </p>
@@ -252,18 +254,18 @@ export default function BulkEnquiryPage() {
 
           <div className="lg:col-span-3">
             {status === "success" ? (
-              <div className="rounded-2xl border border-silver-light bg-white p-8 text-center">
-                <CheckCircle2 size={40} className="mx-auto text-royal" />
-                <h3 className="mt-4 text-lg font-bold text-navy">
+              <div className="rounded-2xl glass-card p-8 text-center">
+                <CheckCircle2 size={40} className="mx-auto text-electric-light" />
+                <h3 className="mt-4 text-lg font-bold text-white">
                   Enquiry submitted!
                 </h3>
-                <p className="mt-2 text-sm text-ink/70">
+                <p className="mt-2 text-sm text-white/60">
                   Thank you — our team will get back to you within 24 hours
                   with a custom quote.
                 </p>
                 <button
                   onClick={() => setStatus("idle")}
-                  className="mt-5 rounded-lg bg-royal px-5 py-2.5 text-sm font-semibold text-white hover:bg-royal-dark transition-colors"
+                  className="mt-5 rounded-lg bg-gradient-to-r from-electric to-liquid px-5 py-2.5 text-sm font-semibold text-white shadow-glow-electric hover:brightness-110 transition-all"
                 >
                   Submit another enquiry
                 </button>
@@ -271,52 +273,56 @@ export default function BulkEnquiryPage() {
             ) : (
               <form
                 onSubmit={handleSubmit}
-                className="rounded-2xl border border-silver-light bg-white p-6 sm:p-8"
+                className="rounded-2xl glass-card p-6 sm:p-8"
               >
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
-                    <label className="mb-1.5 block text-sm font-medium text-navy">
+                    <label htmlFor="bulk-name" className="mb-1.5 block text-sm font-medium text-white/80">
                       Full Name *
                     </label>
                     <input
+                      id="bulk-name"
                       required
                       type="text"
                       value={form.name}
                       onChange={(e) => update("name", e.target.value)}
-                      className="w-full rounded-lg border border-silver px-3.5 py-2.5 text-sm text-navy outline-none focus:border-royal"
+                      className="w-full rounded-lg glass-card px-3.5 py-2.5 text-sm text-white outline-none focus:shadow-glow-electric placeholder:text-white/30"
                       placeholder="Your name"
                     />
                   </div>
                   <div>
-                    <label className="mb-1.5 block text-sm font-medium text-navy">
+                    <label htmlFor="bulk-organization" className="mb-1.5 block text-sm font-medium text-white/80">
                       Organization
                     </label>
                     <input
+                      id="bulk-organization"
                       type="text"
                       value={form.organization}
                       onChange={(e) => update("organization", e.target.value)}
-                      className="w-full rounded-lg border border-silver px-3.5 py-2.5 text-sm text-navy outline-none focus:border-royal"
+                      className="w-full rounded-lg glass-card px-3.5 py-2.5 text-sm text-white outline-none focus:shadow-glow-electric placeholder:text-white/30"
                       placeholder="School, company, etc."
                     />
                   </div>
                   <div>
-                    <label className="mb-1.5 block text-sm font-medium text-navy">
+                    <label htmlFor="bulk-email" className="mb-1.5 block text-sm font-medium text-white/80">
                       Email *
                     </label>
                     <input
+                      id="bulk-email"
                       required
                       type="email"
                       value={form.email}
                       onChange={(e) => update("email", e.target.value)}
-                      className="w-full rounded-lg border border-silver px-3.5 py-2.5 text-sm text-navy outline-none focus:border-royal"
+                      className="w-full rounded-lg glass-card px-3.5 py-2.5 text-sm text-white outline-none focus:shadow-glow-electric placeholder:text-white/30"
                       placeholder="you@example.com"
                     />
                   </div>
                   <div>
-                    <label className="mb-1.5 block text-sm font-medium text-navy">
+                    <label htmlFor="bulk-phone" className="mb-1.5 block text-sm font-medium text-white/80">
                       Phone *
                     </label>
                     <input
+                      id="bulk-phone"
                       required
                       type="tel"
                       inputMode="numeric"
@@ -325,79 +331,83 @@ export default function BulkEnquiryPage() {
                       onChange={(e) => update("phone", e.target.value)}
                       aria-invalid={phoneError ? "true" : "false"}
                       className={
-                        "w-full rounded-lg border px-3.5 py-2.5 text-sm text-navy outline-none " +
+                        "w-full rounded-lg glass-card px-3.5 py-2.5 text-sm text-white outline-none placeholder:text-white/30 " +
                         (phoneError
-                          ? "border-red-400 focus:border-red-500"
-                          : "border-silver focus:border-royal")
+                          ? "shadow-[0_0_0_1px_rgba(248,113,113,0.6)]"
+                          : "focus:shadow-glow-electric")
                       }
                       placeholder="10-digit mobile number"
                     />
                     {phoneError && (
-                      <p className="mt-1 text-xs font-medium text-red-600">{phoneError}</p>
+                      <p className="mt-1 text-xs font-medium text-red-400">{phoneError}</p>
                     )}
                   </div>
                   <div className="sm:col-span-2">
-                    <label className="mb-1.5 block text-sm font-medium text-navy">
+                    <label htmlFor="bulk-enquiry-type" className="mb-1.5 block text-sm font-medium text-white/80">
                       Enquiry Type
                     </label>
                     <select
+                      id="bulk-enquiry-type"
                       value={form.enquiryType}
                       onChange={(e) => update("enquiryType", e.target.value)}
-                      className="w-full rounded-lg border border-silver px-3.5 py-2.5 text-sm text-navy outline-none focus:border-royal"
+                      className="w-full rounded-lg glass-card px-3.5 py-2.5 text-sm text-white outline-none focus:shadow-glow-electric"
                     >
                       {enquiryTypes.map((t) => (
-                        <option key={t} value={t}>{t}</option>
+                        <option key={t} value={t} className="bg-graphite text-white">{t}</option>
                       ))}
                     </select>
                   </div>
                   <div className="sm:col-span-2">
-                    <label className="mb-1.5 block text-sm font-medium text-navy">
+                    <label htmlFor="bulk-products" className="mb-1.5 block text-sm font-medium text-white/80">
                       Products Needed *
                     </label>
                     <input
+                      id="bulk-products"
                       required
                       type="text"
                       value={form.products}
                       onChange={(e) => update("products", e.target.value)}
-                      className="w-full rounded-lg border border-silver px-3.5 py-2.5 text-sm text-navy outline-none focus:border-royal"
+                      className="w-full rounded-lg glass-card px-3.5 py-2.5 text-sm text-white outline-none focus:shadow-glow-electric placeholder:text-white/30"
                       placeholder="e.g. Arduino Uno, ESP32, sensors..."
                     />
                   </div>
                   <div>
-                    <label className="mb-1.5 block text-sm font-medium text-navy">
+                    <label htmlFor="bulk-quantity" className="mb-1.5 block text-sm font-medium text-white/80">
                       Estimated Quantity *
                     </label>
                     <input
+                      id="bulk-quantity"
                       required
                       type="text"
                       value={form.quantity}
                       onChange={(e) => update("quantity", e.target.value)}
-                      className="w-full rounded-lg border border-silver px-3.5 py-2.5 text-sm text-navy outline-none focus:border-royal"
+                      className="w-full rounded-lg glass-card px-3.5 py-2.5 text-sm text-white outline-none focus:shadow-glow-electric placeholder:text-white/30"
                       placeholder="e.g. 50 units"
                     />
                   </div>
                   <div className="sm:col-span-2">
-                    <label className="mb-1.5 block text-sm font-medium text-navy">
+                    <label htmlFor="bulk-message" className="mb-1.5 block text-sm font-medium text-white/80">
                       Additional Details
                     </label>
                     <textarea
+                      id="bulk-message"
                       rows={4}
                       value={form.message}
                       onChange={(e) => update("message", e.target.value)}
-                      className="w-full resize-none rounded-lg border border-silver px-3.5 py-2.5 text-sm text-navy outline-none focus:border-royal"
+                      className="w-full resize-none rounded-lg glass-card px-3.5 py-2.5 text-sm text-white outline-none focus:shadow-glow-electric placeholder:text-white/30"
                       placeholder="Timeline, budget, delivery location, etc."
                     />
                   </div>
                 </div>
 
                 {status === "error" && (
-                  <p className="mt-4 text-sm font-medium text-red-600">{errorMsg}</p>
+                  <p className="mt-4 text-sm font-medium text-red-400">{errorMsg}</p>
                 )}
 
                 <button
                   type="submit"
                   disabled={status === "loading"}
-                  className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-royal px-5 py-3 text-sm font-semibold text-white hover:bg-royal-dark transition-colors disabled:opacity-60"
+                  className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-electric to-liquid px-5 py-3 text-sm font-semibold text-white shadow-glow-electric hover:brightness-110 transition-all disabled:opacity-60"
                 >
                   {status === "loading" && <Loader2 size={16} className="animate-spin" />}
                   {status === "loading" ? "Submitting..." : "Submit Enquiry"}

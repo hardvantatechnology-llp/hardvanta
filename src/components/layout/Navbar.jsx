@@ -354,8 +354,14 @@ export default function Navbar() {
               l.label === "Shop" ? (
                 <div key={l.label} className="relative"
                   onMouseEnter={() => setShopOpen(true)}
-                  onMouseLeave={() => setShopOpen(false)}>
+                  onMouseLeave={() => setShopOpen(false)}
+                  onFocus={() => setShopOpen(true)}
+                  onBlur={(e) => {
+                    if (!e.currentTarget.contains(e.relatedTarget)) setShopOpen(false);
+                  }}>
                   <Link href={l.href}
+                    aria-haspopup="true"
+                    aria-expanded={shopOpen}
                     className="flex items-center gap-1 whitespace-nowrap px-3 py-3 text-sm font-medium text-white/85 hover:text-electric-light transition-colors duration-150">
                     {l.label} <ChevronDown size={13} className={`transition-transform duration-200 ${shopOpen ? "rotate-180" : ""}`} />
                   </Link>

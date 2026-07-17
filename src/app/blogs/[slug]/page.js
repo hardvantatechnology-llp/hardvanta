@@ -23,28 +23,30 @@ export default async function BlogDetailPage({ params }) {
   });
 
   return (
-    <div>
-      <div className="bg-navy text-white">
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-graphite to-obsidian">
+      <div className="liquid-blob left-1/4 top-[-15%] h-96 w-96 bg-electric/10" />
+
+      <div className="relative bg-gradient-to-r from-obsidian via-midnight to-obsidian text-white">
         <div className="container-page py-8">
-          <nav className="flex items-center gap-1 text-sm text-silver">
-            <Link href="/" className="hover:text-royal-light">Home</Link>
+          <nav className="flex items-center gap-1 text-sm text-white/50">
+            <Link href="/" className="hover:text-electric-light">Home</Link>
             <ChevronRight size={14} />
-            <Link href="/blogs" className="hover:text-royal-light">Blogs</Link>
+            <Link href="/blogs" className="hover:text-electric-light">Blogs</Link>
             <ChevronRight size={14} />
             <span className="line-clamp-1 text-white">{blog.title}</span>
           </nav>
         </div>
       </div>
 
-      <div className="container-page py-10">
+      <div className="container-page relative py-10">
         <div className="mx-auto max-w-3xl">
 
-          <span className="inline-block rounded-full bg-cloud px-3 py-1 text-xs font-semibold text-royal">
+          <span className="inline-block rounded-full bg-electric/10 px-3 py-1 text-xs font-semibold text-electric-light">
             {blog.category}
           </span>
-          <h1 className="mt-3 text-2xl font-bold text-navy sm:text-3xl">{blog.title}</h1>
+          <h1 className="mt-3 text-2xl font-bold text-white sm:text-3xl">{blog.title}</h1>
 
-          <div className="mt-3 flex items-center gap-4 text-sm text-silver-dark">
+          <div className="mt-3 flex items-center gap-4 text-sm text-white/40">
             <span className="flex items-center gap-1.5">
               <User size={14} /> {blog.author}
             </span>
@@ -58,7 +60,7 @@ export default async function BlogDetailPage({ params }) {
             </span>
           </div>
 
-          <div className="relative mt-6 aspect-[16/9] w-full overflow-hidden rounded-xl bg-cloud">
+          <div className="relative mt-6 aspect-[16/9] w-full overflow-hidden rounded-xl bg-obsidian">
             <Image
               src={imageSrc(blog.coverImage)}
               alt={blog.title}
@@ -70,7 +72,7 @@ export default async function BlogDetailPage({ params }) {
           </div>
 
           {/* Content — stored as plain text/markdown-ish paragraphs */}
-          <div className="prose-info mt-8 space-y-4 text-sm leading-relaxed text-ink/80">
+          <div className="prose-info mt-8 space-y-4 text-sm leading-relaxed text-white/70">
             {blog.content.split("\n").filter(Boolean).map((para, i) => (
               <p key={i}>{para}</p>
             ))}
@@ -80,15 +82,15 @@ export default async function BlogDetailPage({ params }) {
         {/* Related */}
         {related.length > 0 && (
           <div className="mx-auto mt-14 max-w-5xl">
-            <h2 className="mb-5 text-xl font-bold text-navy">More in {blog.category}</h2>
+            <h2 className="mb-5 text-xl font-bold text-white">More in {blog.category}</h2>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
               {related.map((b) => (
                 <Link
                   key={b.id}
                   href={`/blogs/${b.slug}`}
-                  className="group overflow-hidden rounded-xl border border-silver-light bg-white transition-shadow hover:shadow-card-hover"
+                  className="group overflow-hidden rounded-xl glass-card transition-shadow hover:shadow-glow-electric"
                 >
-                  <div className="relative aspect-[16/10] w-full overflow-hidden bg-cloud">
+                  <div className="relative aspect-[16/10] w-full overflow-hidden bg-obsidian">
                     <Image
                       src={imageSrc(b.coverImage)}
                       alt={b.title}
@@ -98,7 +100,7 @@ export default async function BlogDetailPage({ params }) {
                     />
                   </div>
                   <div className="p-4">
-                    <h3 className="line-clamp-2 text-sm font-bold text-navy group-hover:text-royal transition-colors">
+                    <h3 className="line-clamp-2 text-sm font-bold text-white group-hover:text-electric-light transition-colors">
                       {b.title}
                     </h3>
                   </div>

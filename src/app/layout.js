@@ -31,7 +31,7 @@ export default function RootLayout({ children }) {
       >
         <Providers>
           <Navbar />
-          <main className="min-h-screen bg-cloud">
+          <main className="min-h-screen bg-gradient-to-b from-graphite to-obsidian">
             <PageTransition>{children}</PageTransition>
           </main>
           <Footer />

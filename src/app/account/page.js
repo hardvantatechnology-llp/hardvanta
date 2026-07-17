@@ -8,6 +8,7 @@ import {
   Shield, Bell, ChevronRight, Star, Clock, CheckCircle2
 } from "lucide-react";
 import SignOutButton from "@/components/auth/SignOutButton";
+import Button from "@/components/ui/Button";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "My Account — Hardvanta" };
@@ -212,11 +213,9 @@ export default async function AccountPage() {
                   <p className="mt-1 text-sm text-white/40">
                     Start shopping and your orders will appear here
                   </p>
-                  <Link href="/products">
-                    <button className="mt-4 rounded-lg bg-gradient-to-r from-electric to-liquid px-6 py-2.5 text-sm font-semibold text-white shadow-glow-electric hover:brightness-110 transition-all">
-                      Shop Now
-                    </button>
-                  </Link>
+                  <Button href="/products" variant="gradient" className="mt-4">
+                    Shop Now
+                  </Button>
                 </div>
               ) : (
                 <ul className="divide-y divide-white/10">

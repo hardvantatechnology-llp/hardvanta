@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { ArrowUpDown, Check, ChevronDown } from "lucide-react";
 import { SORT_OPTIONS } from "@/utils/sortProducts";
 
@@ -10,6 +10,7 @@ export default function SortDropdown({ current = "relevance", searchParams = {},
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
+  const reduce = useReducedMotion();
 
   useEffect(() => {
     if (!open) return;
@@ -42,6 +43,8 @@ export default function SortDropdown({ current = "relevance", searchParams = {},
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
         className="flex items-center gap-2 rounded-full glass px-4 py-1.5 text-sm font-medium text-white/80 transition-all hover:text-white hover:shadow-glow-electric"
       >
         <ArrowUpDown size={14} />
@@ -52,9 +55,10 @@ export default function SortDropdown({ current = "relevance", searchParams = {},
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0, y: -6, scale: 0.97 }}
+            role="listbox"
+            initial={reduce ? false : { opacity: 0, y: -6, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -6, scale: 0.97 }}
+            exit={reduce ? undefined : { opacity: 0, y: -6, scale: 0.97 }}
             transition={{ duration: 0.15 }}
             className="glass-strong absolute right-0 top-full z-30 mt-2 w-56 overflow-hidden rounded-2xl p-1.5"
           >
@@ -62,6 +66,8 @@ export default function SortDropdown({ current = "relevance", searchParams = {},
               <button
                 key={o.value}
                 onClick={() => selectSort(o.value)}
+                role="option"
+                aria-selected={current === o.value}
                 className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-sm text-white/80 transition-colors hover:bg-white/10 hover:text-white"
               >
                 {o.label}

@@ -3,12 +3,11 @@ import React from "react";
 export const metadata = { title: "Privacy Policy — Hardvanta" };
 
 const css = `
-  * { box-sizing: border-box; }
   .pp-root {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: #f8f9fb;
+    background: #0d0f16;
     min-height: 100vh;
-    color: #1a1d23;
+    color: rgba(255,255,255,0.7);
   }
   .pp-hero {
     background: linear-gradient(120deg, #0f1b3d 0%, #1a2e6b 60%, #2a3f8f 100%);
@@ -79,8 +78,9 @@ const css = `
     padding: 2.5rem 1.5rem 5rem;
   }
   .pp-toc {
-    background: #fff;
-    border: 1px solid #e4e8f0;
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.1);
     border-radius: 14px;
     padding: 1.5rem 1.75rem;
     margin-bottom: 2.5rem;
@@ -88,7 +88,7 @@ const css = `
   .pp-toc-title {
     font-size: 11px;
     font-weight: 700;
-    color: #6b7280;
+    color: rgba(255,255,255,0.4);
     text-transform: uppercase;
     letter-spacing: 1px;
     margin: 0 0 0.875rem;
@@ -103,35 +103,36 @@ const css = `
   }
   .pp-toc-list li a {
     font-size: 13.5px;
-    color: #2d4ae0;
+    color: #3b82f6;
     text-decoration: none;
     display: flex;
     align-items: center;
     gap: 6px;
     padding: 3px 0;
   }
-  .pp-toc-list li a:hover { color: #1a2e9e; }
+  .pp-toc-list li a:hover { color: #60a5fa; }
   .pp-toc-list li a::before {
     content: '';
     width: 5px;
     height: 5px;
     border-radius: 50%;
-    background: #c7d2fe;
+    background: rgba(59,130,246,0.5);
     flex-shrink: 0;
   }
   .pp-section {
-    background: #fff;
-    border: 1px solid #e4e8f0;
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.1);
     border-radius: 14px;
     padding: 2rem 2rem 1.75rem;
     margin-bottom: 1.25rem;
     transition: box-shadow 0.2s;
   }
-  .pp-section:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.07); }
+  .pp-section:hover { box-shadow: 0 4px 20px rgba(59,130,246,0.25); }
   .pp-section-label {
     font-size: 11px;
     font-weight: 700;
-    color: #2d4ae0;
+    color: #3b82f6;
     text-transform: uppercase;
     letter-spacing: 1px;
     margin: 0 0 0.6rem;
@@ -143,13 +144,13 @@ const css = `
     content: '';
     flex: 1;
     height: 1px;
-    background: #e9ecff;
+    background: rgba(59,130,246,0.25);
     max-width: 40px;
   }
   .pp-section h2 {
     font-size: clamp(17px, 2.5vw, 20px);
     font-weight: 800;
-    color: #0f1b3d;
+    color: #ffffff;
     margin: 0 0 1rem;
     letter-spacing: -0.2px;
     line-height: 1.3;
@@ -157,27 +158,27 @@ const css = `
   .pp-section h3 {
     font-size: 15px;
     font-weight: 700;
-    color: #0f1b3d;
+    color: #ffffff;
     margin: 1.25rem 0 0.4rem;
   }
   .pp-section p {
     font-size: 15px;
-    color: #3d4a5c;
+    color: rgba(255,255,255,0.7);
     line-height: 1.8;
     margin: 0 0 0.9rem;
   }
   .pp-section p:last-child { margin-bottom: 0; }
   .pp-callout {
-    background: #f0f3ff;
-    border-left: 3px solid #2d4ae0;
+    background: rgba(59,130,246,0.12);
+    border-left: 3px solid #3b82f6;
     border-radius: 0 8px 8px 0;
     padding: 1rem 1.25rem;
     margin: 1rem 0;
     font-size: 14px;
-    color: #1a2e6b;
+    color: rgba(255,255,255,0.85);
     line-height: 1.7;
   }
-  .pp-callout strong { font-weight: 700; color: #0f1b3d; }
+  .pp-callout strong { font-weight: 700; color: #ffffff; }
   .pp-cookie-table {
     width: 100%;
     border-collapse: collapse;
@@ -185,17 +186,17 @@ const css = `
     margin: 0.75rem 0;
   }
   .pp-cookie-table th {
-    background: #f1f4fd;
-    color: #0f1b3d;
+    background: rgba(255,255,255,0.08);
+    color: #ffffff;
     font-weight: 700;
     text-align: left;
     padding: 9px 14px;
-    border-bottom: 2px solid #dde3f5;
+    border-bottom: 2px solid rgba(255,255,255,0.15);
   }
   .pp-cookie-table td {
     padding: 9px 14px;
-    border-bottom: 1px solid #eef0f7;
-    color: #3d4a5c;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.7);
     font-family: monospace;
     font-size: 13px;
   }
@@ -231,7 +232,7 @@ const css = `
     margin-top: 2.5rem;
     text-align: center;
     font-size: 12.5px;
-    color: #9ca3af;
+    color: rgba(255,255,255,0.4);
   }
   @media (max-width: 640px) {
     .pp-hero { padding: 2rem 1.25rem; }
@@ -337,7 +338,7 @@ export default function PrivacyPolicyPage() {
             <h3>How do you withdraw your consent?</h3>
             <p>
               If after opting in you change your mind, you may withdraw your consent at any time by contacting us at{" "}
-              <a href="mailto:info@hardvantatechnology@gmail.com" style={{ color: "#2d4ae0", fontWeight: 600 }}>info@hardvantatechnology@gmail.com</a>.
+              <a href="mailto:info@hardvantatechnology@gmail.com" style={{ color: "#3b82f6", fontWeight: 600 }}>info@hardvantatechnology@gmail.com</a>.
             </p>
           </Section>
 
@@ -402,30 +403,30 @@ export default function PrivacyPolicyPage() {
                 </thead>
                 <tbody>
                   <tr>
-                    <td><code style={{ background: "#f1f4fd", padding: "2px 7px", borderRadius: "5px", fontSize: "12px", color: "#1a2e6b" }}>woocommerce_cart_hash</code></td>
+                    <td><code style={{ background: "rgba(59,130,246,0.12)", padding: "2px 7px", borderRadius: "5px", fontSize: "12px", color: "#93c5fd" }}>woocommerce_cart_hash</code></td>
                     <td style={{ fontFamily: "inherit", fontSize: "13.5px" }}>Maintains the shopping cart state between pages</td>
-                    <td><span style={{ background: "#e9ecff", color: "#2d4ae0", fontSize: "12px", fontWeight: 600, padding: "2px 9px", borderRadius: "100px" }}>Essential</span></td>
+                    <td><span style={{ background: "rgba(59,130,246,0.15)", color: "#3b82f6", fontSize: "12px", fontWeight: 600, padding: "2px 9px", borderRadius: "100px" }}>Essential</span></td>
                     <td style={{ fontFamily: "inherit", fontSize: "13.5px" }}>Session</td>
                     <td style={{ fontFamily: "inherit", fontSize: "13.5px" }}>No</td>
                   </tr>
                   <tr>
-                    <td><code style={{ background: "#f1f4fd", padding: "2px 7px", borderRadius: "5px", fontSize: "12px", color: "#1a2e6b" }}>woocommerce_items_in_cart</code></td>
+                    <td><code style={{ background: "rgba(59,130,246,0.12)", padding: "2px 7px", borderRadius: "5px", fontSize: "12px", color: "#93c5fd" }}>woocommerce_items_in_cart</code></td>
                     <td style={{ fontFamily: "inherit", fontSize: "13.5px" }}>Tracks the number of items in the cart</td>
-                    <td><span style={{ background: "#e9ecff", color: "#2d4ae0", fontSize: "12px", fontWeight: 600, padding: "2px 9px", borderRadius: "100px" }}>Essential</span></td>
+                    <td><span style={{ background: "rgba(59,130,246,0.15)", color: "#3b82f6", fontSize: "12px", fontWeight: 600, padding: "2px 9px", borderRadius: "100px" }}>Essential</span></td>
                     <td style={{ fontFamily: "inherit", fontSize: "13.5px" }}>Session</td>
                     <td style={{ fontFamily: "inherit", fontSize: "13.5px" }}>No</td>
                   </tr>
                   <tr>
-                    <td><code style={{ background: "#f1f4fd", padding: "2px 7px", borderRadius: "5px", fontSize: "12px", color: "#1a2e6b" }}>wp_woocommerce_session_</code></td>
+                    <td><code style={{ background: "rgba(59,130,246,0.12)", padding: "2px 7px", borderRadius: "5px", fontSize: "12px", color: "#93c5fd" }}>wp_woocommerce_session_</code></td>
                     <td style={{ fontFamily: "inherit", fontSize: "13.5px" }}>Stores a unique session identifier for the customer</td>
-                    <td><span style={{ background: "#e9ecff", color: "#2d4ae0", fontSize: "12px", fontWeight: 600, padding: "2px 9px", borderRadius: "100px" }}>Essential</span></td>
+                    <td><span style={{ background: "rgba(59,130,246,0.15)", color: "#3b82f6", fontSize: "12px", fontWeight: 600, padding: "2px 9px", borderRadius: "100px" }}>Essential</span></td>
                     <td style={{ fontFamily: "inherit", fontSize: "13.5px" }}>2 Days (or session duration)</td>
                     <td style={{ fontFamily: "inherit", fontSize: "13.5px" }}>No direct personal data</td>
                   </tr>
                 </tbody>
               </table>
             </div>
-            <p style={{ fontSize: "13.5px", color: "#6b7280", marginTop: "0.75rem" }}>
+            <p style={{ fontSize: "13.5px", color: "rgba(255,255,255,0.4)", marginTop: "0.75rem" }}>
               No personal information is stored within these cookies.
             </p>
           </Section>

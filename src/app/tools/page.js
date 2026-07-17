@@ -93,24 +93,26 @@ const tools = [
 
 export default function ToolsPage() {
   return (
-    <div>
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-graphite to-obsidian">
+      <div className="liquid-blob left-1/4 top-[-15%] h-96 w-96 bg-electric/10" />
+
       {/* Hero */}
-      <div className="bg-navy text-white">
+      <div className="relative bg-gradient-to-r from-obsidian via-midnight to-obsidian text-white">
         <div className="container-page py-10">
-          <nav className="mb-4 flex items-center gap-1 text-sm text-silver">
-            <Link href="/" className="hover:text-royal-light">Home</Link>
+          <nav className="mb-4 flex items-center gap-1 text-sm text-white/50">
+            <Link href="/" className="hover:text-electric-light">Home</Link>
             <ChevronRight size={14} />
             <span className="text-white">Tools</span>
           </nav>
 
-          <div className="flex items-center gap-2 text-royal-light">
+          <div className="flex items-center gap-2 text-electric-light">
             <Wrench size={18} />
             <span className="text-xs font-semibold uppercase tracking-wider">Tool Guide</span>
           </div>
           <h1 className="mt-2 text-3xl font-bold sm:text-4xl">
             Essential Electronics &amp; Robotics Tools
           </h1>
-          <p className="mt-3 max-w-2xl text-silver">
+          <p className="mt-3 max-w-2xl text-white/60">
             A quick guide to the must-have tools for any maker — what each one
             does and when you&apos;ll reach for it.
           </p>
@@ -118,18 +120,18 @@ export default function ToolsPage() {
       </div>
 
       {/* Tool grid */}
-      <div className="container-page py-12">
+      <div className="container-page relative py-12">
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {tools.map(({ name, Icon, summary }) => (
             <div
               key={name}
-              className="rounded-xl border border-silver-light bg-white p-6 transition-shadow hover:shadow-card-hover"
+              className="rounded-xl glass-card p-6 transition-all hover:brightness-110"
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-cloud text-royal">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-electric/10 text-electric-light">
                 <Icon size={24} />
               </div>
-              <h3 className="mt-4 font-bold text-navy">{name}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-ink/70">
+              <h3 className="mt-4 font-bold text-white">{name}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-white/60">
                 {summary}
               </p>
             </div>
@@ -137,16 +139,16 @@ export default function ToolsPage() {
         </div>
 
         {/* CTA to shop tools */}
-        <div className="mt-12 rounded-2xl bg-navy p-8 text-center text-white sm:p-10">
+        <div className="mt-12 rounded-2xl bg-gradient-to-r from-obsidian via-midnight to-obsidian p-8 text-center text-white sm:p-10">
           <h2 className="text-xl font-bold sm:text-2xl">
             Ready to build your toolkit?
           </h2>
-          <p className="mx-auto mt-2 max-w-xl text-silver">
+          <p className="mx-auto mt-2 max-w-xl text-white/60">
             Browse genuine, tested tools and components from our store.
           </p>
           <Link
             href="/products"
-            className="mt-5 inline-block rounded-lg bg-royal px-6 py-3 text-sm font-semibold text-white hover:bg-royal-dark transition-colors"
+            className="mt-5 inline-block rounded-lg bg-gradient-to-r from-electric to-liquid px-6 py-3 text-sm font-semibold text-white shadow-glow-electric hover:brightness-110 transition-all"
           >
             Shop Tools &amp; Components
           </Link>

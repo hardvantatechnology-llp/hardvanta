@@ -186,6 +186,7 @@ function LoginForm() {
                       type="email" required value={forgotEmail}
                       onChange={(e) => setForgotEmail(e.target.value)}
                       placeholder="Enter your email"
+                      aria-label="Email address"
                       className="w-full rounded-xl glass-card pl-9 pr-4 py-2.5 text-sm text-white outline-none focus:shadow-glow-electric transition-all placeholder:text-white/30"
                     />
                   </div>
@@ -204,6 +205,7 @@ function LoginForm() {
                     value={forgotCode}
                     onChange={(e) => setForgotCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
                     placeholder="------"
+                    aria-label="6-digit reset code"
                     className="w-full rounded-xl glass-card px-4 py-2.5 text-center text-lg font-semibold tracking-[0.5em] text-white outline-none focus:shadow-glow-electric placeholder:text-white/20"
                   />
                   <div className="relative">
@@ -213,6 +215,7 @@ function LoginForm() {
                       value={forgotNewPassword}
                       onChange={(e) => setForgotNewPassword(e.target.value)}
                       placeholder="New password (min 8 characters)"
+                      aria-label="New password"
                       className="w-full rounded-xl glass-card pl-9 pr-10 py-2.5 text-sm text-white outline-none focus:shadow-glow-electric placeholder:text-white/30"
                     />
                     <button type="button" onClick={() => setShowNewPassword((v) => !v)}
@@ -289,10 +292,11 @@ function LoginForm() {
               <form onSubmit={handlePasswordSubmit} className="space-y-4">
                 {/* Email */}
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-white/80">Email address</label>
+                  <label htmlFor="login-email" className="mb-1.5 block text-sm font-medium text-white/80">Email address</label>
                   <div className="relative">
                     <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
                     <input
+                      id="login-email"
                       type="email" required value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="you@example.com"
@@ -304,7 +308,7 @@ function LoginForm() {
                 {/* Password */}
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
-                    <label className="text-sm font-medium text-white/80">Password</label>
+                    <label htmlFor="login-password" className="text-sm font-medium text-white/80">Password</label>
                     <button type="button" onClick={() => setForgotStep(true)} className="text-xs text-electric-light hover:underline font-medium">
                       Forgot password?
                     </button>
@@ -312,12 +316,14 @@ function LoginForm() {
                   <div className="relative">
                     <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
                     <input
+                      id="login-password"
                       type={showPassword ? "text" : "password"} required value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Enter your password"
                       className="w-full rounded-xl glass-card pl-9 pr-10 py-2.5 text-sm text-white outline-none focus:shadow-glow-electric transition-all placeholder:text-white/30"
                     />
                     <button type="button" onClick={() => setShowPassword((v) => !v)}
+                      aria-label={showPassword ? "Hide password" : "Show password"}
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-electric-light transition-colors">
                       {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
                     </button>
@@ -348,8 +354,9 @@ function LoginForm() {
 
               <form onSubmit={handleOtpSubmit} className="space-y-5">
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-white/80 text-center">Enter 6-digit code</label>
+                  <label htmlFor="login-otp" className="mb-1.5 block text-sm font-medium text-white/80 text-center">Enter 6-digit code</label>
                   <input
+                    id="login-otp"
                     type="text" inputMode="numeric" maxLength={6} required autoFocus
                     value={otp}
                     onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}

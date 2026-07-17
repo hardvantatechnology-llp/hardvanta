@@ -89,7 +89,7 @@ export default function AddToCart({ product }) {
         disabled={outOfStock}
         variant={addError ? "primary" : added ? "glass" : "outline"}
         size="lg"
-        className={outOfStock ? "!bg-white/5 !text-white/30 !border-white/10 !shadow-none" : "!border-electric/40 !bg-transparent !text-white hover:!bg-white/5"}
+        className={outOfStock ? "!bg-white/5 !text-white/30 !border-white/10 !shadow-none" : ""}
       >
         {addError ? (
           "Couldn't add — retry"

@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
 const FILLS = {
   PENDING: "bg-gradient-to-r from-amber-400 to-amber-500",
@@ -11,6 +11,7 @@ const FILLS = {
 };
 
 export default function AdminBarStat({ label, count, pct }) {
+  const reduce = useReducedMotion();
   return (
     <div>
       <div className="flex justify-between text-sm mb-1">
@@ -19,7 +20,7 @@ export default function AdminBarStat({ label, count, pct }) {
       </div>
       <div className="h-2 w-full rounded-full bg-white/10 overflow-hidden">
         <motion.div
-          initial={{ width: 0 }}
+          initial={reduce ? false : { width: 0 }}
           animate={{ width: `${pct}%` }}
           transition={{ duration: 0.6, ease: "easeOut" }}
           className={`h-full rounded-full ${FILLS[label] || "bg-white/40"}`}

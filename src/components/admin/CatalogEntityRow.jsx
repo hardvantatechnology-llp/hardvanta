@@ -65,6 +65,7 @@ export default function CatalogEntityRow({ item, productCount, onUpdate, onToggl
                 if (e.key === "Enter") saveEdit();
                 if (e.key === "Escape") cancelEdit();
               }}
+              aria-label={`Rename ${item.name}`}
               className="w-full rounded-lg glass-card px-2 py-1 text-sm text-white outline-none focus:shadow-glow-electric"
               disabled={pending}
             />

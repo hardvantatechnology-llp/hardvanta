@@ -33,10 +33,11 @@ const whoWeServe = [
 
 export default function B2BPage() {
   return (
-    <main className="min-h-screen bg-white">
+    <main className="relative min-h-screen overflow-hidden bg-gradient-to-b from-graphite to-obsidian">
+      <div className="liquid-blob left-1/4 top-[-15%] h-96 w-96 bg-electric/10" />
 
       {/* Hero */}
-      <section className="bg-gradient-to-br from-navy via-royal-dark to-navy px-6 py-20 text-center text-white">
+      <section className="relative bg-gradient-to-r from-obsidian via-midnight to-obsidian px-6 py-20 text-center text-white">
         <p className="text-xs font-bold uppercase tracking-widest text-white/50">
           Business Solutions
         </p>
@@ -50,7 +51,7 @@ export default function B2BPage() {
         <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
           <a
             href="#bulk"
-            className="rounded-lg bg-white px-8 py-3 text-sm font-bold text-navy hover:bg-silver-light transition-colors"
+            className="rounded-lg bg-gradient-to-r from-electric to-liquid px-8 py-3 text-sm font-bold text-white shadow-glow-electric hover:brightness-110 transition-all"
           >
             Bulk Orders
           </a>
@@ -64,16 +65,16 @@ export default function B2BPage() {
       </section>
 
       {/* Who We Serve */}
-      <section className="border-b border-silver-light bg-cloud py-10">
+      <section className="relative border-b border-white/10 bg-graphite py-10">
         <div className="container-page">
-          <p className="mb-6 text-center text-xs font-bold uppercase tracking-widest text-silver-dark">
+          <p className="mb-6 text-center text-xs font-bold uppercase tracking-widest text-white/50">
             Trusted by
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4">
             {whoWeServe.map((w) => (
               <div
                 key={w.label}
-                className="flex items-center gap-2 rounded-full border border-silver-light bg-white px-5 py-2 text-sm font-medium text-navy shadow-sm"
+                className="flex items-center gap-2 rounded-full glass-card px-5 py-2 text-sm font-medium text-white"
               >
                 <span>{w.icon}</span> {w.label}
               </div>
@@ -83,14 +84,14 @@ export default function B2BPage() {
       </section>
 
       {/* Bulk Orders */}
-      <section id="bulk" className="container-page py-16 scroll-mt-24">
-        <p className="text-xs font-bold uppercase tracking-widest text-royal">
+      <section id="bulk" className="container-page relative py-16 scroll-mt-24">
+        <p className="text-xs font-bold uppercase tracking-widest text-electric-light">
           Bulk Orders
         </p>
-        <h2 className="mt-2 text-3xl font-extrabold text-navy">
+        <h2 className="mt-2 text-3xl font-extrabold text-white">
           Order in Bulk, Save More
         </h2>
-        <p className="mt-3 max-w-2xl text-sm leading-7 text-silver-dark">
+        <p className="mt-3 max-w-2xl text-sm leading-7 text-white/60">
           Whether you need 50 Arduino boards or 10,000 resistors — we supply
           in bulk with best-in-market pricing, GST invoicing, and fast delivery
           across India.
@@ -100,11 +101,11 @@ export default function B2BPage() {
           {benefits.map((b) => (
             <div
               key={b.title}
-              className="rounded-2xl border border-silver-light bg-cloud p-6 hover:shadow-card transition-shadow"
+              className="rounded-2xl glass-card p-6 hover:brightness-110 transition-all"
             >
               <span className="text-3xl">{b.icon}</span>
-              <h3 className="mt-3 font-bold text-navy">{b.title}</h3>
-              <p className="mt-2 text-sm leading-6 text-silver-dark">{b.desc}</p>
+              <h3 className="mt-3 font-bold text-white">{b.title}</h3>
+              <p className="mt-2 text-sm leading-6 text-white/60">{b.desc}</p>
             </div>
           ))}
         </div>
@@ -114,15 +115,15 @@ export default function B2BPage() {
       </section>
 
       {/* Prototyping Services */}
-      <section id="prototyping" className="bg-cloud py-16 scroll-mt-24">
+      <section id="prototyping" className="relative bg-graphite py-16 scroll-mt-24">
         <div className="container-page">
-          <p className="text-xs font-bold uppercase tracking-widest text-royal">
+          <p className="text-xs font-bold uppercase tracking-widest text-electric-light">
             Prototyping Services
           </p>
-          <h2 className="mt-2 text-3xl font-extrabold text-navy">
+          <h2 className="mt-2 text-3xl font-extrabold text-white">
             Turn Your Idea into Reality
           </h2>
-          <p className="mt-3 max-w-2xl text-sm leading-7 text-silver-dark">
+          <p className="mt-3 max-w-2xl text-sm leading-7 text-white/60">
             From concept to working prototype — our engineering team handles
             PCB design, embedded firmware, IoT integration, and industrial
             automation for your product.
@@ -132,11 +133,11 @@ export default function B2BPage() {
             {prototypingServices.map((s) => (
               <div
                 key={s.title}
-                className="rounded-2xl border border-silver-light bg-white p-6 shadow-sm hover:shadow-card transition-shadow"
+                className="rounded-2xl glass-card p-6 hover:brightness-110 transition-all"
               >
                 <span className="text-3xl">{s.icon}</span>
-                <h3 className="mt-3 font-bold text-navy">{s.title}</h3>
-                <p className="mt-2 text-sm leading-6 text-silver-dark">
+                <h3 className="mt-3 font-bold text-white">{s.title}</h3>
+                <p className="mt-2 text-sm leading-6 text-white/60">
                   {s.desc}
                 </p>
               </div>
@@ -144,7 +145,7 @@ export default function B2BPage() {
           </div>
 
           {/* CTA */}
-          <div className="mt-12 rounded-2xl bg-gradient-to-r from-navy to-royal-dark px-8 py-10 text-center text-white">
+          <div className="mt-12 rounded-2xl bg-gradient-to-r from-obsidian via-midnight to-obsidian px-8 py-10 text-center text-white">
             <h3 className="text-2xl font-extrabold">
               Ready to Start Your Project?
             </h3>
@@ -153,7 +154,7 @@ export default function B2BPage() {
             </p>
             <a
               href="tel:+919170546395"
-              className="mt-6 inline-block rounded-lg bg-white px-8 py-3 text-sm font-bold text-navy hover:bg-silver-light transition-colors"
+              className="mt-6 inline-block rounded-lg bg-gradient-to-r from-electric to-liquid px-8 py-3 text-sm font-bold text-white shadow-glow-electric hover:brightness-110 transition-all"
             >
               📞 Call +91 91705 46395
             </a>

@@ -47,14 +47,15 @@ function FAQCard({ faq, index, isOpen, onToggle }) {
     <div
       id={`faq-${index}`}
       style={{
-        background: "#ffffff",
-        border: "1px solid #e5e7eb",
+        background: "rgba(255,255,255,0.06)",
+        backdropFilter: "blur(20px)",
+        border: "1px solid rgba(255,255,255,0.1)",
         borderRadius: "14px",
         marginBottom: "14px",
         overflow: "hidden",
         boxShadow: isOpen
-          ? "0 4px 20px rgba(30,42,110,0.10)"
-          : "0 1px 4px rgba(0,0,0,0.05)",
+          ? "0 4px 20px rgba(59,130,246,0.25)"
+          : "0 1px 4px rgba(0,0,0,0.45)",
         transition: "box-shadow 0.25s ease",
         scrollMarginTop: "20px",
       }}
@@ -87,7 +88,8 @@ function FAQCard({ faq, index, isOpen, onToggle }) {
               width: "44px",
               height: "44px",
               borderRadius: "10px",
-              background: "linear-gradient(135deg,#eff3ff 0%,#e0e7ff 100%)",
+              background:
+                "linear-gradient(135deg, rgba(59,130,246,0.18) 0%, rgba(168,85,247,0.18) 100%)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -103,7 +105,7 @@ function FAQCard({ faq, index, isOpen, onToggle }) {
               flex: 1,
               fontSize: "clamp(14px, 3.5vw, 16px)",
               fontWeight: 700,
-              color: "#111827",
+              color: "#ffffff",
               lineHeight: 1.4,
             }}
           >
@@ -120,7 +122,7 @@ function FAQCard({ faq, index, isOpen, onToggle }) {
               flexShrink: 0,
               transition: "transform 0.25s ease",
               transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
-              color: "#6b7280",
+              color: "rgba(255,255,255,0.4)",
             }}
           >
             <path
@@ -145,7 +147,7 @@ function FAQCard({ faq, index, isOpen, onToggle }) {
         <div
           style={{
             padding: "0 24px 24px 24px",
-            borderTop: "1px solid #f3f4f6",
+            borderTop: "1px solid rgba(255,255,255,0.1)",
             paddingTop: "18px",
           }}
         >
@@ -153,7 +155,7 @@ function FAQCard({ faq, index, isOpen, onToggle }) {
             style={{
               margin: faq.highlight ? "0 0 14px" : "0",
               fontSize: "clamp(13.5px, 3vw, 15px)",
-              color: "#374151",
+              color: "rgba(255,255,255,0.7)",
               lineHeight: 1.8,
             }}
           >
@@ -163,12 +165,12 @@ function FAQCard({ faq, index, isOpen, onToggle }) {
           {faq.highlight && (
             <div
               style={{
-                background: "#eff6ff",
-                borderLeft: "3px solid #3b5bdb",
+                background: "rgba(59,130,246,0.12)",
+                borderLeft: "3px solid #3b82f6",
                 borderRadius: "6px",
                 padding: "12px 16px",
                 fontSize: "clamp(12.5px, 2.8vw, 13.5px)",
-                color: "#1e3a8a",
+                color: "rgba(255,255,255,0.85)",
                 lineHeight: 1.65,
               }}
             >
@@ -190,8 +192,7 @@ export default function FAQPage() {
   return (
     <>
       {/* ── Global responsive styles injected once ── */}
-      <style>{`
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+      <style dangerouslySetInnerHTML={{ __html: `
         body { font-family: Inter, system-ui, -apple-system, sans-serif; }
 
         .faq-hero { padding: 44px 20px 56px; }
@@ -217,15 +218,15 @@ export default function FAQPage() {
         }
         @media (min-width: 640px) { .cta-card { padding: 44px 32px; } }
 
-        a:focus-visible { outline: 2px solid #3b5bdb; outline-offset: 3px; border-radius: 4px; }
-        button:focus-visible { outline: 2px solid #3b5bdb; outline-offset: 3px; border-radius: 10px; }
+        a:focus-visible { outline: 2px solid #3b82f6; outline-offset: 3px; border-radius: 4px; }
+        button:focus-visible { outline: 2px solid #3b82f6; outline-offset: 3px; border-radius: 10px; }
 
         @media (prefers-reduced-motion: reduce) {
           * { transition: none !important; }
         }
-      `}</style>
+      `}} />
 
-      <div style={{ background: "#f3f4f6", minHeight: "100vh" }}>
+      <div style={{ background: "#0d0f16", minHeight: "100vh" }}>
 
         {/* ════ HERO — matches Privacy Policy exactly ════ */}
         <div
@@ -311,12 +312,13 @@ export default function FAQPage() {
           {/* ── "On this page" nav card ── */}
           <div
             style={{
-              background: "#ffffff",
-              border: "1px solid #e5e7eb",
+              background: "rgba(255,255,255,0.06)",
+              backdropFilter: "blur(20px)",
+              border: "1px solid rgba(255,255,255,0.1)",
               borderRadius: "14px",
               padding: "22px 24px",
               marginBottom: "24px",
-              boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
+              boxShadow: "0 1px 4px rgba(0,0,0,0.45)",
             }}
           >
             <p
@@ -325,7 +327,7 @@ export default function FAQPage() {
                 fontWeight: 700,
                 letterSpacing: "0.1em",
                 textTransform: "uppercase",
-                color: "#9ca3af",
+                color: "rgba(255,255,255,0.4)",
                 marginBottom: "14px",
               }}
             >
@@ -345,7 +347,7 @@ export default function FAQPage() {
                   }}
                   style={{
                     fontSize: "clamp(12px, 3vw, 13px)",
-                    color: "#3b5bdb",
+                    color: "#3b82f6",
                     textDecoration: "none",
                     display: "flex",
                     alignItems: "flex-start",
@@ -355,7 +357,7 @@ export default function FAQPage() {
                 >
                   <span
                     style={{
-                      color: "#9ca3af",
+                      color: "rgba(255,255,255,0.4)",
                       fontSize: "11px",
                       marginTop: "2px",
                       flexShrink: 0,

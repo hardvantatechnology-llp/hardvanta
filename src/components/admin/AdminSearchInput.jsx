@@ -43,6 +43,7 @@ export default function AdminSearchInput({ placeholder = "Search…", basePath, 
         value={value}
         onChange={handleChange}
         placeholder={placeholder}
+        aria-label={placeholder}
         className="w-full rounded-lg glass-card pl-9 pr-8 py-2 text-sm text-white outline-none focus:shadow-glow-electric placeholder:text-white/30"
       />
       {value && (

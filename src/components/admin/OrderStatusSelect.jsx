@@ -37,6 +37,7 @@ export default function OrderStatusSelect({ id, status }) {
       value={value}
       onChange={handleChange}
       disabled={busy}
+      aria-label="Order status"
       className="rounded-lg glass-card bg-graphite px-3 py-1.5 text-sm font-semibold text-white outline-none focus:shadow-glow-electric disabled:opacity-50"
     >
       {STATUSES.map((s) => (

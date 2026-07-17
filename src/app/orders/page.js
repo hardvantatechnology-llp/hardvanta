@@ -100,7 +100,7 @@ export default async function OrdersPage({ searchParams }) {
                   <span className="text-sm font-bold text-white">Total: {formatPrice(order.total)}</span>
                   <div className="flex items-center gap-2">
                     {order.status !== "CANCELLED" && order.status !== "DELIVERED" && (
-                      <Link href={`/orders/${order.id}?cancel=1`} className="rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-1.5 text-xs font-semibold text-red-400 hover:bg-red-500/20 transition-colors">
+                      <Link href={`/orders/${order.id}`} className="rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-1.5 text-xs font-semibold text-red-400 hover:bg-red-500/20 transition-colors">
                         Cancel
                       </Link>
                     )}

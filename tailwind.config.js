@@ -69,25 +69,11 @@ module.exports = {
         "glow-cyan": "0 0 40px -8px rgba(34, 211, 238, 0.45)",
         "glow-purple": "0 0 40px -8px rgba(168, 85, 247, 0.45)",
         glass: "0 8px 32px -8px rgba(0, 0, 0, 0.45), inset 0 1px 0 0 rgba(255, 255, 255, 0.08)",
-        "glass-hover": "0 16px 48px -12px rgba(0, 0, 0, 0.55), inset 0 1px 0 0 rgba(255, 255, 255, 0.12)",
-      },
-      backdropBlur: {
-        xs: "2px",
       },
       borderRadius: {
         "3xl": "1.75rem",
-        "4xl": "2.25rem",
       },
       keyframes: {
-        float: {
-          "0%, 100%": { transform: "translateY(0) translateX(0)" },
-          "50%": { transform: "translateY(-14px) translateX(6px)" },
-        },
-        blob: {
-          "0%, 100%": { transform: "translate(0, 0) scale(1)" },
-          "33%": { transform: "translate(4%, -6%) scale(1.08)" },
-          "66%": { transform: "translate(-3%, 4%) scale(0.94)" },
-        },
         shimmer: {
           "0%": { transform: "translateX(-100%)" },
           "100%": { transform: "translateX(100%)" },
@@ -102,8 +88,6 @@ module.exports = {
         },
       },
       animation: {
-        float: "float 6s ease-in-out infinite",
-        blob: "blob 14s ease-in-out infinite",
         shimmer: "shimmer 2.5s linear infinite",
         "gradient-x": "gradient-x 8s ease infinite",
         ripple: "ripple 0.6s ease-out forwards",

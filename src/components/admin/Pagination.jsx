@@ -53,7 +53,7 @@ export default function Pagination({ page, totalPages, basePath, searchParams = 
         )}
 
         {pages.map((p) => (
-          <Link key={p} href={hrefFor(p)} className={pillClass(p === page)}>
+          <Link key={p} href={hrefFor(p)} className={pillClass(p === page)} aria-current={p === page ? "page" : undefined}>
             {p}
           </Link>
         ))}

@@ -80,6 +80,8 @@ export default function AdminSidebarNav() {
         <button
           type="button"
           onClick={() => setMobileOpen((v) => !v)}
+          aria-expanded={mobileOpen}
+          aria-controls="admin-sidebar-nav"
           className="flex w-full items-center justify-between px-3 py-2 text-xs font-semibold uppercase tracking-wide text-white/40 lg:pointer-events-none"
         >
           Admin Panel
@@ -88,10 +90,10 @@ export default function AdminSidebarNav() {
           </span>
         </button>
 
-        <nav className={`space-y-4 ${mobileOpen ? "block" : "hidden"} lg:block`}>
+        <nav id="admin-sidebar-nav" className={`space-y-4 ${mobileOpen ? "block" : "hidden"} lg:block`}>
           {SECTIONS.map((section) => (
             <div key={section.label}>
-              <p className="px-3 pb-1 text-[10px] font-bold uppercase tracking-widest text-white/25">
+              <p className="px-3 pb-1 text-[10px] font-bold uppercase tracking-widest text-white/40">
                 {section.label}
               </p>
               <div className="space-y-0.5">
@@ -102,6 +104,7 @@ export default function AdminSidebarNav() {
                       key={href}
                       href={href}
                       onClick={() => setMobileOpen(false)}
+                      aria-current={active ? "page" : undefined}
                       className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                         active
                           ? "bg-gradient-to-r from-electric to-liquid text-white shadow-glow-electric"

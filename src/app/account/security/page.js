@@ -97,11 +97,12 @@ export default function SecurityPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Current Password */}
             <div>
-              <label className="mb-1 block text-sm font-medium text-white/80">
+              <label htmlFor="security-current" className="mb-1 block text-sm font-medium text-white/80">
                 Current Password
               </label>
               <div className="relative">
                 <input
+                  id="security-current"
                   type={showCurrent ? "text" : "password"}
                   required
                   value={currentPassword}
@@ -112,6 +113,7 @@ export default function SecurityPage() {
                 <button
                   type="button"
                   onClick={() => setShowCurrent((v) => !v)}
+                  aria-label={showCurrent ? "Hide password" : "Show password"}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-electric-light"
                 >
                   {showCurrent ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -121,11 +123,12 @@ export default function SecurityPage() {
 
             {/* New Password */}
             <div>
-              <label className="mb-1 block text-sm font-medium text-white/80">
+              <label htmlFor="security-new" className="mb-1 block text-sm font-medium text-white/80">
                 New Password
               </label>
               <div className="relative">
                 <input
+                  id="security-new"
                   type={showNew ? "text" : "password"}
                   required
                   value={newPassword}
@@ -136,6 +139,7 @@ export default function SecurityPage() {
                 <button
                   type="button"
                   onClick={() => setShowNew((v) => !v)}
+                  aria-label={showNew ? "Hide password" : "Show password"}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-electric-light"
                 >
                   {showNew ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -145,11 +149,12 @@ export default function SecurityPage() {
 
             {/* Confirm Password */}
             <div>
-              <label className="mb-1 block text-sm font-medium text-white/80">
+              <label htmlFor="security-confirm" className="mb-1 block text-sm font-medium text-white/80">
                 Confirm New Password
               </label>
               <div className="relative">
                 <input
+                  id="security-confirm"
                   type={showConfirm ? "text" : "password"}
                   required
                   value={confirmPassword}
@@ -160,6 +165,7 @@ export default function SecurityPage() {
                 <button
                   type="button"
                   onClick={() => setShowConfirm((v) => !v)}
+                  aria-label={showConfirm ? "Hide password" : "Show password"}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-electric-light"
                 >
                   {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}

@@ -34,6 +34,7 @@ export default function NewCatalogEntityForm({ label, onCreate }) {
         <input
           name="name"
           placeholder={`New ${label} name`}
+          aria-label={`New ${label} name`}
           className="rounded-lg glass-card px-3 py-2 text-sm text-white outline-none focus:shadow-glow-electric placeholder:text-white/30"
           disabled={pending}
         />

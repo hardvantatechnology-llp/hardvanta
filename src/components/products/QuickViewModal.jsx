@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Star, X, ShoppingCart, Heart, Check, ArrowRight } from "lucide-react";
 import { formatPrice } from "@/utils/formatPrice";
 import { imageSrc } from "@/utils/imageSrc";
@@ -17,6 +17,7 @@ export default function QuickViewModal({ product, onClose }) {
   const { wishlistIds, toggleWishlist } = useWishlist();
   const [added, setAdded] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const reduce = useReducedMotion();
 
   useEffect(() => setMounted(true), []);
 
@@ -53,17 +54,20 @@ export default function QuickViewModal({ product, onClose }) {
     <AnimatePresence>
       <motion.div
         key="backdrop"
-        initial={{ opacity: 0 }}
+        initial={reduce ? false : { opacity: 0 }}
         animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+        exit={reduce ? undefined : { opacity: 0 }}
         onClick={onClose}
         className="fixed inset-0 z-[200] flex items-center justify-center bg-obsidian/70 backdrop-blur-md p-4"
       >
         <motion.div
           key="panel"
-          initial={{ opacity: 0, scale: 0.94, y: 16 }}
+          role="dialog"
+          aria-modal="true"
+          aria-label={product.name}
+          initial={reduce ? false : { opacity: 0, scale: 0.94, y: 16 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.94, y: 16 }}
+          exit={reduce ? undefined : { opacity: 0, scale: 0.94, y: 16 }}
           transition={{ type: "spring", stiffness: 320, damping: 30 }}
           onClick={(e) => e.stopPropagation()}
           className="glass-strong relative grid w-full max-w-2xl gap-6 rounded-3xl p-6 sm:grid-cols-2"

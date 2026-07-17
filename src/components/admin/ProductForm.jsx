@@ -62,8 +62,8 @@ export default function ProductForm({ product }) {
           categoryId: f.categoryId || cats[0]?.id || "",
           brandId: f.brandId || brands[0]?.id || "",
         }));
-      } catch (err) {
-        console.log(err);
+      } catch {
+        // categories/brands failed to load — form still usable, dropdowns just stay empty
       }
     }
     loadData();

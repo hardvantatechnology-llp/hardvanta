@@ -1,11 +1,11 @@
 "use client";
 
-import { useRef, useState, useCallback } from "react";
+import { forwardRef, useRef, useState, useCallback } from "react";
 import Link from "next/link";
 
 let rippleId = 0;
 
-export default function Button({
+const Button = forwardRef(function Button({
   children,
   variant = "primary",
   size = "md",
@@ -16,8 +16,13 @@ export default function Button({
   style,
   href,
   ...props
-}) {
-  const ref = useRef(null);
+}, forwardedRef) {
+  const innerRef = useRef(null);
+  const ref = (node) => {
+    innerRef.current = node;
+    if (typeof forwardedRef === "function") forwardedRef(node);
+    else if (forwardedRef) forwardedRef.current = node;
+  };
   const [ripples, setRipples] = useState([]);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
 
@@ -25,13 +30,14 @@ export default function Button({
     "relative inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-all duration-200 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-electric/50 overflow-hidden";
 
   const variants = {
+    // Danger/error semantic (destructive confirms, add-to-cart error state) — not a generic "primary" look.
     primary:
-      "bg-royal text-white shadow-sm hover:bg-royal-dark hover:shadow-md",
+      "bg-red-500 text-white shadow-sm hover:bg-red-600 hover:shadow-[0_0_40px_-8px_rgba(248,113,113,0.45)]",
     secondary:
-      "bg-navy text-white hover:bg-navy-light shadow-sm hover:shadow-md",
+      "bg-liquid text-white shadow-sm hover:bg-liquid-dark hover:shadow-glow-purple",
     outline:
-      "border border-silver-dark bg-white text-navy hover:border-royal hover:text-royal",
-    ghost: "text-navy hover:bg-silver-light",
+      "border border-electric/40 bg-transparent text-white hover:border-electric hover:bg-white/5",
+    ghost: "text-white/70 hover:bg-white/10 hover:text-white",
     glass:
       "glass text-white hover:border-white/25 hover:shadow-glow-electric",
     gradient:
@@ -46,7 +52,7 @@ export default function Button({
 
   const handleClick = useCallback(
     (e) => {
-      const el = ref.current;
+      const el = innerRef.current;
       if (el && !window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
         const rect = el.getBoundingClientRect();
         const size = Math.max(rect.width, rect.height) * 2;
@@ -71,7 +77,7 @@ export default function Button({
 
   const handleMouseMove = useCallback(
     (e) => {
-      const el = ref.current;
+      const el = innerRef.current;
       if (el && !window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
         const rect = el.getBoundingClientRect();
         const relX = (e.clientX - rect.left - rect.width / 2) / rect.width;
@@ -123,4 +129,6 @@ export default function Button({
       ))}
     </Tag>
   );
-}
+});
+
+export default Button;

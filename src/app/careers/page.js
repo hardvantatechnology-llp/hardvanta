@@ -52,8 +52,7 @@ const perks = [
 export default function CareersPage() {
   return (
     <>
-      <style>{`
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+      <style dangerouslySetInnerHTML={{ __html: `
         body { font-family: Inter, system-ui, -apple-system, sans-serif; }
 
         .car-hero { padding: 44px 20px 56px; }
@@ -96,7 +95,7 @@ export default function CareersPage() {
         }
 
         a:focus-visible, button:focus-visible {
-          outline: 2px solid #3b5bdb;
+          outline: 2px solid #3b82f6;
           outline-offset: 3px;
           border-radius: 6px;
         }
@@ -111,15 +110,15 @@ export default function CareersPage() {
         @media (prefers-reduced-motion: reduce) {
           * { transition: none !important; }
         }
-      `}</style>
+      `}} />
 
-      <div style={{ background: "#f3f4f6", minHeight: "100vh" }}>
+      <div style={{ background: "#0d0f16", minHeight: "100vh" }}>
 
         {/* ══════ HERO ══════ */}
         <div
           className="car-hero"
           style={{
-            background: "linear-gradient(135deg,#1e2a6e 0%,#2d3a8c 55%,#1a237e 100%)",
+            background: "linear-gradient(135deg,#05060a 0%,#0a1128 55%,#05060a 100%)",
             position: "relative",
             overflow: "hidden",
           }}
@@ -194,11 +193,12 @@ export default function CareersPage() {
 
           {/* "On this page" nav */}
           <div style={{
-            background: "#ffffff", border: "1px solid #e5e7eb",
+            background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)",
+            backdropFilter: "blur(20px)",
             borderRadius: "14px", padding: "22px 24px", marginBottom: "24px",
-            boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
+            boxShadow: "0 4px 24px rgba(0,0,0,0.45)",
           }}>
-            <p style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#9ca3af", marginBottom: "14px" }}>
+            <p style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)", marginBottom: "14px" }}>
               ON THIS PAGE
             </p>
             <nav className="nav-grid" aria-label="Page sections">
@@ -216,12 +216,12 @@ export default function CareersPage() {
                     document.querySelector(link.href)?.scrollIntoView({ behavior: "smooth", block: "start" });
                   }}
                   style={{
-                    fontSize: "clamp(12px,3vw,13px)", color: "#3b5bdb",
+                    fontSize: "clamp(12px,3vw,13px)", color: "#3b82f6",
                     textDecoration: "none",
                     display: "flex", alignItems: "flex-start", gap: "5px", lineHeight: 1.45,
                   }}
                 >
-                  <span style={{ color: "#9ca3af", fontSize: "11px", marginTop: "2px", flexShrink: 0 }}>›</span>
+                  <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "11px", marginTop: "2px", flexShrink: 0 }}>›</span>
                   {link.label}
                 </a>
               ))}
@@ -232,27 +232,28 @@ export default function CareersPage() {
           <div
             id="why-us"
             style={{
-              background: "#ffffff", border: "1px solid #e5e7eb",
+              background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)",
+              backdropFilter: "blur(20px)",
               borderRadius: "14px", padding: "clamp(20px,4vw,32px)",
-              marginBottom: "18px", boxShadow: "0 1px 6px rgba(0,0,0,0.05)",
+              marginBottom: "18px", boxShadow: "0 4px 24px rgba(0,0,0,0.45)",
               scrollMarginTop: "24px",
             }}
           >
-            <p style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#9ca3af", marginBottom: "6px" }}>
+            <p style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)", marginBottom: "6px" }}>
               SECTION 01
             </p>
             <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "10px" }}>
               <div style={{
                 flexShrink: 0, width: "42px", height: "42px", borderRadius: "10px",
-                background: "linear-gradient(135deg,#eff3ff 0%,#e0e7ff 100%)",
+                background: "linear-gradient(135deg,rgba(59,130,246,0.25) 0%,rgba(168,85,247,0.25) 100%)",
                 display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px",
               }}>🛠️</div>
-              <h2 style={{ fontSize: "clamp(16px,4vw,20px)", fontWeight: 800, color: "#111827" }}>
+              <h2 style={{ fontSize: "clamp(16px,4vw,20px)", fontWeight: 800, color: "#ffffff" }}>
                 Why Work With Us
               </h2>
             </div>
 
-            <p style={{ fontSize: "clamp(13.5px,3vw,15px)", color: "#374151", lineHeight: 1.8, marginBottom: "20px" }}>
+            <p style={{ fontSize: "clamp(13.5px,3vw,15px)", color: "rgba(255,255,255,0.7)", lineHeight: 1.8, marginBottom: "20px" }}>
               We are a growing team passionate about makers and builders. Curiosity matters more than
               credentials here — if you have built something, that is your real resume. ✨
             </p>
@@ -262,22 +263,22 @@ export default function CareersPage() {
                 <div
                   key={item.title}
                   style={{
-                    background: "#f9fafb", border: "1px solid #f3f4f6",
+                    background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)",
                     borderRadius: "12px", padding: "18px",
                   }}
                 >
                   <div style={{
                     width: "40px", height: "40px", borderRadius: "10px",
-                    background: "linear-gradient(135deg,#eff3ff,#e0e7ff)",
+                    background: "linear-gradient(135deg,rgba(59,130,246,0.25),rgba(168,85,247,0.25))",
                     display: "flex", alignItems: "center", justifyContent: "center",
                     fontSize: "20px", marginBottom: "12px",
                   }}>
                     {item.emoji}
                   </div>
-                  <p style={{ fontWeight: 700, fontSize: "clamp(13.5px,3vw,15px)", color: "#111827", marginBottom: "6px" }}>
+                  <p style={{ fontWeight: 700, fontSize: "clamp(13.5px,3vw,15px)", color: "#ffffff", marginBottom: "6px" }}>
                     {item.title}
                   </p>
-                  <p style={{ fontSize: "clamp(12.5px,2.8vw,13.5px)", color: "#6b7280", lineHeight: 1.65 }}>
+                  <p style={{ fontSize: "clamp(12.5px,2.8vw,13.5px)", color: "rgba(255,255,255,0.6)", lineHeight: 1.65 }}>
                     {item.desc}
                   </p>
                 </div>
@@ -289,27 +290,28 @@ export default function CareersPage() {
           <div
             id="values"
             style={{
-              background: "#ffffff", border: "1px solid #e5e7eb",
+              background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)",
+              backdropFilter: "blur(20px)",
               borderRadius: "14px", padding: "clamp(20px,4vw,32px)",
-              marginBottom: "18px", boxShadow: "0 1px 6px rgba(0,0,0,0.05)",
+              marginBottom: "18px", boxShadow: "0 4px 24px rgba(0,0,0,0.45)",
               scrollMarginTop: "24px",
             }}
           >
-            <p style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#9ca3af", marginBottom: "6px" }}>
+            <p style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)", marginBottom: "6px" }}>
               SECTION 02
             </p>
             <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "10px" }}>
               <div style={{
                 flexShrink: 0, width: "42px", height: "42px", borderRadius: "10px",
-                background: "linear-gradient(135deg,#eff3ff 0%,#e0e7ff 100%)",
+                background: "linear-gradient(135deg,rgba(59,130,246,0.25) 0%,rgba(168,85,247,0.25) 100%)",
                 display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px",
               }}>⚡</div>
-              <h2 style={{ fontSize: "clamp(16px,4vw,20px)", fontWeight: 800, color: "#111827" }}>
+              <h2 style={{ fontSize: "clamp(16px,4vw,20px)", fontWeight: 800, color: "#ffffff" }}>
                 What We Stand For
               </h2>
             </div>
 
-            <p style={{ fontSize: "clamp(13.5px,3vw,15px)", color: "#374151", lineHeight: 1.8, marginBottom: "4px" }}>
+            <p style={{ fontSize: "clamp(13.5px,3vw,15px)", color: "rgba(255,255,255,0.7)", lineHeight: 1.8, marginBottom: "4px" }}>
               These aren&apos;t posters on a wall — they&apos;re how we actually work every day.
             </p>
 
@@ -319,10 +321,10 @@ export default function CareersPage() {
                   key={v.label}
                   style={{
                     display: "inline-flex", alignItems: "center", gap: "8px",
-                    background: "#eff6ff",
-                    border: "1px solid #dbeafe",
+                    background: "rgba(59,130,246,0.12)",
+                    border: "1px solid rgba(59,130,246,0.3)",
                     borderRadius: "999px", padding: "8px 16px",
-                    fontSize: "clamp(12.5px,2.8vw,14px)", fontWeight: 600, color: "#1e3a8a",
+                    fontSize: "clamp(12.5px,2.8vw,14px)", fontWeight: 600, color: "#bfdbfe",
                   }}
                 >
                   <span>{v.emoji}</span> {v.label}
@@ -332,9 +334,9 @@ export default function CareersPage() {
 
             {/* Highlight */}
             <div style={{
-              background: "#eff6ff", borderLeft: "3px solid #3b5bdb",
+              background: "rgba(59,130,246,0.1)", borderLeft: "3px solid #3b82f6",
               borderRadius: "6px", padding: "12px 16px", marginTop: "20px",
-              fontSize: "clamp(12.5px,2.8vw,13.5px)", color: "#1e3a8a", lineHeight: 1.65,
+              fontSize: "clamp(12.5px,2.8vw,13.5px)", color: "#bfdbfe", lineHeight: 1.65,
             }}>
               <strong>💡 Our belief: </strong>
               The best engineers aren&apos;t always the ones with the fanciest degrees — they&apos;re the ones who can&apos;t stop building. If that&apos;s you, we&apos;d love to talk.
@@ -345,27 +347,28 @@ export default function CareersPage() {
           <div
             id="perks"
             style={{
-              background: "#ffffff", border: "1px solid #e5e7eb",
+              background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)",
+              backdropFilter: "blur(20px)",
               borderRadius: "14px", padding: "clamp(20px,4vw,32px)",
-              marginBottom: "18px", boxShadow: "0 1px 6px rgba(0,0,0,0.05)",
+              marginBottom: "18px", boxShadow: "0 4px 24px rgba(0,0,0,0.45)",
               scrollMarginTop: "24px",
             }}
           >
-            <p style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#9ca3af", marginBottom: "6px" }}>
+            <p style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)", marginBottom: "6px" }}>
               SECTION 03
             </p>
             <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "10px" }}>
               <div style={{
                 flexShrink: 0, width: "42px", height: "42px", borderRadius: "10px",
-                background: "linear-gradient(135deg,#eff3ff 0%,#e0e7ff 100%)",
+                background: "linear-gradient(135deg,rgba(59,130,246,0.25) 0%,rgba(168,85,247,0.25) 100%)",
                 display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px",
               }}>🎁</div>
-              <h2 style={{ fontSize: "clamp(16px,4vw,20px)", fontWeight: 800, color: "#111827" }}>
+              <h2 style={{ fontSize: "clamp(16px,4vw,20px)", fontWeight: 800, color: "#ffffff" }}>
                 Perks &amp; Benefits
               </h2>
             </div>
 
-            <p style={{ fontSize: "clamp(13.5px,3vw,15px)", color: "#374151", lineHeight: 1.8, marginBottom: "18px" }}>
+            <p style={{ fontSize: "clamp(13.5px,3vw,15px)", color: "rgba(255,255,255,0.7)", lineHeight: 1.8, marginBottom: "18px" }}>
               We take care of the people who take care of our makers. 💚
             </p>
 
@@ -374,16 +377,16 @@ export default function CareersPage() {
                 <div
                   key={p.title}
                   style={{
-                    background: "#f9fafb", border: "1px solid #f3f4f6",
+                    background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)",
                     borderRadius: "12px", padding: "18px",
                     display: "flex", flexDirection: "column", gap: "8px",
                   }}
                 >
                   <span style={{ fontSize: "26px" }}>{p.emoji}</span>
-                  <p style={{ fontWeight: 700, fontSize: "clamp(13px,3vw,14.5px)", color: "#111827" }}>
+                  <p style={{ fontWeight: 700, fontSize: "clamp(13px,3vw,14.5px)", color: "#ffffff" }}>
                     {p.title}
                   </p>
-                  <p style={{ fontSize: "clamp(12px,2.8vw,13px)", color: "#6b7280", lineHeight: 1.6 }}>
+                  <p style={{ fontSize: "clamp(12px,2.8vw,13px)", color: "rgba(255,255,255,0.6)", lineHeight: 1.6 }}>
                     {p.desc}
                   </p>
                 </div>
@@ -395,45 +398,46 @@ export default function CareersPage() {
           <div
             id="roles"
             style={{
-              background: "#ffffff", border: "1px solid #e5e7eb",
+              background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)",
+              backdropFilter: "blur(20px)",
               borderRadius: "14px", padding: "clamp(20px,4vw,32px)",
-              marginBottom: "18px", boxShadow: "0 1px 6px rgba(0,0,0,0.05)",
+              marginBottom: "18px", boxShadow: "0 4px 24px rgba(0,0,0,0.45)",
               scrollMarginTop: "24px",
             }}
           >
-            <p style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#9ca3af", marginBottom: "6px" }}>
+            <p style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)", marginBottom: "6px" }}>
               SECTION 04
             </p>
             <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "14px" }}>
               <div style={{
                 flexShrink: 0, width: "42px", height: "42px", borderRadius: "10px",
-                background: "linear-gradient(135deg,#eff3ff 0%,#e0e7ff 100%)",
+                background: "linear-gradient(135deg,rgba(59,130,246,0.25) 0%,rgba(168,85,247,0.25) 100%)",
                 display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px",
               }}>📋</div>
-              <h2 style={{ fontSize: "clamp(16px,4vw,20px)", fontWeight: 800, color: "#111827" }}>
+              <h2 style={{ fontSize: "clamp(16px,4vw,20px)", fontWeight: 800, color: "#ffffff" }}>
                 Open Positions
               </h2>
             </div>
 
             {/* Empty state */}
             <div style={{
-              background: "#f9fafb", border: "1.5px dashed #d1d5db",
+              background: "rgba(255,255,255,0.03)", border: "1.5px dashed rgba(255,255,255,0.15)",
               borderRadius: "12px", padding: "36px 24px", textAlign: "center",
             }}>
               <div style={{ fontSize: "40px", marginBottom: "12px" }}>📭</div>
-              <p style={{ fontWeight: 700, fontSize: "clamp(15px,3.5vw,17px)", color: "#111827", marginBottom: "8px" }}>
+              <p style={{ fontWeight: 700, fontSize: "clamp(15px,3.5vw,17px)", color: "#ffffff", marginBottom: "8px" }}>
                 No open roles right now
               </p>
-              <p style={{ fontSize: "clamp(13px,3vw,14px)", color: "#6b7280", lineHeight: 1.7, maxWidth: "400px", margin: "0 auto 0" }}>
-                We&apos;re not actively hiring at the moment — but great people don&apos;t wait for job postings. 
+              <p style={{ fontSize: "clamp(13px,3vw,14px)", color: "rgba(255,255,255,0.6)", lineHeight: 1.7, maxWidth: "400px", margin: "0 auto 0" }}>
+                We&apos;re not actively hiring at the moment — but great people don&apos;t wait for job postings.
                 Send us your resume and tell us what you&apos;d love to build with us.
               </p>
             </div>
 
             <div style={{
-              background: "#eff6ff", borderLeft: "3px solid #3b5bdb",
+              background: "rgba(59,130,246,0.1)", borderLeft: "3px solid #3b82f6",
               borderRadius: "6px", padding: "12px 16px", marginTop: "18px",
-              fontSize: "clamp(12.5px,2.8vw,13.5px)", color: "#1e3a8a", lineHeight: 1.65,
+              fontSize: "clamp(12.5px,2.8vw,13.5px)", color: "#bfdbfe", lineHeight: 1.65,
             }}>
               <strong>💡 Heads up: </strong>
               We review every application carefully. If your skills and passion are a match, we&apos;ll reach out — even if there&apos;s no active role.
@@ -442,7 +446,7 @@ export default function CareersPage() {
 
           {/* ── CTA card ── */}
           <div style={{
-            background: "linear-gradient(135deg,#1e2a6e 0%,#2d3a8c 100%)",
+            background: "linear-gradient(135deg,#05060a 0%,#0a1128 100%)",
             borderRadius: "14px", textAlign: "center",
             padding: "clamp(32px,5vw,52px) clamp(20px,5vw,40px)",
             marginTop: "8px", position: "relative", overflow: "hidden",
@@ -474,8 +478,8 @@ export default function CareersPage() {
                 <a
                   href="/contact"
                   style={{
-                    display: "inline-block", background: "#ffffff",
-                    color: "#1e2a6e", fontWeight: 700,
+                    display: "inline-block", background: "#3b82f6",
+                    color: "#ffffff", fontWeight: 700,
                     fontSize: "clamp(13px,3vw,14.5px)",
                     padding: "13px 32px", borderRadius: "8px",
                     textDecoration: "none", letterSpacing: "0.01em",

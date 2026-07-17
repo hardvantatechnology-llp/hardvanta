@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Check, Clock, Package, Truck, Home, XCircle } from "lucide-react";
 
 // The normal forward journey of an order. CANCELLED is handled separately.
@@ -12,6 +12,8 @@ const STEPS = [
 ];
 
 export default function OrderTracker({ status }) {
+  const reduce = useReducedMotion();
+
   if (status === "CANCELLED") {
     return (
       <div className="flex items-center gap-2 rounded-lg bg-red-500/10 px-4 py-3 text-sm font-semibold text-red-400">
@@ -35,7 +37,7 @@ export default function OrderTracker({ status }) {
             <div className="flex flex-col items-center">
               <motion.div
                 initial={false}
-                animate={{ scale: active ? 1.1 : 1 }}
+                animate={{ scale: reduce ? 1 : active ? 1.1 : 1 }}
                 transition={{ type: "spring", stiffness: 300, damping: 15 }}
                 className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors ${
                   done
@@ -60,9 +62,10 @@ export default function OrderTracker({ status }) {
               <div className="-mt-5 h-0.5 flex-1 overflow-hidden rounded-full bg-white/10">
                 <motion.div
                   initial={false}
-                  animate={{ width: i < currentIndex ? "100%" : "0%" }}
-                  transition={{ duration: 0.4 }}
-                  className="h-full bg-gradient-to-r from-electric to-liquid"
+                  animate={{ scaleX: i < currentIndex ? 1 : 0 }}
+                  transition={reduce ? { duration: 0 } : { duration: 0.4 }}
+                  style={{ transformOrigin: "left" }}
+                  className="h-full w-full bg-gradient-to-r from-electric to-liquid"
                 />
               </div>
             )}
