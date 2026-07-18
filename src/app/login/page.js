@@ -183,7 +183,8 @@ function LoginForm() {
                   <div className="relative">
                     <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
                     <input
-                      type="email" required value={forgotEmail}
+                      id="forgot-email"
+                      type="email" name="username" autoComplete="username" required value={forgotEmail}
                       onChange={(e) => setForgotEmail(e.target.value)}
                       placeholder="Enter your email"
                       aria-label="Email address"
@@ -201,7 +202,9 @@ function LoginForm() {
               <motion.div {...motionProps("reset")}>
                 <form onSubmit={handleResetConfirm} className="space-y-4">
                   <input
-                    type="text" inputMode="numeric" maxLength={6} required autoFocus
+                    id="forgot-code"
+                    type="text" name="one-time-code" autoComplete="one-time-code"
+                    inputMode="numeric" maxLength={6} required autoFocus
                     value={forgotCode}
                     onChange={(e) => setForgotCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
                     placeholder="------"
@@ -211,7 +214,9 @@ function LoginForm() {
                   <div className="relative">
                     <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
                     <input
-                      type={showNewPassword ? "text" : "password"} required minLength={8}
+                      id="forgot-new-password"
+                      type={showNewPassword ? "text" : "password"} name="new-password" autoComplete="new-password"
+                      required minLength={8}
                       value={forgotNewPassword}
                       onChange={(e) => setForgotNewPassword(e.target.value)}
                       placeholder="New password (min 8 characters)"
@@ -297,7 +302,7 @@ function LoginForm() {
                     <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
                     <input
                       id="login-email"
-                      type="email" required value={email}
+                      type="email" name="username" autoComplete="username" required value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="you@example.com"
                       className="w-full rounded-xl glass-card pl-9 pr-4 py-2.5 text-sm text-white outline-none focus:shadow-glow-electric transition-all placeholder:text-white/30"
@@ -317,7 +322,8 @@ function LoginForm() {
                     <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
                     <input
                       id="login-password"
-                      type={showPassword ? "text" : "password"} required value={password}
+                      type={showPassword ? "text" : "password"} name="current-password" autoComplete="current-password"
+                      required value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Enter your password"
                       className="w-full rounded-xl glass-card pl-9 pr-10 py-2.5 text-sm text-white outline-none focus:shadow-glow-electric transition-all placeholder:text-white/30"
@@ -332,7 +338,7 @@ function LoginForm() {
 
                 {/* Remember me */}
                 <label className="flex items-center gap-2.5 cursor-pointer">
-                  <input type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)}
+                  <input type="checkbox" name="remember-me" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)}
                     className="w-4 h-4 rounded accent-electric" />
                   <span className="text-sm text-white/50">Remember me for 30 days</span>
                 </label>
@@ -357,7 +363,8 @@ function LoginForm() {
                   <label htmlFor="login-otp" className="mb-1.5 block text-sm font-medium text-white/80 text-center">Enter 6-digit code</label>
                   <input
                     id="login-otp"
-                    type="text" inputMode="numeric" maxLength={6} required autoFocus
+                    type="text" name="one-time-code" autoComplete="one-time-code"
+                    inputMode="numeric" maxLength={6} required autoFocus
                     value={otp}
                     onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
                     placeholder="000000"

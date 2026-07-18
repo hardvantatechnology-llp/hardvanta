@@ -73,6 +73,8 @@ export default function RegisterPage() {
             <input
               id="register-name"
               type="text"
+              name="name"
+              autoComplete="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="w-full rounded-lg glass-card px-3 py-2.5 text-sm text-white outline-none focus:shadow-glow-electric"
@@ -85,6 +87,8 @@ export default function RegisterPage() {
             <input
               id="register-email"
               type="email"
+              name="email"
+              autoComplete="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -100,6 +104,8 @@ export default function RegisterPage() {
               <input
                 id="register-phone"
                 type="tel"
+                name="phone"
+                autoComplete="tel"
                 inputMode="numeric"
                 required
                 value={phone}
@@ -117,6 +123,8 @@ export default function RegisterPage() {
               <input
                 id="register-password"
                 type={showPassword ? "text" : "password"}
+                name="new-password"
+                autoComplete="new-password"
                 required
                 minLength={8}
                 value={password}

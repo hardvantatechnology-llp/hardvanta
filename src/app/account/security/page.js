@@ -104,6 +104,8 @@ export default function SecurityPage() {
                 <input
                   id="security-current"
                   type={showCurrent ? "text" : "password"}
+                  name="current-password"
+                  autoComplete="current-password"
                   required
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
@@ -130,6 +132,8 @@ export default function SecurityPage() {
                 <input
                   id="security-new"
                   type={showNew ? "text" : "password"}
+                  name="new-password"
+                  autoComplete="new-password"
                   required
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
@@ -156,6 +160,8 @@ export default function SecurityPage() {
                 <input
                   id="security-confirm"
                   type={showConfirm ? "text" : "password"}
+                  name="new-password"
+                  autoComplete="new-password"
                   required
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
