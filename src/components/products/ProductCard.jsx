@@ -140,21 +140,22 @@ function ProductCard({ product, priority = false }) {
             )}
           </div>
 
-          {/* Action icons — top-right */}
+          {/* Action icons — top-right. Solid dark backdrop (not translucent .glass) so
+              they stay legible over light/white product photos, not just dark ones. */}
           <div className="absolute right-3 top-3 flex flex-col gap-1.5">
             <button
               type="button"
               onClick={() => toggleWishlist(product.id)}
               aria-label={wished ? "Remove from wishlist" : "Add to wishlist"}
-              className="flex h-8 w-8 items-center justify-center rounded-full glass text-white/80 transition-all hover:shadow-glow-purple"
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-obsidian/70 shadow-glass backdrop-blur-md text-white/90 transition-all hover:bg-obsidian/85 hover:shadow-glow-purple"
             >
-              <Heart size={15} className={wished ? "fill-liquid text-liquid" : ""} />
+              <Heart size={15} className={wished ? "fill-red-500 text-red-500" : ""} />
             </button>
             <button
               type="button"
               onClick={toggleCompare}
               aria-label={compared ? "Remove from compare" : "Add to compare"}
-              className="flex h-8 w-8 items-center justify-center rounded-full glass text-white/80 transition-all hover:shadow-glow-cyan"
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-obsidian/70 shadow-glass backdrop-blur-md text-white/90 transition-all hover:bg-obsidian/85 hover:shadow-glow-cyan"
             >
               <Repeat size={14} className={compared ? "text-cyan" : ""} />
             </button>
@@ -165,7 +166,7 @@ function ProductCard({ product, priority = false }) {
                 setQuickView(true);
               }}
               aria-label="Quick view"
-              className="flex h-8 w-8 items-center justify-center rounded-full glass text-white/80 opacity-0 transition-all group-hover:opacity-100 hover:shadow-glow-electric"
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-obsidian/70 shadow-glass backdrop-blur-md text-white/90 opacity-0 transition-all group-hover:opacity-100 hover:bg-obsidian/85 hover:shadow-glow-electric"
             >
               <Eye size={14} />
             </button>

@@ -135,7 +135,7 @@ export default function QuickViewModal({ product, onClose }) {
                 aria-label={wished ? "Remove from wishlist" : "Add to wishlist"}
                 className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg glass text-white/80 hover:shadow-glow-purple"
               >
-                <Heart size={18} className={wished ? "fill-liquid text-liquid" : ""} />
+                <Heart size={18} className={wished ? "fill-red-500 text-red-500" : ""} />
               </button>
             </div>
 
