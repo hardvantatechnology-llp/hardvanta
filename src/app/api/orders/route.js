@@ -113,8 +113,13 @@ export async function POST(request) {
           },
         });
 
-        // STEP 5: Cart clear karo
-        await tx.cartItem.deleteMany({ where: { userId } });
+        // STEP 5: Cart clear karo — scoped to exactly the products that were
+        // just ordered (not a blanket delete-by-userId), so an item added to
+        // the cart concurrently with this order (e.g. from another tab)
+        // isn't silently wiped out along with the purchased ones.
+        await tx.cartItem.deleteMany({
+          where: { userId, productId: { in: cartItems.map((it) => it.productId) } },
+        });
 
         return created;
       },

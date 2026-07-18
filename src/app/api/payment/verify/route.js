@@ -113,7 +113,12 @@ export async function POST(request) {
         },
       });
 
-      await tx.cartItem.deleteMany({ where: { userId } });
+      // Scoped to exactly the products in this order (not a blanket delete-
+      // by-userId), so an item added to the cart concurrently with this
+      // payment isn't silently wiped out along with the purchased ones.
+      await tx.cartItem.deleteMany({
+        where: { userId, productId: { in: updated.items.map((i) => i.productId) } },
+      });
       return updated;
     });
   } catch (err) {

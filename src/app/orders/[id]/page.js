@@ -27,6 +27,7 @@ function formatAddress(address) {
   if (address.area)      parts.push(address.area);
   if (address.landmark)  parts.push("Near " + address.landmark);
   if (address.line1)     parts.push(address.line1);
+  if (address.line2)     parts.push(address.line2);
   if (address.city)      parts.push(address.city);
   if (address.state)     parts.push(address.state);
   if (address.pincode)   parts.push(address.pincode);

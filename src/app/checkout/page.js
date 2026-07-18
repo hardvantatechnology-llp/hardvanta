@@ -6,9 +6,9 @@ import { useSession } from "next-auth/react";
 import { Ticket, X, Tag, Truck, Wifi, Banknote } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { formatPrice } from "@/utils/formatPrice";
-import { lookupPincode } from "@/utils/pincode";
 import Button from "@/components/ui/Button";
 import CheckoutStepper from "@/components/checkout/CheckoutStepper";
+import AddressBook from "@/components/checkout/AddressBook";
 
 const COD_LIMIT = 10000;
 
@@ -21,23 +21,13 @@ export default function CheckoutPage() {
   count,
   coupon,
   setCoupon,
+  refreshCart,
 } = useCart();
 
-  const [form, setForm] = useState({
-    fullName: "",
-    phone: "",
-    flatHouse: "",
-    area: "",
-    landmark: "",
-    city: "",
-    state: "",
-    pincode: "",
-  });
+  const [selectedAddress, setSelectedAddress] = useState(null);
   const [payMethod, setPayMethod] = useState("COD");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [pinStatus, setPinStatus] = useState("idle");
-  const [pinMessage, setPinMessage] = useState("");
 
   // Coupon state
   const [couponCode, setCouponCode] = useState("");
@@ -99,27 +89,6 @@ export default function CheckoutPage() {
     setCouponError("");
   }
 
-  function update(key, value) {
-    setForm((f) => ({ ...f, [key]: value }));
-  }
-
-  async function handlePincode(value) {
-    const pin = value.replace(/\D/g, "").slice(0, 6);
-    update("pincode", pin);
-    if (pin.length < 6) { setPinStatus("idle"); setPinMessage(""); return; }
-    setPinStatus("checking");
-    setPinMessage("Checking PIN code…");
-    const result = await lookupPincode(pin);
-    if (result.ok) {
-      setForm((f) => ({ ...f, pincode: pin, city: result.city, state: result.state }));
-      setPinStatus("ok");
-      setPinMessage(`${result.area}, ${result.city}, ${result.state}`);
-    } else {
-      setPinStatus("error");
-      setPinMessage(result.error);
-    }
-  }
-
   function loadRazorpayScript() {
     return new Promise((resolve) => {
       if (typeof window !== "undefined" && window.Razorpay) return resolve(true);
@@ -131,14 +100,18 @@ export default function CheckoutPage() {
     });
   }
 
-  function buildAddressPayload() {
-    const parts = [form.flatHouse.trim(), form.area.trim()];
-    if (form.landmark.trim()) parts.push(`Near ${form.landmark.trim()}`);
-    const line1 = parts.filter(Boolean).join(", ");
+  // Maps a saved Address-book record to the JSON shape stored on Order.address
+  // (unchanged from before — order detail/invoice rendering both read these
+  // exact keys, so this keeps that code path untouched).
+  function buildAddressPayload(address) {
     return {
-      fullName: form.fullName, phone: form.phone, line1,
-      flatHouse: form.flatHouse, area: form.area, landmark: form.landmark,
-      city: form.city, state: form.state, pincode: form.pincode,
+      fullName: address.fullName,
+      phone: address.phone,
+      line1: address.addressLine1,
+      line2: address.addressLine2 || "",
+      city: address.city,
+      state: address.state,
+      pincode: address.postalCode,
     };
   }
 
@@ -147,7 +120,7 @@ export default function CheckoutPage() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        address: buildAddressPayload(),
+        address: buildAddressPayload(selectedAddress),
         couponCode: coupon?.code ?? null,
         couponDiscount,
       }),
@@ -155,6 +128,10 @@ export default function CheckoutPage() {
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Could not place order.");
     setCoupon(null);
+    // The order transaction already cleared the purchased items server-side —
+    // sync this context's local cart state so the navbar badge, cart drawer,
+    // and cart page reflect it immediately instead of showing stale items.
+    await refreshCart();
     router.push("/orders?placed=1");
     router.refresh();
   }
@@ -165,12 +142,12 @@ export default function CheckoutPage() {
     const res = await fetch("/api/payment/create-order", { method: "POST" });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Could not start payment.");
-    const address = buildAddressPayload();
+    const address = buildAddressPayload(selectedAddress);
     await new Promise((resolve, reject) => {
       const rzp = new window.Razorpay({
         key: data.keyId, amount: data.amount, currency: data.currency,
         name: "hardvanta", description: "Order payment", order_id: data.orderId,
-        prefill: { name: form.fullName, contact: form.phone },
+        prefill: { name: selectedAddress.fullName, contact: selectedAddress.phone },
         theme: { color: "#2545d3" },
         handler: async (response) => {
           const verifyRes = await fetch("/api/payment/verify", {
@@ -184,6 +161,9 @@ export default function CheckoutPage() {
           });
           const verifyData = await verifyRes.json();
           if (!verifyRes.ok) { reject(new Error(verifyData.error || "Payment verification failed.")); return; }
+          // Same as the COD path — sync local cart state to the now-empty
+          // server cart so the badge/drawer/cart page update immediately.
+          await refreshCart();
           router.push("/orders?placed=1");
           router.refresh();
           resolve();
@@ -198,12 +178,8 @@ export default function CheckoutPage() {
   async function handleSubmit(e) {
     e.preventDefault();
     setError("");
-    if (!/^[6-9]\d{9}$/.test(form.phone)) {
-      setError("Please enter a valid Indian mobile number (must start with 6, 7, 8 or 9).");
-      return;
-    }
-    if (pinStatus === "error") {
-      setError("Please enter a valid Indian PIN code before placing the order.");
+    if (!selectedAddress) {
+      setError("Please select or add a shipping address.");
       return;
     }
     if (payMethod === "COD" && codBlocked) {
@@ -253,53 +229,7 @@ export default function CheckoutPage() {
               <p className="rounded-lg bg-red-500/10 border border-red-500/20 px-3 py-2 text-sm text-red-400">{error}</p>
             )}
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Full name" value={form.fullName} onChange={(v) => update("fullName", v)} required />
-              <Field
-                label="Phone" value={form.phone} type="tel" inputMode="numeric"
-                placeholder="10-digit mobile number" minLength={10} maxLength={10}
-                onChange={(v) => update("phone", v.replace(/\D/g, "").slice(0, 10))} required
-              />
-            </div>
-
-            <Field
-              label="Flat / House No / Building Name" value={form.flatHouse}
-              onChange={(v) => update("flatHouse", v)} required
-              placeholder="e.g. Flat 302, Shree Residency"
-            />
-            <Field
-              label="Area / Sector / Locality" value={form.area}
-              onChange={(v) => update("area", v)} required
-              placeholder="e.g. Sector 62, Near City Mall"
-            />
-            <Field
-              label="Landmark (optional)" value={form.landmark}
-              onChange={(v) => update("landmark", v)}
-              placeholder="e.g. Opposite HDFC Bank"
-            />
-
-            <div className="grid gap-4 sm:grid-cols-3">
-              <div>
-                <label htmlFor="checkout-pincode" className="mb-1 block text-sm font-medium text-white/80">Pincode</label>
-                <input
-                  id="checkout-pincode"
-                  type="text" inputMode="numeric" required value={form.pincode}
-                  onChange={(e) => handlePincode(e.target.value)} placeholder="6-digit PIN"
-                  className={`w-full rounded-lg glass-card px-3 py-2.5 text-sm text-white outline-none placeholder:text-white/30 ${
-                    pinStatus === "error" ? "ring-1 ring-red-400"
-                    : pinStatus === "ok" ? "ring-1 ring-cyan"
-                    : "focus:shadow-glow-electric"
-                  }`}
-                />
-                {pinMessage && (
-                  <p className={`mt-1 text-xs ${pinStatus === "error" ? "text-red-400" : pinStatus === "ok" ? "text-cyan" : "text-white/40"}`}>
-                    {pinStatus === "ok" ? "✓ " : pinStatus === "error" ? "✕ " : ""}{pinMessage}
-                  </p>
-                )}
-              </div>
-              <Field label="City" value={form.city} onChange={(v) => update("city", v)} required />
-              <Field label="State" value={form.state} onChange={(v) => update("state", v)} required />
-            </div>
+            <AddressBook enabled={status === "authenticated"} onChange={setSelectedAddress} />
 
             {/* Payment method */}
             <div className="pt-2">
@@ -458,23 +388,5 @@ function PayOption({ active, onClick, title, desc, disabled, Icon }) {
         {active && <span className="h-2 w-2 rounded-full bg-gradient-to-r from-electric to-liquid" />}
       </span>
     </button>
-  );
-}
-
-function Field({ label, value, onChange, required, type = "text", inputMode, placeholder, minLength, maxLength }) {
-  const id = `checkout-${label.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")}`;
-  return (
-    <div>
-      <label htmlFor={id} className="mb-1 block text-sm font-medium text-white/80">
-        {label}{required && <span className="ml-0.5 text-electric-light">*</span>}
-      </label>
-      <input
-        id={id}
-        type={type} inputMode={inputMode} required={required}
-        minLength={minLength} maxLength={maxLength} value={value}
-        onChange={(e) => onChange(e.target.value)} placeholder={placeholder}
-        className="w-full rounded-lg glass-card px-3 py-2.5 text-sm text-white outline-none placeholder:text-white/30 focus:shadow-glow-electric"
-      />
-    </div>
   );
 }

@@ -183,6 +183,20 @@ const mergedRef = useRef(false);
     [isAuthed]
   );
 
+  // Re-syncs local cart state from the server cart — used after checkout,
+  // where the order transaction already cleared the purchased items in the
+  // DB but this context's local `items` state has no way to know that yet.
+  const refreshCart = useCallback(async () => {
+    if (!isAuthed) return;
+    try {
+      const res = await fetch("/api/cart");
+      const data = await res.json();
+      if (res.ok && Array.isArray(data.items)) setItems(data.items);
+    } catch (e) {
+      console.error("refreshCart failed", e);
+    }
+  }, [isAuthed]);
+
   const count = items.reduce((sum, i) => sum + i.quantity, 0);
   const total = items.reduce(
     (sum, i) => sum + (i.salePrice ?? i.price) * i.quantity,
@@ -199,12 +213,13 @@ const mergedRef = useRef(false);
       removeItem,
       updateQuantity,
       clearCart,
+      refreshCart,
       count,
       total,
       coupon,
       setCoupon,
     }),
-    [items, addItem, removeItem, updateQuantity, clearCart, count, total, coupon]
+    [items, addItem, removeItem, updateQuantity, clearCart, refreshCart, count, total, coupon]
   );
 
   return (

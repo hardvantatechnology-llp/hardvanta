@@ -225,6 +225,7 @@ model Order {
 model Address {
   id           String   @id @default(cuid())
   userId       String
+  label        String   @default("Home")
   fullName     String
   phone        String
   addressLine1 String
