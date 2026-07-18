@@ -20,7 +20,10 @@ export default function CheckoutPage() {
   total,
   count,
   coupon,
-  setCoupon,
+  couponError,
+  couponLoading,
+  applyCoupon: applyCouponCtx,
+  removeCoupon: removeCouponCtx,
   refreshCart,
 } = useCart();
 
@@ -29,10 +32,9 @@ export default function CheckoutPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Coupon state
+  // Coupon input text (the applied coupon itself now lives in CartContext,
+  // shared with the cart page and AvailableCoupons).
   const [couponCode, setCouponCode] = useState("");
-  const [couponError, setCouponError] = useState("");
-  const [couponLoading, setCouponLoading] = useState(false);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -57,36 +59,17 @@ export default function CheckoutPage() {
     if (codBlocked && payMethod === "COD") setPayMethod("ONLINE");
   }, [codBlocked, payMethod]);
 
-  // Coupon functions
+  // Coupon functions — delegate to the shared CartContext implementation
+  // (also used by the cart page and AvailableCoupons) so all stay in sync.
   async function applyCoupon() {
     if (!couponCode.trim()) return;
-    setCouponError("");
-    setCouponLoading(true);
-    try {
-      const res = await fetch("/api/coupons/validate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: couponCode.trim().toUpperCase(), subtotal }),
-      });
-      const data = await res.json();
-      if (!res.ok || !data.valid) {
-        setCouponError(data.message || "Invalid coupon.");
-        setCoupon(null);
-      } else {
-        setCoupon(data);
-        setCouponCode("");
-      }
-    } catch {
-      setCouponError("Something went wrong. Try again.");
-    } finally {
-      setCouponLoading(false);
-    }
+    const { ok } = await applyCouponCtx(couponCode);
+    if (ok) setCouponCode("");
   }
 
   function removeCoupon() {
-    setCoupon(null);
+    removeCouponCtx();
     setCouponCode("");
-    setCouponError("");
   }
 
   function loadRazorpayScript() {
@@ -122,12 +105,11 @@ export default function CheckoutPage() {
       body: JSON.stringify({
         address: buildAddressPayload(selectedAddress),
         couponCode: coupon?.code ?? null,
-        couponDiscount,
       }),
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Could not place order.");
-    setCoupon(null);
+    removeCouponCtx();
     // The order transaction already cleared the purchased items server-side —
     // sync this context's local cart state so the navbar badge, cart drawer,
     // and cart page reflect it immediately instead of showing stale items.
@@ -139,7 +121,11 @@ export default function CheckoutPage() {
   async function handleOnlinePayment() {
     const ok = await loadRazorpayScript();
     if (!ok) throw new Error("Could not load payment gateway. Check your connection.");
-    const res = await fetch("/api/payment/create-order", { method: "POST" });
+    const res = await fetch("/api/payment/create-order", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ couponCode: coupon?.code ?? null }),
+    });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Could not start payment.");
     const address = buildAddressPayload(selectedAddress);
@@ -150,14 +136,13 @@ export default function CheckoutPage() {
         prefill: { name: selectedAddress.fullName, contact: selectedAddress.phone },
         theme: { color: "#2545d3" },
         handler: async (response) => {
+          // Discount is not sent here — it's already been re-validated and
+          // stored on the Order row by /api/payment/create-order; verify
+          // just needs to claim the coupon's usage now that payment succeeded.
           const verifyRes = await fetch("/api/payment/verify", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              ...response, address,
-              couponCode: coupon?.code ?? null,
-              couponDiscount,
-            }),
+            body: JSON.stringify({ ...response, address }),
           });
           const verifyData = await verifyRes.json();
           if (!verifyRes.ok) { reject(new Error(verifyData.error || "Payment verification failed.")); return; }
@@ -344,7 +329,7 @@ export default function CheckoutPage() {
                     <input
                       type="text"
                       value={couponCode}
-                      onChange={(e) => { setCouponCode(e.target.value.toUpperCase()); setCouponError(""); }}
+                      onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                       onKeyDown={(e) => e.key === "Enter" && applyCoupon()}
                       placeholder="Enter coupon code"
                       className="flex-1 rounded-xl glass-card px-3 py-2 text-sm text-white outline-none focus:shadow-glow-electric uppercase placeholder:normal-case placeholder:text-white/30"

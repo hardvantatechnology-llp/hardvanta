@@ -5,6 +5,7 @@ import Pagination, { parsePage } from "@/components/admin/Pagination";
 import AdminSearchInput from "@/components/admin/AdminSearchInput";
 import { PackageSearch } from "lucide-react";
 import { PAYMENT_STATUS_META } from "@/lib/orderStatus";
+import { formatDate } from "@/utils/formatDateTime";
 
 export const dynamic = "force-dynamic";
 
@@ -96,10 +97,7 @@ export default async function AdminOrdersPage({ searchParams }) {
                     #{o.id.slice(-8).toUpperCase()}
                   </p>
                   <p className="text-xs text-white/40">
-                    {o.user?.email} ·{" "}
-                    {new Date(o.createdAt).toLocaleDateString("en-IN", {
-                      day: "numeric", month: "short", year: "numeric",
-                    })}
+                    {o.user?.email} · {formatDate(o.createdAt)}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">

@@ -1,5 +1,6 @@
 import { FileText } from "lucide-react";
 import { formatPrice } from "@/utils/formatPrice";
+import { formatDate } from "@/utils/formatDateTime";
 import Pagination, { parsePage } from "@/components/admin/Pagination";
 
 export const dynamic = "force-dynamic";
@@ -67,7 +68,7 @@ export default async function InvoicesPage({ searchParams }) {
                     <td className="px-5 py-3 text-white/80">{formatPrice(inv.tax)}</td>
                     <td className="px-5 py-3 font-bold text-white">{formatPrice(inv.total)}</td>
                     <td className="px-5 py-3 text-white/40">
-                      {new Date(inv.createdAt).toLocaleDateString("en-IN")}
+                      {formatDate(inv.createdAt)}
                     </td>
                   </tr>
                 ))

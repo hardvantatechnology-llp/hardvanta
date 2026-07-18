@@ -7,6 +7,7 @@ import OrderTracker from "@/components/orders/OrderTracker";
 import CancelOrderButton from "@/components/orders/CancelOrderButton";
 import Button from "@/components/ui/Button";
 import { PAYMENT_STATUS_META } from "@/lib/orderStatus";
+import { formatDate } from "@/utils/formatDateTime";
 
 export const dynamic = "force-dynamic";
 
@@ -71,7 +72,7 @@ export default async function OrderDetailPage({ params, searchParams }) {
             <div>
               <h1 className="text-xl font-bold text-white">Order #{order.id.slice(-8).toUpperCase()}</h1>
               <p className="text-sm text-white/40 mt-0.5">
-                Placed on {new Date(order.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}
+                Placed on {formatDate(order.createdAt)}
               </p>
             </div>
             <span className={`rounded-full border px-4 py-1.5 text-xs font-bold tracking-wide ${statusCfg.bg} ${statusCfg.text} ${statusCfg.border}`}>

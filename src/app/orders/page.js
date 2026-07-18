@@ -6,6 +6,7 @@ import { formatPrice } from "@/utils/formatPrice";
 import OrderTracker from "@/components/orders/OrderTracker";
 import OrderSuccessBanner from "@/components/orders/OrderSuccessBanner";
 import Button from "@/components/ui/Button";
+import { formatDate } from "@/utils/formatDateTime";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "My Orders — Hardvanta" };
@@ -70,7 +71,7 @@ export default async function OrdersPage({ searchParams }) {
                   <div>
                     <p className="text-sm font-bold text-white">Order #{order.id.slice(-8).toUpperCase()}</p>
                     <p className="text-xs text-white/40 mt-0.5">
-                      {new Date(order.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                      {formatDate(order.createdAt)}
                     </p>
                   </div>
                   <div className="flex items-center gap-3">

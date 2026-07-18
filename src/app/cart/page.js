@@ -187,8 +187,8 @@ export default function CartPage() {
   // AvailableCoupons and the checkout page) so all three stay in sync.
   async function applyCoupon() {
     if (!couponCode.trim()) return;
-    await applyCouponCtx(couponCode);
-    setCouponCode("");
+    const { ok } = await applyCouponCtx(couponCode);
+    if (ok) setCouponCode("");
   }
 
   function removeCoupon() {
@@ -464,7 +464,7 @@ export default function CartPage() {
                       <input
                         type="text"
                         value={couponCode}
-                        onChange={(e) => { setCouponCode(e.target.value.toUpperCase()); setCouponError(""); }}
+                        onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                         onKeyDown={(e) => e.key === "Enter" && applyCoupon()}
                         placeholder="Enter coupon code"
                         className="flex-1 rounded-xl glass-card px-3 py-2 text-sm text-white outline-none focus:shadow-glow-electric uppercase placeholder:normal-case placeholder:text-white/30"
@@ -494,6 +494,11 @@ export default function CartPage() {
                 >
                   ← Continue Shopping
                 </Link>
+              </div>
+
+              {/* Available Coupons */}
+              <div className="mt-4">
+                <AvailableCoupons />
               </div>
 
               {/* Trust badges */}

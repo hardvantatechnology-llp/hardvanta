@@ -232,11 +232,11 @@ const mergedRef = useRef(false);
     null
   );
 
-  // Returns true/false so callers can decide what to do with their own local
-  // UI state (e.g. only clearing a typed-code input on success).
+  // Returns { ok, message } — callers get the outcome synchronously instead
+  // of reading back context state, which may not have re-rendered yet.
   const applyCoupon = useCallback(async (code) => {
     const trimmed = String(code || "").trim().toUpperCase();
-    if (!trimmed) return false;
+    if (!trimmed) return { ok: false, message: "" };
     setCouponError("");
     setCouponLoading(true);
     try {
@@ -247,15 +247,17 @@ const mergedRef = useRef(false);
       });
       const data = await res.json();
       if (!res.ok || !data.valid) {
-        setCouponError(data.message || "Invalid coupon.");
+        const message = data.message || "Invalid coupon.";
+        setCouponError(message);
         setCoupon(null);
-        return false;
+        return { ok: false, message };
       }
       setCoupon(data);
-      return true;
+      return { ok: true, message: data.message };
     } catch {
-      setCouponError("Something went wrong. Try again.");
-      return false;
+      const message = "Something went wrong. Try again.";
+      setCouponError(message);
+      return { ok: false, message };
     } finally {
       setCouponLoading(false);
     }

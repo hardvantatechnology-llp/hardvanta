@@ -1,4 +1,5 @@
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
+import { formatDate } from "@/utils/formatDateTime";
 
 export async function generateInvoicePDF(order) {
   const pdfDoc = await PDFDocument.create();
@@ -16,7 +17,7 @@ export async function generateInvoicePDF(order) {
 
   y -= 35;
   draw(`Invoice No: ${order.invoiceNumber || "N/A"}`, 50, 10);
-  draw(`Date: ${new Date(order.createdAt).toLocaleDateString("en-IN")}`, 350, 10);
+  draw(`Date: ${formatDate(order.createdAt)}`, 350, 10);
   y -= 15;
   draw(`Payment ID: ${order.paymentId || "N/A"}`, 50, 10);
   y -= 15;

@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import SignOutButton from "@/components/auth/SignOutButton";
 import Button from "@/components/ui/Button";
+import { formatDate } from "@/utils/formatDateTime";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "My Account — Hardvanta" };
@@ -255,9 +256,7 @@ export default async function AccountPage() {
                             </p>
                             <p className="mt-0.5 text-xs text-white/40 flex items-center gap-1">
                               <Clock size={11} />
-                              {new Date(order.createdAt).toLocaleDateString("en-IN", {
-                                day: "numeric", month: "short", year: "numeric",
-                              })}
+                              {formatDate(order.createdAt)}
                             </p>
                             <div className="mt-1.5 flex items-center gap-2">
                               <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold ${s.bg} ${s.text} ${s.border}`}>

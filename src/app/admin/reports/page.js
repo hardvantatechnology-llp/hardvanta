@@ -1,4 +1,5 @@
 import { formatPrice } from "@/utils/formatPrice";
+import { formatDate } from "@/utils/formatDateTime";
 import Pagination, { parsePage } from "@/components/admin/Pagination";
 import AdminStatCard from "@/components/admin/AdminStatCard";
 import { IndianRupee, CheckCircle2, ShoppingCart, XCircle } from "lucide-react";
@@ -135,7 +136,7 @@ export default async function ReportsPage({ searchParams }) {
                     </span>
                   </td>
                   <td className="px-5 py-3 text-white/40">
-                    {new Date(order.createdAt).toLocaleDateString("en-IN")}
+                    {formatDate(order.createdAt)}
                   </td>
                 </tr>
               ))}

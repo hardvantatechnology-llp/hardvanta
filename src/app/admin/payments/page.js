@@ -2,6 +2,7 @@ import { CreditCard } from "lucide-react";
 import { formatPrice } from "@/utils/formatPrice";
 import Pagination, { parsePage } from "@/components/admin/Pagination";
 import { PAYMENT_STATUS_META } from "@/lib/orderStatus";
+import { formatDate } from "@/utils/formatDateTime";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Payments — Admin" };
@@ -77,7 +78,7 @@ export default async function PaymentsPage({ searchParams }) {
                       })()}
                     </td>
                     <td className="px-5 py-3 text-white/40">
-                      {new Date(payment.createdAt).toLocaleDateString("en-IN")}
+                      {formatDate(payment.createdAt)}
                     </td>
                   </tr>
                 ))

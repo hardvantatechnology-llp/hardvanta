@@ -12,8 +12,9 @@ export default function AvailableCoupons() {
   if (availableCoupons.length === 0) return null;
 
   async function handleApply(code) {
-    await applyCoupon(code);
-    toast.success(`Coupon ${code} applied!`);
+    const { ok, message } = await applyCoupon(code);
+    if (ok) toast.success(`Coupon ${code} applied!`);
+    else toast.error(message || "Could not apply this coupon.");
   }
 
   return (
