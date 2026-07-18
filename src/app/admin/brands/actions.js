@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { getAdminSession } from "@/lib/admin";
 
@@ -26,6 +26,7 @@ export async function createBrand(formData) {
 
   await prisma.brand.create({ data: { name, slug } });
   revalidatePath("/admin/brands");
+  revalidateTag("products");
 }
 
 export async function updateBrand(formData) {
@@ -39,6 +40,7 @@ export async function updateBrand(formData) {
 
   await prisma.brand.update({ where: { id }, data: { name, slug } });
   revalidatePath("/admin/brands");
+  revalidateTag("products");
 }
 
 export async function toggleBrandActive(id, active) {

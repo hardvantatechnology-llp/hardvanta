@@ -14,7 +14,14 @@ export default async function UsersPage({ searchParams }) {
   const [users, total, adminCount, customerCount] = await Promise.all([
     prisma.user.findMany({
       orderBy: { createdAt: "desc" },
-      include: { _count: { select: { orders: true } } },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        createdAt: true,
+        _count: { select: { orders: true } },
+      },
       skip: (page - 1) * PAGE_SIZE,
       take: PAGE_SIZE,
     }),

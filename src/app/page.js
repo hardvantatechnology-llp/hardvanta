@@ -6,7 +6,9 @@ import GoogleReviews from "@/components/home/GoogleReviews";
 import ProductGrid from "@/components/products/ProductGrid";
 import { getFeaturedProducts, getDeals } from "@/lib/queries";
 
-export const dynamic = "force-dynamic";
+// Home page has no per-user data — safe to serve as ISR instead of forcing a
+// fresh SSR render (and DB round trip) on every request.
+export const revalidate = 60;
 
 export default async function Home() {
   const [featured, deals] = await Promise.all([

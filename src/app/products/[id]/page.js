@@ -17,7 +17,10 @@ import WishlistToggleButton from "@/components/products/WishlistToggleButton";
 import ShareButton from "@/components/products/ShareButton";
 import RecentlyViewed from "@/components/products/RecentlyViewed";
 
-export const dynamic = "force-dynamic";
+// Product data is now served through unstable_cache (see src/lib/queries.js),
+// so the page itself can be revalidated on an interval instead of forcing a
+// full SSR render (and a DB round trip) on every single request.
+export const revalidate = 60;
 
 export async function generateMetadata({ params }) {
   const product = await getProductById(params.id);

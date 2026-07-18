@@ -1,5 +1,6 @@
 // GET /api/products?category=<slug>&featured=true&q=<search>&page=<n>&limit=<n>
 import { NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { isAdmin } from "@/lib/admin";
 
 export const dynamic = "force-dynamic";
@@ -181,6 +182,7 @@ export async function POST(request) {
         },
       },
     });
+    revalidateTag("products");
     return NextResponse.json({ product }, { status: 201 });
   } catch (err) {
     if (err.code === "P2002") {

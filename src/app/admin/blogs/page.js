@@ -16,6 +16,14 @@ export default async function AdminBlogsPage({ searchParams }) {
   const [blogs, total] = await Promise.all([
     prisma.blog.findMany({
       orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        title: true,
+        category: true,
+        author: true,
+        published: true,
+        coverImage: true,
+      },
       skip: (page - 1) * PAGE_SIZE,
       take: PAGE_SIZE,
     }),

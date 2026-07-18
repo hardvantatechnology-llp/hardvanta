@@ -1,5 +1,6 @@
 // GET /api/products/[id] — single product by id or slug.
 import { NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { isAdmin } from "@/lib/admin";
 
 export const dynamic = "force-dynamic";
@@ -104,6 +105,7 @@ export async function PUT(request, { params }) {
       where: { id: params.id },
       data,
     });
+    revalidateTag("products");
     return NextResponse.json({ product });
   } catch (err) {
     if (err.code === "P2002") {
@@ -137,6 +139,7 @@ export async function DELETE(request, { params }) {
         where: { id: params.id },
         data: { active: false },
       });
+      revalidateTag("products");
       return NextResponse.json({
         ok: true,
         message: "Product deactivated because it has existing orders.",
@@ -150,6 +153,7 @@ export async function DELETE(request, { params }) {
     await prisma.inventory.deleteMany({ where: { productId: params.id } });
     await prisma.product.delete({ where: { id: params.id } });
 
+    revalidateTag("products");
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error(err);

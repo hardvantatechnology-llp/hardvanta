@@ -14,7 +14,15 @@ export default async function InvoicesPage({ searchParams }) {
   const [invoices, total] = await Promise.all([
     prisma.invoice.findMany({
       orderBy: { createdAt: "desc" },
-      include: { order: { include: { user: true } } },
+      select: {
+        id: true,
+        invoiceNumber: true,
+        subtotal: true,
+        tax: true,
+        total: true,
+        createdAt: true,
+        order: { select: { user: { select: { name: true } } } },
+      },
       skip: (page - 1) * PAGE_SIZE,
       take: PAGE_SIZE,
     }),

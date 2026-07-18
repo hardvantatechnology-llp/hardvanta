@@ -30,7 +30,14 @@ export default async function ReportsPage({ searchParams }) {
     topProducts,
   ] = await Promise.all([
     prisma.order.findMany({
-      include: { items: true, user: true },
+      select: {
+        id: true,
+        total: true,
+        status: true,
+        createdAt: true,
+        user: { select: { name: true } },
+        _count: { select: { items: true } },
+      },
       orderBy: { createdAt: "desc" },
       skip: (page - 1) * PAGE_SIZE,
       take: PAGE_SIZE,
@@ -120,7 +127,7 @@ export default async function ReportsPage({ searchParams }) {
                 <tr key={order.id} className="hover:bg-white/5 transition-colors">
                   <td className="px-5 py-3 font-semibold text-electric-light">#{order.id.slice(-8).toUpperCase()}</td>
                   <td className="px-5 py-3 text-white/40">{order.user?.name || "—"}</td>
-                  <td className="px-5 py-3 text-white/40">{order.items.length}</td>
+                  <td className="px-5 py-3 text-white/40">{order._count.items}</td>
                   <td className="px-5 py-3 font-bold text-white">{formatPrice(order.total)}</td>
                   <td className="px-5 py-3">
                     <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${STATUS_STYLES[order.status] || "bg-white/10 text-white"}`}>

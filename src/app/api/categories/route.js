@@ -1,6 +1,7 @@
 // GET  /api/categories  → list all categories
 // POST /api/categories  → create a category (admin only)
 import { NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { isAdmin } from "@/lib/admin";
 
 export const dynamic = "force-dynamic";
@@ -43,5 +44,6 @@ export async function POST(request) {
     create: { slug, name: trimmed, icon: icon || "Box" },
   });
 
+  revalidateTag("categories");
   return NextResponse.json({ category }, { status: 201 });
 }

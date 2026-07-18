@@ -14,7 +14,15 @@ export default async function PaymentsPage({ searchParams }) {
   const [payments, total] = await Promise.all([
     prisma.payment.findMany({
       orderBy: { createdAt: "desc" },
-      include: { order: { include: { user: true } } },
+      select: {
+        id: true,
+        orderId: true,
+        method: true,
+        amount: true,
+        status: true,
+        createdAt: true,
+        order: { select: { user: { select: { name: true } } } },
+      },
       skip: (page - 1) * PAGE_SIZE,
       take: PAGE_SIZE,
     }),

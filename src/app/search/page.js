@@ -37,9 +37,18 @@ async function searchProducts(q) {
         { category: { name: { contains: q, mode: "insensitive" } } },
       ],
     },
-    include: {
-      category: true,
-      brand:    true,
+    // ProductCard only reads these fields — no need for full category/brand rows.
+    select: {
+      id: true,
+      name: true,
+      image: true,
+      price: true,
+      salePrice: true,
+      inStock: true,
+      rating: true,
+      reviewCount: true,
+      createdAt: true,
+      brand: { select: { name: true } },
     },
     orderBy: { createdAt: "desc" },
     take: 60,   // max 60 results per search
@@ -118,8 +127,8 @@ export default async function SearchPage({ searchParams }) {
         {/* Results grid — uses your existing ProductCard exactly */}
         {products.length > 0 && (
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-            {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
+            {products.map((product, i) => (
+              <ProductCard key={product.id} product={product} priority={i < 6} />
             ))}
           </div>
         )}

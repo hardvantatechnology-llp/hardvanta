@@ -16,18 +16,22 @@ const STATUS_STYLES = {
 
 export default async function AdminDashboard() {
   const { prisma } = await import("@/lib/prisma");
-  const [productCount, orderCount, userCount, orders] = await Promise.all([
+  const [productCount, orderCount, userCount, orders, revenue] = await Promise.all([
     prisma.product.count(),
     prisma.order.count(),
     prisma.user.count(),
     prisma.order.findMany({
       orderBy: { createdAt: "desc" },
       take: 5,
-      include: { items: true },
+      select: {
+        id: true,
+        total: true,
+        status: true,
+        _count: { select: { items: true } },
+      },
     }),
+    prisma.order.aggregate({ _sum: { total: true } }),
   ]);
-
-  const revenue = await prisma.order.aggregate({ _sum: { total: true } });
 
   const stats = [
     { label: "Revenue", value: formatPrice(revenue._sum.total || 0), icon: <IndianRupee size={17} />, glow: "cyan" },
@@ -66,7 +70,7 @@ export default async function AdminDashboard() {
                   #{o.id.slice(-8).toUpperCase()}
                 </span>
                 <span className="text-white/40">
-                  {o.items.length} item{o.items.length !== 1 ? "s" : ""}
+                  {o._count.items} item{o._count.items !== 1 ? "s" : ""}
                 </span>
                 <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${STATUS_STYLES[o.status] || "bg-white/10 text-white"}`}>
                   {o.status}

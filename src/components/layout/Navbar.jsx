@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
@@ -30,7 +31,10 @@ import { useCart } from "@/context/CartContext";
 import { getUserView, setUserView } from "@/lib/viewMode";
 import Logo from "./Logo";
 import SearchBar from "./SearchBar";
-import CartDrawer from "@/components/cart/CartDrawer";
+
+// The drawer is closed on first paint on every page (Navbar is in the root
+// layout) — split it out so its code only loads once someone opens the cart.
+const CartDrawer = dynamic(() => import("@/components/cart/CartDrawer"), { ssr: false });
 
 // X (Twitter) official SVG — lucide mein Twitter icon nahi hota
 function XIcon({ size = 16 }) {

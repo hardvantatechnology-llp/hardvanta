@@ -8,6 +8,7 @@ export default async function ContactPage() {
 
   const messages = await prisma.contactMessage.findMany({
     orderBy: { createdAt: "desc" },
+    take: 100,
   });
 
   return (

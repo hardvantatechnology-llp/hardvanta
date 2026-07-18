@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, useCallback } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
 import { useSession } from "next-auth/react";
 
 const WishlistContext = createContext(null);
@@ -69,8 +69,13 @@ export function WishlistProvider({ children }) {
     [session, wishlistIds]
   );
 
+  const value = useMemo(
+    () => ({ wishlistIds, toggleWishlist, loading }),
+    [wishlistIds, toggleWishlist, loading]
+  );
+
   return (
-    <WishlistContext.Provider value={{ wishlistIds, toggleWishlist, loading }}>
+    <WishlistContext.Provider value={value}>
       {children}
     </WishlistContext.Provider>
   );

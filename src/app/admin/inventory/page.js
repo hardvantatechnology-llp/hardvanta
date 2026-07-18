@@ -14,7 +14,13 @@ export default async function InventoryPage({ searchParams }) {
   const [products, total, outOfStockCount, lowStockCount] = await Promise.all([
     prisma.product.findMany({
       orderBy: { stock: "asc" },
-      include: { category: true, brand: true },
+      select: {
+        id: true,
+        name: true,
+        sku: true,
+        stock: true,
+        category: { select: { name: true } },
+      },
       skip: (page - 1) * PAGE_SIZE,
       take: PAGE_SIZE,
     }),

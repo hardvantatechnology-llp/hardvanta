@@ -28,7 +28,14 @@ export default async function CustomersPage({ searchParams }) {
     prisma.user.findMany({
       where,
       orderBy: { createdAt: "desc" },
-      include: { _count: { select: { orders: true } } },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        createdAt: true,
+        _count: { select: { orders: true } },
+      },
       skip: (page - 1) * PAGE_SIZE,
       take: PAGE_SIZE,
     }),

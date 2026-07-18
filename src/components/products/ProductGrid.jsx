@@ -35,8 +35,10 @@ export default function ProductGrid({ products, loading = false }) {
 
   return (
     <div className={GRID}>
-      {products.map((p) => (
-        <ProductCard key={p.id} product={p} />
+      {products.map((p, i) => (
+        // First row (above the fold on most viewports) skips lazy-loading so
+        // it doesn't compete with the LCP image for priority.
+        <ProductCard key={p.id} product={p} priority={i < 4} />
       ))}
     </div>
   );

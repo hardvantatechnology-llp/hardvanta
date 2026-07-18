@@ -8,7 +8,15 @@ export default async function NotificationsPage() {
 
   const notifications = await prisma.notification.findMany({
     orderBy: { createdAt: "desc" },
-    include: { user: true },
+    take: 100,
+    select: {
+      id: true,
+      title: true,
+      message: true,
+      isRead: true,
+      createdAt: true,
+      user: { select: { name: true } },
+    },
   });
 
   return (

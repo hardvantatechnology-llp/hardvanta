@@ -15,6 +15,19 @@ async function requireUser() {
   return session?.user?.id ?? null;
 }
 
+// Only the fields the cart UI actually renders — avoids pulling full Product
+// rows (description, sku, rating, etc.) on every cart read/mutation.
+const cartProductSelect = {
+  id: true,
+  name: true,
+  price: true,
+  salePrice: true,
+  image: true,
+  slug: true,
+  stock: true,
+  brand: { select: { name: true } },
+};
+
 function serialize(items) {
   return items.map((it) => ({
     id: it.product.id,
@@ -24,8 +37,17 @@ function serialize(items) {
     image: it.product.image,
     slug: it.product.slug,
     stock: it.product.stock,
+    brand: it.product.brand,
     quantity: it.quantity,
   }));
+}
+
+async function loadCart(prisma, userId) {
+  const items = await prisma.cartItem.findMany({
+    where: { userId },
+    select: { quantity: true, product: { select: cartProductSelect } },
+  });
+  return serialize(items);
 }
 
 export async function GET() {
@@ -38,13 +60,8 @@ export async function GET() {
 
     const { prisma } = await import("@/lib/prisma");
 
-    const items = await prisma.cartItem.findMany({
-      where: { userId },
-      include: { product: true },
-    });
-
     return NextResponse.json({
-      items: serialize(items),
+      items: await loadCart(prisma, userId),
     });
   } catch (err) {
     console.error("GET /api/cart error:", err);
@@ -80,39 +97,25 @@ export async function POST(request) {
 
     const { prisma } = await import("@/lib/prisma");
 
-    const product = await prisma.product.findUnique({ where: { id: productId } });
+    const product = await prisma.product.findUnique({
+      where: { id: productId },
+      select: { id: true },
+    });
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
-    const existing = await prisma.cartItem.findUnique({
-      where: { userId_productId: { userId, productId } },
-    });
-    const newQuantity = Math.max(1, (existing?.quantity ?? 0) + quantity);
 
+    // Atomic increment — avoids a read-then-write race between two concurrent
+    // "add to cart" requests for the same item (the old read-modify-write via
+    // a separate findUnique could lose an update under concurrent requests).
     await prisma.cartItem.upsert({
-      where: {
-        userId_productId: {
-          userId,
-          productId,
-        },
-      },
-      create: {
-        userId,
-        productId,
-        quantity: newQuantity,
-      },
-      update: {
-        quantity: newQuantity,
-      },
-    });
-
-    const items = await prisma.cartItem.findMany({
-      where: { userId },
-      include: { product: true },
+      where: { userId_productId: { userId, productId } },
+      create: { userId, productId, quantity },
+      update: { quantity: { increment: quantity } },
     });
 
     return NextResponse.json({
-      items: serialize(items),
+      items: await loadCart(prisma, userId),
     });
   } catch (err) {
     console.error("POST /api/cart error:", err);
@@ -156,41 +159,21 @@ export async function PATCH(request) {
         },
       });
     } else {
-      const product = await prisma.product.findUnique({ where: { id: productId } });
-      if (!product) {
-        return NextResponse.json({ error: "Product not found" }, { status: 404 });
-      }
-      const clampedQuantity = Math.max(1, quantity);
-      const existing = await prisma.cartItem.findUnique({
-        where: { userId_productId: { userId, productId } },
+      // A single scoped updateMany replaces the old find-product /
+      // find-cart-item / update sequence — the product is guaranteed to
+      // exist if the cart item does (Product→CartItem is an onDelete:
+      // Cascade relation), so there's nothing left to check separately.
+      const { count } = await prisma.cartItem.updateMany({
+        where: { userId, productId },
+        data: { quantity: Math.max(1, quantity) },
       });
-      if (!existing) {
+      if (count === 0) {
         return NextResponse.json({ error: "Cart item not found" }, { status: 404 });
       }
-      await prisma.cartItem.update({
-        where: {
-          userId_productId: {
-            userId,
-            productId,
-          },
-        },
-        data: {
-          quantity: clampedQuantity,
-        },
-      });
     }
 
-    const items = await prisma.cartItem.findMany({
-      where: {
-        userId,
-      },
-      include: {
-        product: true,
-      },
-    });
-
     return NextResponse.json({
-      items: serialize(items),
+      items: await loadCart(prisma, userId),
     });
   } catch (err) {
     console.error("PATCH /api/cart error:", err);
@@ -221,26 +204,15 @@ export async function DELETE(request) {
           productId,
         },
       });
-    } else {
-      await prisma.cartItem.deleteMany({
-        where: {
-          userId,
-        },
+      return NextResponse.json({
+        items: await loadCart(prisma, userId),
       });
     }
 
-    const items = await prisma.cartItem.findMany({
-      where: {
-        userId,
-      },
-      include: {
-        product: true,
-      },
-    });
-
-    return NextResponse.json({
-      items: serialize(items),
-    });
+    // Clearing the whole cart — the result is always empty, so there's no
+    // need to re-query the (now-deleted) rows just to serialize them back.
+    await prisma.cartItem.deleteMany({ where: { userId } });
+    return NextResponse.json({ items: [] });
   } catch (err) {
     console.error("DELETE /api/cart error:", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

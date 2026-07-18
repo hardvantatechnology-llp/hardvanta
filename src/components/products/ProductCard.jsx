@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { memo, useState, useEffect, useCallback } from "react";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import { Star, ShoppingCart, Heart, Check, Repeat, Eye } from "lucide-react";
@@ -10,7 +11,11 @@ import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import GlassCard from "@/components/ui/GlassCard";
 import Button from "@/components/ui/Button";
-import QuickViewModal from "./QuickViewModal";
+
+// Most visitors never open the quick-view modal — split it into its own
+// chunk (framer-motion + portal included) so it isn't part of every product
+// grid's initial JS, and load it only when someone clicks the eye icon.
+const QuickViewModal = dynamic(() => import("./QuickViewModal"), { ssr: false });
 
 const COMPARE_KEY = "hv_compare_ids";
 const COMPARE_MAX = 4;
@@ -40,7 +45,7 @@ function Stars({ rating = 0 }) {
   );
 }
 
-export default function ProductCard({ product }) {
+function ProductCard({ product, priority = false }) {
   const { addItem } = useCart();
   const { wishlistIds, toggleWishlist } = useWishlist();
   const [added, setAdded] = useState(false);
@@ -108,7 +113,7 @@ export default function ProductCard({ product }) {
                 src={imageSrc(product.image)}
                 alt={product.name}
                 fill
-                loading="lazy"
+                {...(priority ? { priority: true } : { loading: "lazy" })}
                 sizes="(max-width: 1024px) 50vw, 25vw"
                 className="object-contain p-3 transition-transform duration-500 ease-out group-hover:scale-110"
               />
@@ -219,3 +224,5 @@ export default function ProductCard({ product }) {
     </>
   );
 }
+
+export default memo(ProductCard);
