@@ -13,6 +13,7 @@ import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
 import { sendOrderConfirmationEmail } from "@/lib/email";
 import { applyStockDeltas } from "@/lib/stock";
+import { buildOrderStatusPatch } from "@/lib/orderStatus";
 
 export async function POST(request) {
   const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
@@ -43,8 +44,30 @@ export async function POST(request) {
   }
 
   const type = event.event;
+
+  if (type === "payment.failed") {
+    const failedPayment = event.payload?.payment?.entity;
+    const failedOrderId = failedPayment?.order_id;
+    if (failedOrderId) {
+      const order = await prisma.order.findFirst({
+        where: { razorpayOrderId: failedOrderId },
+        include: { payment: true },
+      });
+      // Never downgrade a payment that's already succeeded/refunded — only a
+      // still-Pending payment (no successful attempt yet) can be marked Failed.
+      if (order && (!order.payment || order.payment.status === "PENDING")) {
+        await prisma.payment.upsert({
+          where: { orderId: order.id },
+          create: { orderId: order.id, method: "ONLINE", amount: order.total, status: "FAILED" },
+          update: { status: "FAILED" },
+        });
+      }
+    }
+    return NextResponse.json({ received: true });
+  }
+
   if (type !== "payment.captured" && type !== "order.paid") {
-    // Ack anything we don't act on (refund/failure events etc.) so Razorpay stops retrying.
+    // Ack anything else we don't act on so Razorpay stops retrying.
     return NextResponse.json({ received: true });
   }
 
@@ -74,7 +97,7 @@ export async function POST(request) {
       const claim = await tx.order.updateMany({
         where: { id: order.id, status: "PENDING" },
         data: {
-          status: "PROCESSING",
+          ...buildOrderStatusPatch(order, "PROCESSING"),
           paymentMethod: "ONLINE",
           paymentId: razorpayPaymentId,
           razorpayOrderId,
@@ -90,6 +113,7 @@ export async function POST(request) {
 
       await applyStockDeltas(tx, fresh.items.map((item) => ({ productId: item.productId, quantity: item.quantity })), -1);
 
+      const existingPayment = await tx.payment.findUnique({ where: { orderId: order.id } });
       await tx.payment.upsert({
         where: { orderId: order.id },
         create: {
@@ -100,12 +124,14 @@ export async function POST(request) {
           razorpayPaymentId,
           amount: fresh.total,
           status: "SUCCESS",
+          paidAt: new Date(),
         },
         update: {
           transactionId: razorpayPaymentId,
           razorpayOrderId,
           razorpayPaymentId,
           status: "SUCCESS",
+          paidAt: existingPayment?.paidAt ?? new Date(),
         },
       });
 

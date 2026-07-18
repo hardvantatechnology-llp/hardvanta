@@ -6,8 +6,9 @@ import { getServerSession } from "next-auth";
 import { getAuthOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getRazorpay } from "@/lib/razorpay";
+import { getEligibility, computeDiscount } from "@/lib/couponEngine";
 
-export async function POST() {
+export async function POST(request) {
   const authOptions = await getAuthOptions();
   const session = await getServerSession(authOptions);
   const userId = session?.user?.id;
@@ -21,6 +22,8 @@ export async function POST() {
     );
   }
 
+  const { couponCode } = await request.json().catch(() => ({}));
+
   const cartItems = await prisma.cartItem.findMany({
     where: { userId },
     include: { product: true },
@@ -33,8 +36,25 @@ export async function POST() {
     (sum, it) => sum + (it.product.salePrice ?? it.product.price) * it.quantity,
     0
   );
-  const shipping = subtotal > 999 ? 0 : 49;
-  const total = subtotal + shipping;
+
+  // Re-validate the coupon server-side — never trust a client-sent discount.
+  // Not incremented here: usedCount is only claimed once payment is verified
+  // (mirrors the existing precedent that stock is only decremented in verify,
+  // not here, since the payment isn't confirmed yet).
+  let couponCodeToStore = null;
+  let discountAmount = 0;
+  if (couponCode) {
+    const coupon = await prisma.coupon.findUnique({ where: { code: String(couponCode).toUpperCase() } });
+    const eligibility = getEligibility(coupon, subtotal);
+    if (!eligibility.ok) {
+      return NextResponse.json({ error: eligibility.reason }, { status: 400 });
+    }
+    discountAmount = computeDiscount(coupon, subtotal);
+    couponCodeToStore = coupon.code;
+  }
+
+  const shipping = (subtotal - discountAmount) > 999 ? 0 : 49;
+  const total = subtotal - discountAmount + shipping;
 
   let pendingOrder;
   try {
@@ -73,6 +93,8 @@ export async function POST() {
           where: { id: existing.id },
           data: {
             total,
+            couponCode: couponCodeToStore,
+            discountAmount,
             razorpayOrderId: null,
             items: { create: itemsData },
           },
@@ -84,6 +106,8 @@ export async function POST() {
         data: {
           userId,
           total,
+          couponCode: couponCodeToStore,
+          discountAmount,
           address: {},
           paymentMethod: "ONLINE",
           status: "PENDING",

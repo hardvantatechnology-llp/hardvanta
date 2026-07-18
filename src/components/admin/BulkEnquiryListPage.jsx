@@ -68,7 +68,7 @@ export default async function BulkEnquiryListPage({
           <h1 className="text-2xl font-bold text-white">{title} ({total})</h1>
           {description && <p className="text-sm text-white/40 mt-0.5">{description}</p>}
         </div>
-        <ExportButtons type={exportType} />
+        <ExportButtons params={{ type: exportType }} />
       </div>
 
       <div className="mb-4 flex flex-wrap items-center gap-3">

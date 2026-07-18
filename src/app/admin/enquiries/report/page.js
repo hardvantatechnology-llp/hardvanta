@@ -104,7 +104,7 @@ export default async function EnquiryReportPage() {
             Combined stats across B2B / Bulk Orders, Bulk Enquiries, and ATL Kits Enquiries
           </p>
         </div>
-        <ExportButtons type="all" />
+        <ExportButtons params={{ type: "all" }} />
       </div>
 
       <div className="grid grid-cols-2 gap-4 mb-6 lg:grid-cols-4">

@@ -6,6 +6,7 @@
 import { prisma } from "@/lib/prisma";
 import { getRazorpay } from "@/lib/razorpay";
 import { applyStockDeltas } from "@/lib/stock";
+import { buildPaymentCancelPatch } from "@/lib/orderStatus";
 
 export const CANCELLABLE_STATUSES = ["PENDING", "PROCESSING"];
 
@@ -23,7 +24,7 @@ export async function cancelOrder(order) {
   // double-credit stock — only one updateMany can match the still-cancellable row.
   const claim = await prisma.order.updateMany({
     where: { id: order.id, status: { in: CANCELLABLE_STATUSES } },
-    data: { status: "CANCELLED" },
+    data: { status: "CANCELLED", cancelledAt: new Date() },
   });
   if (claim.count === 0) {
     return { ok: false, reason: "already-processed" };
@@ -33,6 +34,17 @@ export async function cancelOrder(order) {
     // A single batched UPDATE is already atomic on its own — no $transaction
     // wrapper needed for one statement (previously N separate ones).
     await applyStockDeltas(prisma, order.items.map((item) => ({ productId: item.productId, quantity: item.quantity })), 1);
+  }
+
+  // Symmetric with the stock restore above: a cancelled/refunded order
+  // shouldn't permanently consume the customer's coupon usage-limit slot.
+  if (order.couponCode) {
+    await prisma.coupon.updateMany({
+      where: { code: order.couponCode, usedCount: { gt: 0 } },
+      data: { usedCount: { decrement: 1 } },
+    }).catch((err) => {
+      console.error("[cancelOrder] failed to restore coupon usedCount:", err?.message || err);
+    });
   }
 
   const needsRefund =
@@ -54,7 +66,7 @@ export async function cancelOrder(order) {
         });
         await prisma.payment.update({
           where: { orderId: order.id },
-          data: { status: "REFUNDED" },
+          data: { status: "REFUNDED", refundedAt: order.payment.refundedAt ?? new Date() },
         });
       } catch (err) {
         // The order stays CANCELLED and the payment stays SUCCESS (not REFUNDED)
@@ -65,6 +77,13 @@ export async function cancelOrder(order) {
           err?.message || err
         );
       }
+    }
+  } else {
+    // Never actually paid (COD, or an online attempt that never completed) —
+    // record the payment as Cancelled instead of leaving it stuck at Pending.
+    const paymentPatch = buildPaymentCancelPatch(order.payment);
+    if (paymentPatch) {
+      await prisma.payment.update({ where: { orderId: order.id }, data: paymentPatch });
     }
   }
 

@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { isAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 import { cancelOrder } from "@/app/api/orders/_cancel";
+import { buildOrderStatusPatch, buildPaymentSyncPatch } from "@/lib/orderStatus";
 
 const VALID = ["PENDING", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED"];
 
@@ -57,12 +58,21 @@ export async function PATCH(request, { params }) {
         { status: 409 }
       );
     }
-    const order = await prisma.order.findUnique({ where: { id: params.id } });
+    const order = await prisma.order.findUnique({ where: { id: params.id }, include: { payment: true } });
     return NextResponse.json({ order });
   }
 
-  const order = await prisma.order
-    .update({ where: { id: params.id }, data: { status } })
+  const orderPatch = buildOrderStatusPatch(existing, status);
+  const paymentPatch = buildPaymentSyncPatch(existing, status);
+
+  const order = await prisma
+    .$transaction(async (tx) => {
+      await tx.order.update({ where: { id: params.id }, data: orderPatch });
+      if (paymentPatch) {
+        await tx.payment.update({ where: { orderId: params.id }, data: paymentPatch });
+      }
+      return tx.order.findUnique({ where: { id: params.id }, include: { payment: true } });
+    })
     .catch(() => null);
   if (!order) {
     return NextResponse.json({ error: "Order not found." }, { status: 404 });

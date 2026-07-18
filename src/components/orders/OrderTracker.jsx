@@ -2,23 +2,26 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 import { Check, Clock, Package, Truck, Home, XCircle } from "lucide-react";
+import { formatDateTime } from "@/utils/formatDateTime";
 
 // The normal forward journey of an order. CANCELLED is handled separately.
+// `dateField` is the Order column that records when that step was reached.
 const STEPS = [
-  { key: "PENDING", label: "Order Placed", Icon: Clock },
-  { key: "PROCESSING", label: "Processing", Icon: Package },
-  { key: "SHIPPED", label: "Shipped", Icon: Truck },
-  { key: "DELIVERED", label: "Delivered", Icon: Home },
+  { key: "PENDING", label: "Order Placed", Icon: Clock, dateField: "createdAt" },
+  { key: "PROCESSING", label: "Processing", Icon: Package, dateField: "processingAt" },
+  { key: "SHIPPED", label: "Shipped", Icon: Truck, dateField: "shippedAt" },
+  { key: "DELIVERED", label: "Delivered", Icon: Home, dateField: "deliveredAt" },
 ];
 
-export default function OrderTracker({ status }) {
+export default function OrderTracker({ order }) {
   const reduce = useReducedMotion();
+  const { status } = order;
 
   if (status === "CANCELLED") {
     return (
       <div className="flex items-center gap-2 rounded-lg bg-red-500/10 px-4 py-3 text-sm font-semibold text-red-400">
         <XCircle size={18} />
-        This order was cancelled.
+        This order was cancelled{order.cancelledAt ? ` on ${formatDateTime(order.cancelledAt)}` : ""}.
       </div>
     );
   }
@@ -31,6 +34,7 @@ export default function OrderTracker({ status }) {
         const done = i < currentIndex;
         const active = i === currentIndex;
         const Icon = step.Icon;
+        const stepDate = order[step.dateField];
         return (
           <div key={step.key} className="flex flex-1 items-center last:flex-none">
             {/* Node */}
@@ -55,6 +59,9 @@ export default function OrderTracker({ status }) {
                 }`}
               >
                 {step.label}
+              </span>
+              <span className="w-20 text-center text-[9px] leading-tight text-white/40">
+                {(done || active) && stepDate ? formatDateTime(stepDate) : " "}
               </span>
             </div>
             {/* Connector line (not after the last node) */}

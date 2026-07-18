@@ -1,6 +1,7 @@
 import { CreditCard } from "lucide-react";
 import { formatPrice } from "@/utils/formatPrice";
 import Pagination, { parsePage } from "@/components/admin/Pagination";
+import { PAYMENT_STATUS_META } from "@/lib/orderStatus";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Payments — Admin" };
@@ -29,13 +30,6 @@ export default async function PaymentsPage({ searchParams }) {
     prisma.payment.count(),
   ]);
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
-
-  const STATUS_STYLES = {
-    PENDING: "bg-amber-500/10 text-amber-300",
-    SUCCESS: "bg-cyan/10 text-cyan",
-    FAILED: "bg-red-500/10 text-red-400",
-    REFUNDED: "bg-liquid/10 text-liquid-light",
-  };
 
   return (
     <div>
@@ -73,9 +67,14 @@ export default async function PaymentsPage({ searchParams }) {
                     <td className="px-5 py-3 text-white/50">{payment.method}</td>
                     <td className="px-5 py-3 font-bold text-white">{formatPrice(payment.amount)}</td>
                     <td className="px-5 py-3">
-                      <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${STATUS_STYLES[payment.status] || "bg-white/10 text-white"}`}>
-                        {payment.status}
-                      </span>
+                      {(() => {
+                        const meta = PAYMENT_STATUS_META[payment.status] || PAYMENT_STATUS_META.PENDING;
+                        return (
+                          <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${meta.className}`}>
+                            {meta.label}
+                          </span>
+                        );
+                      })()}
                     </td>
                     <td className="px-5 py-3 text-white/40">
                       {new Date(payment.createdAt).toLocaleDateString("en-IN")}

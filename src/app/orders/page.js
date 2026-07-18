@@ -84,7 +84,7 @@ export default async function OrdersPage({ searchParams }) {
                 </div>
 
                 <div className="px-5 py-5">
-                  <OrderTracker status={order.status} />
+                  <OrderTracker order={order} />
                 </div>
 
                 <div className="px-5 pb-4 space-y-1.5 border-t border-white/10 pt-4">

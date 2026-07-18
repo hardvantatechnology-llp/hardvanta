@@ -7,6 +7,7 @@ import { getAuthOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { sendOrderConfirmationEmail } from "@/lib/email";
 import { applyStockDeltas } from "@/lib/stock";
+import { buildOrderStatusPatch } from "@/lib/orderStatus";
 
 export async function POST(request) {
   const authOptions = await getAuthOptions();
@@ -72,7 +73,7 @@ export async function POST(request) {
       const updated = await tx.order.update({
         where: { id: order.id },
         data: {
-          status: "PROCESSING",
+          ...buildOrderStatusPatch(order, "PROCESSING"),
           paymentMethod: "ONLINE",
           paymentId: razorpay_payment_id,
           razorpayOrderId: razorpay_order_id,
@@ -85,7 +86,32 @@ export async function POST(request) {
 
       await applyStockDeltas(tx, updated.items.map((item) => ({ productId: item.productId, quantity: item.quantity })), -1);
 
+      // Claim the coupon use now that payment is confirmed (mirrors the COD
+      // flow's atomic claim in api/orders). If the usage limit was exhausted
+      // by another order in the window between create-order and this verify
+      // call, the payment has already been captured by Razorpay — we can't
+      // retroactively charge more, so the order still completes and this is
+      // only logged, never failed, to avoid leaving a paid customer stranded.
+      if (updated.couponCode) {
+        const couponRecord = await tx.coupon.findUnique({ where: { code: updated.couponCode } });
+        const claim = couponRecord
+          ? await tx.coupon.updateMany({
+              where: {
+                id: couponRecord.id,
+                OR: [{ usageLimit: null }, { usedCount: { lt: couponRecord.usageLimit } }],
+              },
+              data: { usedCount: { increment: 1 } },
+            })
+          : { count: 0 };
+        if (claim.count === 0) {
+          console.error(
+            `[payment/verify] coupon ${updated.couponCode} usage limit exhausted after payment for order ${updated.id} — allowing order to complete anyway.`
+          );
+        }
+      }
+
       // Mirror the COD flow's Payment record — the online path never had one before.
+      const existingPayment = await tx.payment.findUnique({ where: { orderId: order.id } });
       await tx.payment.upsert({
         where: { orderId: order.id },
         create: {
@@ -97,6 +123,7 @@ export async function POST(request) {
           razorpaySignature: razorpay_signature,
           amount: updated.total,
           status: "SUCCESS",
+          paidAt: new Date(),
         },
         update: {
           transactionId: razorpay_payment_id,
@@ -104,6 +131,7 @@ export async function POST(request) {
           razorpayPaymentId: razorpay_payment_id,
           razorpaySignature: razorpay_signature,
           status: "SUCCESS",
+          paidAt: existingPayment?.paidAt ?? new Date(),
         },
       });
 

@@ -59,7 +59,7 @@ export default async function AdminAtlKitsEnquiriesPage({ searchParams }) {
           <h1 className="text-2xl font-bold text-white">ATL Kits Enquiries ({total})</h1>
           <p className="text-sm text-white/40 mt-0.5">Submissions from the ATL Kits Enquiry page</p>
         </div>
-        <ExportButtons type="atl" />
+        <ExportButtons params={{ type: "atl" }} />
       </div>
 
       <div className="mb-4 flex flex-wrap items-center gap-3">

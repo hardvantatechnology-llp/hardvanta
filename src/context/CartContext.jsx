@@ -15,6 +15,9 @@ export function CartProvider({ children }) {
 
   const [items, setItems] = useState([]);
 const [coupon, setCoupon] = useState(null);
+const [couponError, setCouponError] = useState("");
+const [couponLoading, setCouponLoading] = useState(false);
+const [availableCoupons, setAvailableCoupons] = useState([]);
 
 const [hydrated, setHydrated] = useState(false);
 const mergedRef = useRef(false);
@@ -203,6 +206,66 @@ const mergedRef = useRef(false);
     0
   );
 
+  // Fetch the "available coupons" feed whenever the cart subtotal changes —
+  // each entry already comes back with a precomputed discountAmount for
+  // this subtotal (see GET /api/coupons), so the best-offer pick below is a
+  // simple max() with no client-side discount math duplicated.
+  useEffect(() => {
+    if (count === 0) {
+      setAvailableCoupons([]);
+      return;
+    }
+    let cancelled = false;
+    fetch(`/api/coupons?subtotal=${total}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (!cancelled && Array.isArray(data.coupons)) setAvailableCoupons(data.coupons);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [total, count]);
+
+  const bestCoupon = availableCoupons.reduce(
+    (best, c) => (!best || c.discountAmount > best.discountAmount ? c : best),
+    null
+  );
+
+  // Returns true/false so callers can decide what to do with their own local
+  // UI state (e.g. only clearing a typed-code input on success).
+  const applyCoupon = useCallback(async (code) => {
+    const trimmed = String(code || "").trim().toUpperCase();
+    if (!trimmed) return false;
+    setCouponError("");
+    setCouponLoading(true);
+    try {
+      const res = await fetch("/api/coupons/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: trimmed, subtotal: total }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.valid) {
+        setCouponError(data.message || "Invalid coupon.");
+        setCoupon(null);
+        return false;
+      }
+      setCoupon(data);
+      return true;
+    } catch {
+      setCouponError("Something went wrong. Try again.");
+      return false;
+    } finally {
+      setCouponLoading(false);
+    }
+  }, [total]);
+
+  const removeCoupon = useCallback(() => {
+    setCoupon(null);
+    setCouponError("");
+  }, []);
+
   // Stable reference unless the cart itself actually changes — lets consumers
   // that only read unrelated context fields (or are wrapped in memo) skip
   // re-rendering on every unrelated provider re-render.
@@ -218,8 +281,17 @@ const mergedRef = useRef(false);
       total,
       coupon,
       setCoupon,
+      couponError,
+      couponLoading,
+      applyCoupon,
+      removeCoupon,
+      availableCoupons,
+      bestCoupon,
     }),
-    [items, addItem, removeItem, updateQuantity, clearCart, refreshCart, count, total, coupon]
+    [
+      items, addItem, removeItem, updateQuantity, clearCart, refreshCart, count, total, coupon,
+      couponError, couponLoading, applyCoupon, removeCoupon, availableCoupons, bestCoupon,
+    ]
   );
 
   return (

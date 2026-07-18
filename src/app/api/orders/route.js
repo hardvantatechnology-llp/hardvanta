@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { sendOrderConfirmationEmail } from "@/lib/email";
 import { lockProductsForUpdate, applyStockDeltas } from "@/lib/stock";
+import { getEligibility, computeDiscount } from "@/lib/couponEngine";
 
 export async function GET() {
   const { getAuthOptions } = await import("@/lib/auth");
@@ -29,7 +30,7 @@ export async function POST(request) {
   const userId = session?.user?.id;
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { address } = await request.json();
+  const { address, couponCode } = await request.json();
   if (!address) {
     return NextResponse.json({ error: "Shipping address required." }, { status: 400 });
   }
@@ -48,8 +49,24 @@ export async function POST(request) {
     (sum, it) => sum + (it.product.salePrice ?? it.product.price) * it.quantity,
     0
   );
-  const shipping = subtotal >= 999 ? 0 : 49;
-  const total = subtotal + shipping;
+
+  // Re-validate the coupon server-side from scratch — never trust a
+  // discount amount sent by the client. If a code was supplied but is no
+  // longer eligible, fail the order rather than silently charging full price
+  // for something the customer was shown a discount on.
+  let coupon = null;
+  let discountAmount = 0;
+  if (couponCode) {
+    coupon = await prisma.coupon.findUnique({ where: { code: String(couponCode).toUpperCase() } });
+    const eligibility = getEligibility(coupon, subtotal);
+    if (!eligibility.ok) {
+      return NextResponse.json({ error: eligibility.reason }, { status: 400 });
+    }
+    discountAmount = computeDiscount(coupon, subtotal);
+  }
+
+  const shipping = (subtotal - discountAmount) >= 999 ? 0 : 49;
+  const total = subtotal - discountAmount + shipping;
 
   const COD_LIMIT = 10000;
   if (total > COD_LIMIT) {
@@ -76,6 +93,23 @@ export async function POST(request) {
         // STEP 2: Stock decrement karo (single batched query)
         await applyStockDeltas(tx, cartItems.map((it) => ({ productId: it.productId, quantity: it.quantity })), -1);
 
+        // STEP 2b: Atomically claim one coupon use (guards the usage-limit
+        // race the same way `_cancel.js` atomically claims a cancellation —
+        // an `updateMany` with the limit check baked into `where` means only
+        // one of two concurrent orders can win the last available use).
+        if (coupon) {
+          const claim = await tx.coupon.updateMany({
+            where: {
+              id: coupon.id,
+              OR: [{ usageLimit: null }, { usedCount: { lt: coupon.usageLimit } }],
+            },
+            data: { usedCount: { increment: 1 } },
+          });
+          if (claim.count === 0) {
+            throw new Error("This coupon has just reached its usage limit. Please remove it and try again.");
+          }
+        }
+
         // STEP 3: Order banao
         const created = await tx.order.create({
           data: {
@@ -83,6 +117,8 @@ export async function POST(request) {
             total,
             address,
             paymentMethod: "COD",
+            couponCode: coupon?.code ?? null,
+            discountAmount,
             items: {
               create: cartItems.map((it) => ({
                 productId: it.productId,
@@ -120,7 +156,7 @@ export async function POST(request) {
       }
     );
   } catch (err) {
-    if (err.message?.includes("out of stock")) {
+    if (err.message?.includes("out of stock") || err.message?.includes("usage limit")) {
       return NextResponse.json({ error: err.message }, { status: 409 });
     }
     console.error("[orders] error:", err?.message || err);

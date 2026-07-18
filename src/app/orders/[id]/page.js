@@ -6,6 +6,7 @@ import { Package, ArrowLeft, Phone, MapPin, CreditCard, CheckCircle2, Truck, Shi
 import OrderTracker from "@/components/orders/OrderTracker";
 import CancelOrderButton from "@/components/orders/CancelOrderButton";
 import Button from "@/components/ui/Button";
+import { PAYMENT_STATUS_META } from "@/lib/orderStatus";
 
 export const dynamic = "force-dynamic";
 
@@ -43,7 +44,7 @@ export default async function OrderDetailPage({ params, searchParams }) {
   const { prisma } = await import("@/lib/prisma");
   const order = await prisma.order.findUnique({
     where: { id: params.id },
-    include: { items: true },
+    include: { items: true, payment: true },
   });
 
   if (!order || order.userId !== session.user.id) notFound();
@@ -97,7 +98,7 @@ export default async function OrderDetailPage({ params, searchParams }) {
             </p>
           </div>
           <div className="px-5 py-6">
-            <OrderTracker status={order.status} />
+            <OrderTracker order={order} />
           </div>
         </div>
 
@@ -161,9 +162,14 @@ export default async function OrderDetailPage({ params, searchParams }) {
               <CreditCard size={13} /> Payment
             </p>
             <p className="text-sm font-semibold text-white/90">{order.paymentMethod === "COD" ? "Cash on Delivery" : "Online Payment"}</p>
-            <div className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-cyan/10 border border-cyan/20 px-3 py-1 text-xs font-semibold text-cyan">
-              <CheckCircle2 size={12} /> Confirmed
-            </div>
+            {(() => {
+              const meta = PAYMENT_STATUS_META[order.payment?.status] || PAYMENT_STATUS_META.PENDING;
+              return (
+                <div className={`mt-2 inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold ${meta.className} ${meta.border}`}>
+                  <CheckCircle2 size={12} /> {meta.label}
+                </div>
+              );
+            })()}
           </div>
         </div>
 

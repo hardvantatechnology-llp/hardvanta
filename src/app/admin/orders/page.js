@@ -4,6 +4,7 @@ import OrderStatusSelect from "@/components/admin/OrderStatusSelect";
 import Pagination, { parsePage } from "@/components/admin/Pagination";
 import AdminSearchInput from "@/components/admin/AdminSearchInput";
 import { PackageSearch } from "lucide-react";
+import { PAYMENT_STATUS_META } from "@/lib/orderStatus";
 
 export const dynamic = "force-dynamic";
 
@@ -34,7 +35,7 @@ export default async function AdminOrdersPage({ searchParams }) {
     prisma.order.findMany({
       where,
       orderBy: { createdAt: "desc" },
-      include: { items: true, user: { select: { email: true, name: true } } },
+      include: { items: true, payment: true, user: { select: { email: true, name: true } } },
       skip: (page - 1) * PAGE_SIZE,
       take: PAGE_SIZE,
     }),
@@ -112,6 +113,14 @@ export default async function AdminOrdersPage({ searchParams }) {
                   >
                     {o.paymentMethod === "ONLINE" ? "💳 Paid Online" : "💵 Cash on Delivery"}
                   </span>
+                  {o.payment && (() => {
+                    const meta = PAYMENT_STATUS_META[o.payment.status] || PAYMENT_STATUS_META.PENDING;
+                    return (
+                      <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${meta.className}`}>
+                        {meta.label}
+                      </span>
+                    );
+                  })()}
                   <OrderStatusSelect id={o.id} status={o.status} />
                 </div>
               </div>

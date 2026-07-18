@@ -12,6 +12,7 @@ import { useCart } from "@/context/CartContext";
 import { formatPrice } from "@/utils/formatPrice";
 import { imageSrc } from "@/utils/imageSrc";
 import Button from "@/components/ui/Button";
+import AvailableCoupons from "@/components/cart/AvailableCoupons";
 
 // ─── Quantity Modal ───────────────────────────────────────────────────────────
 function QuantityModal({ currentQty, onClose, onApply }) {
@@ -111,13 +112,13 @@ export default function CartPage() {
   total,
   count,
   coupon,
-  setCoupon,
+  couponError,
+  couponLoading,
+  applyCoupon: applyCouponCtx,
+  removeCoupon: removeCouponCtx,
 } = useCart();
 
   const [couponCode, setCouponCode] = useState("");
-
-  const [couponError, setCouponError] = useState("");
-  const [couponLoading, setCouponLoading] = useState(false);
 
   // Modal state — tracks which item's modal is open
   const [modalItemId, setModalItemId] = useState(null);
@@ -182,35 +183,17 @@ export default function CartPage() {
   }
 
   // ── Coupon helpers ────────────────────────────────────────────────────────
+  // Delegate to the shared CartContext implementation (also used by
+  // AvailableCoupons and the checkout page) so all three stay in sync.
   async function applyCoupon() {
     if (!couponCode.trim()) return;
-    setCouponError("");
-    setCouponLoading(true);
-    try {
-      const res = await fetch("/api/coupons/validate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: couponCode.trim().toUpperCase(), subtotal }),
-      });
-      const data = await res.json();
-      if (!res.ok || !data.valid) {
-        setCouponError(data.message || "Invalid coupon.");
-        setCoupon(null);
-      } else {
-        setCoupon(data);
-        setCouponCode("");
-      }
-    } catch {
-      setCouponError("Something went wrong. Try again.");
-    } finally {
-      setCouponLoading(false);
-    }
+    await applyCouponCtx(couponCode);
+    setCouponCode("");
   }
 
   function removeCoupon() {
-    setCoupon(null);
+    removeCouponCtx();
     setCouponCode("");
-    setCouponError("");
   }
 
   // ── Empty cart ────────────────────────────────────────────────────────────
