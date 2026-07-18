@@ -6,6 +6,7 @@ import { getServerSession } from "next-auth";
 import { getAuthOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { sendOrderConfirmationEmail } from "@/lib/email";
+import { applyStockDeltas } from "@/lib/stock";
 
 export async function POST(request) {
   const authOptions = await getAuthOptions();
@@ -82,14 +83,7 @@ export async function POST(request) {
         include: { items: true },
       });
 
-      await Promise.all(
-        updated.items.map((item) =>
-          tx.product.update({
-            where: { id: item.productId },
-            data: { stock: { decrement: item.quantity } },
-          })
-        )
-      );
+      await applyStockDeltas(tx, updated.items.map((item) => ({ productId: item.productId, quantity: item.quantity })), -1);
 
       // Mirror the COD flow's Payment record — the online path never had one before.
       await tx.payment.upsert({

@@ -5,6 +5,7 @@
 // Not a route — this file has no default export named GET/POST/etc.
 import { prisma } from "@/lib/prisma";
 import { getRazorpay } from "@/lib/razorpay";
+import { applyStockDeltas } from "@/lib/stock";
 
 export const CANCELLABLE_STATUSES = ["PENDING", "PROCESSING"];
 
@@ -29,14 +30,9 @@ export async function cancelOrder(order) {
   }
 
   if (order.items.length > 0) {
-    await prisma.$transaction(
-      order.items.map((item) =>
-        prisma.product.update({
-          where: { id: item.productId },
-          data: { stock: { increment: item.quantity } },
-        })
-      )
-    );
+    // A single batched UPDATE is already atomic on its own — no $transaction
+    // wrapper needed for one statement (previously N separate ones).
+    await applyStockDeltas(prisma, order.items.map((item) => ({ productId: item.productId, quantity: item.quantity })), 1);
   }
 
   const needsRefund =

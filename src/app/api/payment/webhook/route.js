@@ -12,6 +12,7 @@ import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
 import { sendOrderConfirmationEmail } from "@/lib/email";
+import { applyStockDeltas } from "@/lib/stock";
 
 export async function POST(request) {
   const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
@@ -87,14 +88,7 @@ export async function POST(request) {
         include: { items: true },
       });
 
-      await Promise.all(
-        fresh.items.map((item) =>
-          tx.product.update({
-            where: { id: item.productId },
-            data: { stock: { decrement: item.quantity } },
-          })
-        )
-      );
+      await applyStockDeltas(tx, fresh.items.map((item) => ({ productId: item.productId, quantity: item.quantity })), -1);
 
       await tx.payment.upsert({
         where: { orderId: order.id },

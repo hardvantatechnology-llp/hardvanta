@@ -4,6 +4,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { sendOrderConfirmationEmail } from "@/lib/email";
+import { lockProductsForUpdate, applyStockDeltas } from "@/lib/stock";
 
 export async function GET() {
   const { getAuthOptions } = await import("@/lib/auth");
@@ -62,27 +63,18 @@ export async function POST(request) {
   try {
     order = await prisma.$transaction(
       async (tx) => {
-        // STEP 1: Row-level lock ke saath inStock check karo
+        // STEP 1: Row-level lock ke saath inStock check karo (single batched query)
+        const lockedRows = await lockProductsForUpdate(tx, cartItems.map((it) => it.productId));
+        const lockedById = new Map(lockedRows.map((p) => [p.id, p]));
         for (const it of cartItems) {
-          const rows = await tx.$queryRaw`
-            SELECT id, stock, "inStock", name
-            FROM "Product"
-            WHERE id = ${it.productId}
-            FOR UPDATE
-          `;
-          const product = rows[0];
+          const product = lockedById.get(it.productId);
           if (!product || product.inStock === false) {
             throw new Error(`"${it.product.name}" out of stock.`);
           }
         }
 
-        // STEP 2: Stock decrement karo
-        for (const it of cartItems) {
-          await tx.product.update({
-            where: { id: it.productId },
-            data: { stock: { decrement: it.quantity } },
-          });
-        }
+        // STEP 2: Stock decrement karo (single batched query)
+        await applyStockDeltas(tx, cartItems.map((it) => ({ productId: it.productId, quantity: it.quantity })), -1);
 
         // STEP 3: Order banao
         const created = await tx.order.create({
