@@ -8,7 +8,7 @@ import {
   Users, Tag, Layers, Star, Ticket, Archive,
   Bell, Settings, FileText, CreditCard, Mail, BookOpen,
   TrendingUp, BarChart2, Image as ImageIcon, UserCog, Store,
-  Menu, X,
+  Menu, X, Building2, ClipboardList, CircuitBoard, FileBarChart,
 } from "lucide-react";
 import SwitchToUserView from "./SwitchToUserView";
 
@@ -37,6 +37,15 @@ const SECTIONS = [
       { href: "/admin/users",     label: "All Users", icon: UserCog },
       { href: "/admin/sellers",   label: "Sellers",   icon: Store },
       { href: "/admin/reviews",   label: "Reviews",   icon: Star },
+    ],
+  },
+  {
+    label: "Enquiries",
+    items: [
+      { href: "/admin/enquiries/b2b",      label: "B2B / Bulk Orders",   icon: Building2 },
+      { href: "/admin/enquiries/bulk",     label: "Bulk Enquiries",      icon: ClipboardList },
+      { href: "/admin/enquiries/atl-kits", label: "ATL Kits Enquiries",  icon: CircuitBoard },
+      { href: "/admin/enquiries/report",   label: "Enquiry Report",     icon: FileBarChart },
     ],
   },
   {

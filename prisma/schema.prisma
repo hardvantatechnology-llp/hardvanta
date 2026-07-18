@@ -288,6 +288,24 @@ model BulkEnquiry {
   updatedAt    DateTime      @updatedAt
 }
 
+model AtlKitsEnquiry {
+  id            String        @id @default(cuid())
+  schoolName    String
+  contactPerson String
+  designation   String?
+  phone         String
+  email         String
+  state         String
+  kits          String
+  quantity      Int
+  budgetRange   String?
+  udise         String?
+  message       String?
+  status        EnquiryStatus @default(NEW)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
 model Blog {
   id         String   @id @default(cuid())
   slug       String   @unique
@@ -405,8 +423,10 @@ enum OrderStatus {
 enum EnquiryStatus {
   NEW
   CONTACTED
-  QUOTED
-  CLOSED
+  QUOTATION_SENT
+  WON
+  LOST
+  COMPLETED
 }
 
 enum PaymentStatus {

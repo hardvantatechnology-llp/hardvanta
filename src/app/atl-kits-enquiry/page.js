@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { CircuitBoard, Phone, Mail, MapPin, CheckCircle2, FileText, Truck, Clock, BadgeCheck, Send } from "lucide-react";
+import { CircuitBoard, Phone, Mail, MapPin, CheckCircle2, FileText, Truck, Clock, BadgeCheck, Send, Loader2 } from "lucide-react";
 
 const ATL_KITS = [
   { id: "electronics", label: "Basic Electronics Kit", price: "Rs.4,500 - Rs.6,000 / unit" },
@@ -23,9 +23,15 @@ export default function ATLKitsEnquiryPage() {
   const [selectedKits, setSelectedKits] = useState([]);
   const [submitted, setSubmitted] = useState(false);
   const [phoneError, setPhoneError] = useState("");
+  const [kitsError, setKitsError] = useState("");
+  const [status, setStatus] = useState("idle"); // idle | loading | error
+  const [errorMsg, setErrorMsg] = useState("");
   const [form, setForm] = useState({ schoolName:"", contactPerson:"", designation:"", phone:"", email:"", state:"", quantity:"", budgetRange:"", udise:"", message:"" });
 
-  function toggleKit(id) { setSelectedKits((prev) => prev.includes(id) ? prev.filter((k) => k !== id) : [...prev, id]); }
+  function toggleKit(id) {
+    setSelectedKits((prev) => prev.includes(id) ? prev.filter((k) => k !== id) : [...prev, id]);
+    setKitsError("");
+  }
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -50,7 +56,7 @@ export default function ATLKitsEnquiryPage() {
     setForm((f) => ({ ...f, [name]: value }));
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
 
     if (!INDIAN_PHONE_REGEX.test(form.phone)) {
@@ -58,7 +64,30 @@ export default function ATLKitsEnquiryPage() {
       return;
     }
 
-    setSubmitted(true);
+    if (selectedKits.length === 0) {
+      setKitsError("Select at least one kit");
+      return;
+    }
+
+    setStatus("loading");
+    setErrorMsg("");
+    try {
+      const res = await fetch("/api/atl-kits-enquiry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...form,
+          kits: selectedKits.map((id) => ATL_KITS.find((k) => k.id === id)?.label || id),
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || "Could not submit enquiry.");
+      setStatus("idle");
+      setSubmitted(true);
+    } catch (err) {
+      setStatus("error");
+      setErrorMsg(err.message || "Could not submit your enquiry. Please try again.");
+    }
   }
 
   if (submitted) {
@@ -167,7 +196,7 @@ export default function ATLKitsEnquiryPage() {
             <hr className="border-white/10 my-5" />
             <p className="text-xs font-semibold uppercase tracking-widest text-electric-light mb-2">Kit Selection</p>
             <p className="text-xs text-white/60 mb-3">Select one or more kits you are interested in</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-1">
               {ATL_KITS.map(({ id, label, price }) => (
                 <label key={id} className={"flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-all " + (selectedKits.includes(id) ? "border-electric/40 bg-electric/10" : "border-white/10 hover:border-electric/30")}>
                   <input type="checkbox" checked={selectedKits.includes(id)} onChange={() => toggleKit(id)} className="mt-0.5 w-4 h-4 flex-shrink-0 accent-electric" />
@@ -175,6 +204,8 @@ export default function ATLKitsEnquiryPage() {
                 </label>
               ))}
             </div>
+            {kitsError && <p className="text-xs text-red-400 mb-4">{kitsError}</p>}
+            {!kitsError && <div className="mb-5" />}
 
             <hr className="border-white/10 my-5" />
             <p className="text-xs font-semibold uppercase tracking-widest text-electric-light mb-3">Order Details</p>
@@ -200,8 +231,11 @@ export default function ATLKitsEnquiryPage() {
               <textarea id="atl-message" name="message" value={form.message} onChange={handleChange} rows={4} placeholder="Mention any specific components, delivery timeline, demo request, etc." className="w-full rounded-lg glass-card px-3 py-2.5 text-sm text-white outline-none focus:shadow-glow-electric placeholder:text-white/30 resize-y" />
             </div>
 
-            <button type="submit" className="w-full flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-electric to-liquid px-6 py-3 text-sm font-semibold text-white shadow-glow-electric hover:brightness-110 transition-all text-base">
-              <Send size={18} /> Submit Enquiry
+            {status === "error" && <p className="text-sm font-medium text-red-400 mb-3">{errorMsg}</p>}
+
+            <button type="submit" disabled={status === "loading"} className="w-full flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-electric to-liquid px-6 py-3 text-sm font-semibold text-white shadow-glow-electric hover:brightness-110 transition-all text-base disabled:opacity-60">
+              {status === "loading" ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
+              {status === "loading" ? "Submitting..." : "Submit Enquiry"}
             </button>
             <p className="text-center text-xs text-white/40 mt-3">By submitting, you agree to be contacted by the Hardvanta sales team.</p>
           </form>
