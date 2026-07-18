@@ -219,11 +219,13 @@ export default function CheckoutPage() {
         <CheckoutStepper step={2} />
         <div className="grid gap-8 lg:grid-cols-3">
 
-          {/* Address + Payment form */}
-          <form
-            onSubmit={handleSubmit}
-            className="space-y-4 glass-strong rounded-3xl p-6 lg:col-span-2"
-          >
+          {/* Address + Payment — a plain div, not a <form>: AddressBook
+              renders its own nested <form> (Save & Deliver Here posts to the
+              address API independently of placing the order), and nesting
+              HTML forms is invalid — the browser would route its submit to
+              whichever form wins the malformed nesting instead of the one
+              that was actually clicked. */}
+          <div className="space-y-4 glass-strong rounded-3xl p-6 lg:col-span-2">
             <h2 className="text-lg font-bold text-white">Shipping Address</h2>
             {error && (
               <p className="rounded-lg bg-red-500/10 border border-red-500/20 px-3 py-2 text-sm text-red-400">{error}</p>
@@ -252,13 +254,13 @@ export default function CheckoutPage() {
               )}
             </div>
 
-            <Button type="submit" variant="gradient" size="lg" className="w-full" disabled={loading}>
+            <Button type="button" onClick={handleSubmit} variant="gradient" size="lg" className="w-full" disabled={loading}>
               {loading ? "Processing…" : payMethod === "ONLINE" ? `Pay ${formatPrice(grandTotal)}` : `Place Order · ${formatPrice(grandTotal)}`}
             </Button>
             <p className="text-center text-xs text-white/40">
               {payMethod === "ONLINE" ? "Secured by Razorpay. Test mode — use a test card/UPI." : "No payment now — pay in cash on delivery."}
             </p>
-          </form>
+          </div>
 
           {/* Order Summary */}
           <div className="sticky top-24 h-fit space-y-4">
