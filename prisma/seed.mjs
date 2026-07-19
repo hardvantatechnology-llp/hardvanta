@@ -113,12 +113,9 @@ async function main() {
   for (const c of categories) {
     await prisma.category.upsert({
       where: { slug: c.slug },
-      update: {
-        name: c.name,
-        icon: c.icon,
-        image: c.image ?? null,
-        description: c.description ?? null,
-      },
+      // No-op on existing rows — admin edits (via /admin/categories) must
+      // survive a re-seed. Seeding only backfills categories that are missing.
+      update: {},
       create: {
         name: c.name,
         slug: c.slug,
@@ -138,9 +135,8 @@ async function main() {
       where: {
         slug: slugify(brand),
       },
-      update: {
-        name: brand,
-      },
+      // No-op on existing rows — see the category upsert above for why.
+      update: {},
       create: {
         name: brand,
         slug: slugify(brand),
@@ -158,32 +154,11 @@ async function main() {
         slug,
       },
 
-      update: {
-        name: p.name,
-        description: p.description,
-        shortDescription: p.description.substring(0, 100),
-        sku: `SKU-${slug}`,
-        price: p.price,
-        salePrice: p.salePrice ?? null,
-        stock: p.stock,
-        image: p.image,
-        rating: p.rating,
-        reviewCount: p.reviewCount,
-        featured: p.featured,
-        active: true,
-
-        category: {
-          connect: {
-            slug: p.category,
-          },
-        },
-
-        brand: {
-          connect: {
-            slug: slugify(p.brand),
-          },
-        },
-      },
+      // No-op on existing rows — a product already in the DB may have been
+      // edited by an admin since it was first seeded (price, stock, photos,
+      // description). Re-running the seed must never revert those edits;
+      // it should only create products that don't exist yet.
+      update: {},
 
       create: {
         name: p.name,
@@ -224,9 +199,8 @@ async function main() {
         ).id,
       },
 
-      update: {
-        quantity: p.stock,
-      },
+      // No-op on existing rows — same reasoning as the product upsert above.
+      update: {},
 
       create: {
         quantity: p.stock,
@@ -246,14 +220,16 @@ async function main() {
   for (const area of DELIVERY_AREAS) {
     const deliveryArea = await prisma.deliveryArea.upsert({
       where: { slug: area.slug },
-      update: { name: area.name },
+      // No-op on existing rows — admin edits (via /admin/delivery/areas) must survive a re-seed.
+      update: {},
       create: { name: area.name, slug: area.slug },
     });
 
     for (const [code, areaLabel] of area.pincodes) {
       await prisma.pincode.upsert({
         where: { code },
-        update: { areaLabel, deliveryAreaId: deliveryArea.id },
+        // No-op on existing rows — same reasoning as deliveryArea above.
+        update: {},
         create: { code, areaLabel, deliveryAreaId: deliveryArea.id },
       });
     }
