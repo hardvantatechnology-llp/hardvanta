@@ -5,6 +5,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
+import { checkServiceability } from "@/lib/delivery";
 
 async function requireUser() {
   const { getAuthOptions } = await import("@/lib/auth");
@@ -28,6 +29,14 @@ export async function PUT(request) {
   const { pincode, areaLabel, city, deliveryAreaId } = await request.json();
   if (!pincode || !areaLabel || !city) {
     return NextResponse.json({ error: "pincode, areaLabel and city are required." }, { status: 400 });
+  }
+
+  // Don't persist a location built from garbage/mismatched client input —
+  // the pincode must actually be one of ours (this is also what gates
+  // checkout, so a saved location that can't pass this check is useless).
+  const serviceability = await checkServiceability(pincode);
+  if (!serviceability.serviceable) {
+    return NextResponse.json({ error: "This pincode isn't in our serviceable area." }, { status: 400 });
   }
 
   const location = await prisma.userSelectedLocation.upsert({

@@ -1,7 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronRight, Search, Calendar, User, Mail } from "lucide-react";
+import { ChevronRight, Search, Calendar, User } from "lucide-react";
 import { imageSrc } from "@/utils/imageSrc";
+import BlogNewsletterForm from "@/components/blogs/BlogNewsletterForm";
 
 export const dynamic = "force-dynamic";
 
@@ -108,16 +109,7 @@ export default async function BlogsPage({ searchParams }) {
             <p className="mt-1 text-xs text-white/60">
               Get promotional offers &amp; discounts straight to your inbox.
             </p>
-            <form className="mt-3 flex items-center overflow-hidden rounded-lg glass-card">
-              <input
-                type="email"
-                placeholder="Email address"
-                className="w-full bg-transparent px-3 py-2 text-sm text-white outline-none placeholder:text-white/30"
-              />
-              <button type="submit" className="flex items-center gap-1.5 bg-gradient-to-r from-electric to-liquid px-3 py-2 text-xs font-semibold text-white hover:brightness-110 transition-all">
-                <Mail size={14} /> Subscribe
-              </button>
-            </form>
+            <BlogNewsletterForm />
           </div>
         </aside>
 

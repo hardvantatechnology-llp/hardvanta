@@ -17,10 +17,31 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXTAUTH_URL || "http://localhost:3000";
+const siteTitle = "hardvanta — Electronics & Robotics Store";
+const siteDescription =
+  "Shop Arduino, Raspberry Pi, sensors, motors, drone parts and DIY electronics. Fast delivery across India.";
+
 export const metadata = {
-  title: "hardvanta — Electronics & Robotics Store",
-  description:
-    "Shop Arduino, Raspberry Pi, sensors, motors, drone parts and DIY electronics. Fast delivery across India.",
+  // Lets any relative image URL passed to a page's `metadata.openGraph.images`
+  // (e.g. a product image served from /uploads or Supabase Storage) resolve
+  // to an absolute URL — required for social-share previews to load the image.
+  metadataBase: new URL(siteUrl),
+  title: siteTitle,
+  description: siteDescription,
+  openGraph: {
+    title: siteTitle,
+    description: siteDescription,
+    siteName: "hardvanta",
+    type: "website",
+    images: ["/images/hardvanta.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteTitle,
+    description: siteDescription,
+    images: ["/images/hardvanta.png"],
+  },
 };
 
 export default function RootLayout({ children }) {

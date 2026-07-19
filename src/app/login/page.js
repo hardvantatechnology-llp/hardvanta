@@ -15,10 +15,20 @@ const fadeStep = {
   exit: { opacity: 0, y: -10 },
 };
 
+// Only ever redirect to a same-origin relative path — a raw query-param
+// callbackUrl (e.g. "https://evil.tld/...") would otherwise let an attacker
+// craft a login link that redirects the victim off-site right after they
+// authenticate with real credentials.
+function sanitizeCallbackUrl(url) {
+  if (!url || typeof url !== "string") return "/";
+  if (!url.startsWith("/") || url.startsWith("//") || url.startsWith("/\\")) return "/";
+  return url;
+}
+
 function LoginForm() {
   const router = useRouter();
   const params = useSearchParams();
-  const callbackUrl = params.get("callbackUrl") || "/";
+  const callbackUrl = sanitizeCallbackUrl(params.get("callbackUrl"));
   const justRegistered = params.get("registered") === "1";
   const reduce = useReducedMotion();
 

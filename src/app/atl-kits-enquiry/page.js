@@ -243,7 +243,7 @@ export default function ATLKitsEnquiryPage() {
           <aside className="flex flex-col gap-4">
             <div className="rounded-2xl glass-card p-5">
               <h3 className="text-sm font-semibold text-white flex items-center gap-2 mb-4"><Phone size={16} className="text-electric-light" /> Contact us directly</h3>
-              {[{ Icon:Phone, strong:"+91 91705 46395", sub:"Mon - Sat, 9 AM - 6 PM" },{ Icon:Mail, strong:"atl@hardvantatechnology@gmail.com", sub:"Enquiries responded within 48 hrs" },{ Icon:MapPin, strong:"Pan-Delhi-NCR shipping", sub:"Delivered with GST invoice" }].map(({ Icon, strong, sub }) => (
+              {[{ Icon:Phone, strong:"+91 91705 46395", sub:"Mon - Sat, 9 AM - 6 PM" },{ Icon:Mail, strong:"atl@hardvantatechnology.com", sub:"Enquiries responded within 48 hrs" },{ Icon:MapPin, strong:"Pan-Delhi-NCR shipping", sub:"Delivered with GST invoice" }].map(({ Icon, strong, sub }) => (
                 <div key={strong} className="flex items-start gap-3 py-2.5 border-b border-white/10 last:border-none">
                   <Icon size={16} className="text-electric-light mt-0.5 flex-shrink-0" />
                   <div><p className="text-sm font-medium text-white">{strong}</p><p className="text-xs text-white/60 mt-0.5">{sub}</p></div>

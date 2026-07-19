@@ -5,8 +5,11 @@ export const metadata = { title: "Settings — Admin" };
 
 export default async function SettingsPage() {
   const { prisma } = await import("@/lib/prisma");
+  const { getDeliverySettings } = await import("@/lib/delivery");
+  const { formatPrice } = await import("@/utils/formatPrice");
 
   const gst = await prisma.gSTDetails.findFirst();
+  const delivery = await getDeliverySettings();
 
   return (
     <div>
@@ -67,11 +70,11 @@ export default async function SettingsPage() {
             </div>
             <div>
               <p className="text-xs text-white/40 uppercase font-semibold">Free Shipping Above</p>
-              <p className="font-semibold text-white/90 mt-0.5">₹999</p>
+              <p className="font-semibold text-white/90 mt-0.5">{formatPrice(delivery.freeShippingThreshold)}</p>
             </div>
             <div>
               <p className="text-xs text-white/40 uppercase font-semibold">Shipping Charge</p>
-              <p className="font-semibold text-white/90 mt-0.5">₹49</p>
+              <p className="font-semibold text-white/90 mt-0.5">{formatPrice(delivery.deliveryCharge)}</p>
             </div>
           </div>
         </div>

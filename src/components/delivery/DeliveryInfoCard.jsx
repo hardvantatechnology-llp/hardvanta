@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { MapPin, Truck, Zap, Banknote, RotateCcw, ShieldCheck, Clock } from "lucide-react";
 import { useDeliveryLocation } from "@/context/DeliveryLocationContext";
 import LocationPickerModal from "@/components/delivery/LocationPickerModal";
+import { formatPrice } from "@/utils/formatPrice";
 
 function useCountdown(deadline) {
   const [label, setLabel] = useState(null);
@@ -83,7 +84,11 @@ export default function DeliveryInfoCard() {
         <p className="mt-2 text-sm font-semibold text-red-400">❌ Currently unavailable at this location.</p>
       ) : estimate ? (
         <>
-          <p className="mt-2 text-sm font-semibold text-cyan">FREE Delivery</p>
+          <p className="mt-2 text-sm font-semibold text-cyan">
+            {estimate.settings.deliveryCharge > 0
+              ? `${formatPrice(estimate.settings.deliveryCharge)} delivery · FREE above ${formatPrice(estimate.settings.freeShippingThreshold)}`
+              : "FREE Delivery"}
+          </p>
           <p className="mt-1 text-sm text-white/70">
             Delivery by <span className="font-semibold text-white">{estimate.delivery.label}</span>
           </p>

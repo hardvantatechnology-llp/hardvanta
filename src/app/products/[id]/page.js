@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { getProductById, getRelatedProducts } from "@/lib/queries";
 import { formatPrice } from "@/utils/formatPrice";
+import { imageSrc } from "@/utils/imageSrc";
 import ProductGallery from "@/components/products/ProductGallery";
 import ProductGrid from "@/components/products/ProductGrid";
 import AddToCart from "@/components/products/AddToCart";
@@ -25,7 +26,18 @@ export const revalidate = 60;
 
 export async function generateMetadata({ params }) {
   const product = await getProductById(params.id);
-  return { title: product ? `${product.name} — hardvanta` : "Product — hardvanta" };
+  if (!product) return { title: "Product — hardvanta" };
+
+  const title = `${product.name} — hardvanta`;
+  const description = product.shortDescription || product.description?.slice(0, 160) || undefined;
+  const image = imageSrc(product.image);
+
+  return {
+    title,
+    description,
+    openGraph: { title, description, images: [image], type: "website" },
+    twitter: { card: "summary_large_image", title, description, images: [image] },
+  };
 }
 
 export default async function ProductDetailPage({ params }) {

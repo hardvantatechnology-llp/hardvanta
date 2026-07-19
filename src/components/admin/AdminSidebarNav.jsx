@@ -9,7 +9,7 @@ import {
   Bell, Settings, FileText, CreditCard, Mail, BookOpen,
   TrendingUp, BarChart2, Image as ImageIcon, UserCog, Store,
   Menu, X, Building2, ClipboardList, CircuitBoard, FileBarChart,
-  MapPin, Hash, SlidersHorizontal, CalendarOff,
+  MapPin, Hash, SlidersHorizontal, CalendarOff, Send,
 } from "lucide-react";
 import SwitchToUserView from "./SwitchToUserView";
 
@@ -74,6 +74,7 @@ const SECTIONS = [
       { href: "/admin/banners",        label: "Banners",        icon: ImageIcon },
       { href: "/admin/notifications",  label: "Notifications",  icon: Bell },
       { href: "/admin/contact",        label: "Contact",        icon: Mail },
+      { href: "/admin/newsletter",     label: "Newsletter",     icon: Send },
     ],
   },
   {

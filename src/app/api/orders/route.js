@@ -6,6 +6,7 @@ import { getServerSession } from "next-auth";
 import { sendOrderConfirmationEmail } from "@/lib/email";
 import { lockProductsForUpdate, applyStockDeltas } from "@/lib/stock";
 import { getEligibility, computeDiscount, buildUsageClaimWhere } from "@/lib/couponEngine";
+import { checkServiceability, getDeliverySettings } from "@/lib/delivery";
 
 export async function GET() {
   const { getAuthOptions } = await import("@/lib/auth");
@@ -33,6 +34,19 @@ export async function POST(request) {
   const { address, couponCode } = await request.json();
   if (!address) {
     return NextResponse.json({ error: "Shipping address required." }, { status: 400 });
+  }
+
+  // Hard business requirement: we only ship within Delhi NCR. The checkout
+  // UI already disables submission for an unserviceable address, but that's
+  // only a client-side guard — enforce it here too so a request made
+  // directly against this API can't place (and pay for) an order outside
+  // the serviceable area.
+  const serviceability = await checkServiceability(address.pincode);
+  if (!serviceability.serviceable) {
+    return NextResponse.json(
+      { error: "We currently deliver only within Delhi NCR. This address isn't serviceable." },
+      { status: 400 }
+    );
   }
 
   const { prisma } = await import("@/lib/prisma");
@@ -65,7 +79,8 @@ export async function POST(request) {
     discountAmount = computeDiscount(coupon, subtotal);
   }
 
-  const shipping = (subtotal - discountAmount) >= 999 ? 0 : 49;
+  const { freeShippingThreshold, deliveryCharge } = await getDeliverySettings();
+  const shipping = (subtotal - discountAmount) >= freeShippingThreshold ? 0 : deliveryCharge;
   const total = subtotal - discountAmount + shipping;
 
   const COD_LIMIT = 10000;
@@ -87,6 +102,9 @@ export async function POST(request) {
           const product = lockedById.get(it.productId);
           if (!product || product.inStock === false) {
             throw new Error(`"${it.product.name}" out of stock.`);
+          }
+          if (product.stock < it.quantity) {
+            throw new Error(`Only ${product.stock} left in stock for "${it.product.name}". Please reduce the quantity.`);
           }
         }
 
@@ -153,7 +171,7 @@ export async function POST(request) {
       }
     );
   } catch (err) {
-    if (err.message?.includes("out of stock") || err.message?.includes("usage limit")) {
+    if (err.message?.includes("stock") || err.message?.includes("usage limit")) {
       return NextResponse.json({ error: err.message }, { status: 409 });
     }
     console.error("[orders] error:", err?.message || err);

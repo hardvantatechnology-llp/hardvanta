@@ -2,6 +2,12 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { isAdmin } from "@/lib/admin";
 
+// Without this, Next.js statically caches GET's response at build time (no
+// dynamic function/request param is used here) — a brand added via POST
+// would never show up in the storefront until the next deploy. Matches the
+// same directive already on /api/categories and /api/products.
+export const dynamic = "force-dynamic";
+
 function slugify(str) {
   return str
     .toLowerCase()

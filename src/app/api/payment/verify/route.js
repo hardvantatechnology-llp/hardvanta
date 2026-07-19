@@ -9,12 +9,21 @@ import { sendOrderConfirmationEmail } from "@/lib/email";
 import { applyStockDeltas } from "@/lib/stock";
 import { buildOrderStatusPatch } from "@/lib/orderStatus";
 import { buildUsageClaimWhere } from "@/lib/couponEngine";
+import { checkServiceability } from "@/lib/delivery";
+import { getRazorpay } from "@/lib/razorpay";
 
 export async function POST(request) {
   const authOptions = await getAuthOptions();
   const session = await getServerSession(authOptions);
   const userId = session?.user?.id;
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  // RAZORPAY_KEY_ID/SECRET are only ever set together (see getRazorpay()) —
+  // reuse that same guard here instead of handing an undefined secret to
+  // crypto.createHmac, which would throw instead of failing gracefully.
+  if (!getRazorpay()) {
+    return NextResponse.json({ error: "Online payments are not configured yet." }, { status: 503 });
+  }
 
   const {
     razorpay_order_id,
@@ -63,7 +72,30 @@ export async function POST(request) {
   }
 
   if (order.status !== "PENDING") {
-    return NextResponse.json({ error: "Order already processed." }, { status: 400 });
+    // Already completed — most likely the webhook (which claims the order
+    // atomically and can fire near-simultaneously with this call) won the
+    // race, or the browser retried verify after a dropped response. The
+    // payment itself is genuinely valid, so hand back the existing order
+    // instead of erroring a customer who has already paid.
+    const existing = await prisma.order.findUnique({ where: { id: order.id }, include: { items: true } });
+    return NextResponse.json({ order: existing }, { status: 200 });
+  }
+
+  // Hard business requirement: we only ship within Delhi NCR. create-order
+  // already checks this before the customer pays, but verify is the step
+  // that actually persists the shipping address on the order — re-check
+  // here too so a client can't bypass that earlier gate by supplying a
+  // different, unserviceable address at this later step.
+  const addressToPersist = address ?? order.address ?? {};
+  if (!addressToPersist?.pincode) {
+    return NextResponse.json({ error: "Shipping address required." }, { status: 400 });
+  }
+  const serviceability = await checkServiceability(addressToPersist.pincode);
+  if (!serviceability.serviceable) {
+    return NextResponse.json(
+      { error: "We currently deliver only within Delhi NCR. This address isn't serviceable." },
+      { status: 400 }
+    );
   }
 
   const invoiceNumber = `INV-${new Date().getFullYear()}-${order.id.slice(-8).toUpperCase()}`;
@@ -71,8 +103,14 @@ export async function POST(request) {
   let completedOrder;
   try {
     completedOrder = await prisma.$transaction(async (tx) => {
-      const updated = await tx.order.update({
-        where: { id: order.id },
+      // Atomically claim the PENDING -> PROCESSING transition (mirrors the
+      // webhook's own `updateMany` claim). If another request — most likely
+      // the webhook — already flipped this order's status in the window
+      // between the pre-check above and this transaction, `claim.count` is
+      // 0 and we must NOT re-run stock/coupon/payment side effects a second
+      // time; just return the order as already-completed.
+      const claim = await tx.order.updateMany({
+        where: { id: order.id, status: "PENDING" },
         data: {
           ...buildOrderStatusPatch(order, "PROCESSING"),
           paymentMethod: "ONLINE",
@@ -80,10 +118,15 @@ export async function POST(request) {
           razorpayOrderId: razorpay_order_id,
           razorpaySignature: razorpay_signature,
           invoiceNumber,
-          address: address ?? order.address ?? {},
+          address: addressToPersist,
         },
-        include: { items: true },
       });
+
+      if (claim.count === 0) {
+        return tx.order.findUnique({ where: { id: order.id }, include: { items: true } });
+      }
+
+      const updated = await tx.order.findUnique({ where: { id: order.id }, include: { items: true } });
 
       await applyStockDeltas(tx, updated.items.map((item) => ({ productId: item.productId, quantity: item.quantity })), -1);
 
@@ -95,13 +138,13 @@ export async function POST(request) {
       // only logged, never failed, to avoid leaving a paid customer stranded.
       if (updated.couponCode) {
         const couponRecord = await tx.coupon.findUnique({ where: { code: updated.couponCode } });
-        const claim = couponRecord
+        const couponClaim = couponRecord
           ? await tx.coupon.updateMany({
               where: buildUsageClaimWhere(couponRecord.id, couponRecord.usageLimit),
               data: { usedCount: { increment: 1 } },
             })
           : { count: 0 };
-        if (claim.count === 0) {
+        if (couponClaim.count === 0) {
           console.error(
             `[payment/verify] coupon ${updated.couponCode} usage limit exhausted after payment for order ${updated.id} — allowing order to complete anyway.`
           );

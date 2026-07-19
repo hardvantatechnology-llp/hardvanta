@@ -43,35 +43,40 @@ export async function GET(request) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const { searchParams } = new URL(request.url);
-  const format = searchParams.get("format") || "csv";
-  const filter = searchParams.get("filter") || "";
-  const q = searchParams.get("q")?.trim() || "";
+  try {
+    const { searchParams } = new URL(request.url);
+    const format = searchParams.get("format") || "csv";
+    const filter = searchParams.get("filter") || "";
+    const q = searchParams.get("q")?.trim() || "";
 
-  if (!["csv", "xlsx", "pdf"].includes(format)) {
-    return NextResponse.json({ error: "Invalid format." }, { status: 400 });
+    if (!["csv", "xlsx", "pdf"].includes(format)) {
+      return NextResponse.json({ error: "Invalid format." }, { status: 400 });
+    }
+
+    const where = buildCouponWhere({ filter, q });
+    const coupons = await prisma.coupon.findMany({ where, orderBy: { createdAt: "desc" } });
+    const rows = coupons.map(normalize);
+
+    const filenameBase = `coupons-${filter || "all"}-${new Date().toISOString().slice(0, 10)}`;
+
+    let body;
+    if (format === "csv") {
+      body = toCsv(rows);
+    } else if (format === "xlsx") {
+      body = Buffer.from(await toXlsxBuffer(rows, "Coupons"));
+    } else {
+      body = Buffer.from(await toPdfBuffer(rows, "Coupons"));
+    }
+
+    return new NextResponse(body, {
+      status: 200,
+      headers: {
+        "Content-Type": CONTENT_TYPES[format],
+        "Content-Disposition": `attachment; filename="${filenameBase}.${format}"`,
+      },
+    });
+  } catch (err) {
+    console.error("GET /api/admin/coupons/export error:", err);
+    return NextResponse.json({ error: "Could not export coupons." }, { status: 500 });
   }
-
-  const where = buildCouponWhere({ filter, q });
-  const coupons = await prisma.coupon.findMany({ where, orderBy: { createdAt: "desc" } });
-  const rows = coupons.map(normalize);
-
-  const filenameBase = `coupons-${filter || "all"}-${new Date().toISOString().slice(0, 10)}`;
-
-  let body;
-  if (format === "csv") {
-    body = toCsv(rows);
-  } else if (format === "xlsx") {
-    body = Buffer.from(await toXlsxBuffer(rows, "Coupons"));
-  } else {
-    body = Buffer.from(await toPdfBuffer(rows, "Coupons"));
-  }
-
-  return new NextResponse(body, {
-    status: 200,
-    headers: {
-      "Content-Type": CONTENT_TYPES[format],
-      "Content-Disposition": `attachment; filename="${filenameBase}.${format}"`,
-    },
-  });
 }

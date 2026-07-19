@@ -67,19 +67,33 @@ export async function PUT(request, { params }) {
     };
   }
 
-  if (body.price !== undefined)
-    data.price = Number(body.price);
+  if (body.price !== undefined) {
+    const priceNum = Number(body.price);
+    if (!Number.isFinite(priceNum) || priceNum < 0) {
+      return NextResponse.json({ error: "Price must be a non-negative number." }, { status: 400 });
+    }
+    data.price = priceNum;
+  }
 
-  if (body.salePrice !== undefined)
-    data.salePrice =
-      body.salePrice !== null &&
-      body.salePrice !== undefined &&
-      body.salePrice !== ""
-        ? Number(body.salePrice)
-        : null;
+  if (body.salePrice !== undefined) {
+    if (body.salePrice !== null && body.salePrice !== "") {
+      const salePriceNum = Number(body.salePrice);
+      if (!Number.isFinite(salePriceNum) || salePriceNum < 0) {
+        return NextResponse.json({ error: "Sale price must be a non-negative number." }, { status: 400 });
+      }
+      data.salePrice = salePriceNum;
+    } else {
+      data.salePrice = null;
+    }
+  }
 
-  if (body.stock !== undefined)
-    data.stock = Number(body.stock);
+  if (body.stock !== undefined) {
+    const stockNum = Number(body.stock);
+    if (!Number.isInteger(stockNum) || stockNum < 0) {
+      return NextResponse.json({ error: "Stock must be a non-negative whole number." }, { status: 400 });
+    }
+    data.stock = stockNum;
+  }
 
   if (body.featured !== undefined)
     data.featured = Boolean(body.featured);

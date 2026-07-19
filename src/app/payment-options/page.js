@@ -478,7 +478,7 @@ export default function PaymentOptionsPage() {
                 }}
               >
                 📧 <strong>Email</strong><br />
-                <span style={{ color: "rgba(255,255,255,0.8)" }}>support@hardvantatechnology@gmail.com</span>
+                <span style={{ color: "rgba(255,255,255,0.8)" }}>support@hardvantatechnology.com</span>
               </div>
               <div
                 style={{

@@ -338,7 +338,7 @@ export default function PrivacyPolicyPage() {
             <h3>How do you withdraw your consent?</h3>
             <p>
               If after opting in you change your mind, you may withdraw your consent at any time by contacting us at{" "}
-              <a href="mailto:info@hardvantatechnology@gmail.com" style={{ color: "#3b82f6", fontWeight: 600 }}>info@hardvantatechnology@gmail.com</a>.
+              <a href="mailto:info@hardvantatechnology.com" style={{ color: "#3b82f6", fontWeight: 600 }}>info@hardvantatechnology.com</a>.
             </p>
           </Section>
 
@@ -455,7 +455,7 @@ export default function PrivacyPolicyPage() {
               If you would like to access, correct, amend, or delete any personal information we hold, or wish to register a complaint, please reach out to our Privacy Compliance Officer.
             </p>
             <p>
-              <a href="mailto:info@hardvantatechnology@gmail.com">info@hardvantatechnology@gmail.com</a>
+              <a href="mailto:info@hardvantatechnology.com">info@hardvantatechnology.com</a>
             </p>
             <div className="pp-contact-address">
               Hardvanta Technologies LLP<br />

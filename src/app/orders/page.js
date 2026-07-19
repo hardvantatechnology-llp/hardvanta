@@ -100,11 +100,6 @@ export default async function OrdersPage({ searchParams }) {
                 <div className="flex items-center justify-between px-5 py-3 bg-white/[0.03] border-t border-white/10">
                   <span className="text-sm font-bold text-white">Total: {formatPrice(order.total)}</span>
                   <div className="flex items-center gap-2">
-                    {order.status !== "CANCELLED" && order.status !== "DELIVERED" && (
-                      <Link href={`/orders/${order.id}`} className="rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-1.5 text-xs font-semibold text-red-400 hover:bg-red-500/20 transition-colors">
-                        Cancel
-                      </Link>
-                    )}
                     <Link href={`/orders/${order.id}`} className="rounded-lg bg-gradient-to-r from-electric to-liquid px-3 py-1.5 text-xs font-semibold text-white shadow-glow-electric hover:brightness-110 transition-all">
                       View Details
                     </Link>

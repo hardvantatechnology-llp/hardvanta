@@ -75,6 +75,10 @@ export async function GET(request) {
   const [products, total] = await Promise.all([
     prisma.product.findMany({
       where,
+      // Card/list views never render the full description — omit it so a
+      // paginated catalog fetch doesn't pull that (potentially large) text
+      // column for every row on every page.
+      omit: { description: true },
       include: {
         category: { select: { id: true, name: true, slug: true } },
         brand: { select: { id: true, name: true, slug: true } },
@@ -136,6 +140,20 @@ export async function POST(request) {
     );
   }
 
+  const priceNum = Number(price);
+  const stockNum = stock === undefined || stock === null || stock === "" ? 0 : Number(stock);
+  const salePriceNum =
+    salePrice !== null && salePrice !== undefined && salePrice !== "" ? Number(salePrice) : null;
+  if (!Number.isFinite(priceNum) || priceNum < 0) {
+    return NextResponse.json({ error: "Price must be a non-negative number." }, { status: 400 });
+  }
+  if (!Number.isInteger(stockNum) || stockNum < 0) {
+    return NextResponse.json({ error: "Stock must be a non-negative whole number." }, { status: 400 });
+  }
+  if (salePriceNum !== null && (!Number.isFinite(salePriceNum) || salePriceNum < 0)) {
+    return NextResponse.json({ error: "Sale price must be a non-negative number." }, { status: 400 });
+  }
+
   const { prisma } = await import("@/lib/prisma");
 
   let slug = slugify(name);
@@ -154,14 +172,9 @@ export async function POST(request) {
         sku,
         name,
         description,
-        price: Number(price),
-        salePrice:
-          salePrice !== null &&
-          salePrice !== undefined &&
-          salePrice !== ""
-            ? Number(salePrice)
-            : null,
-        stock: Number(stock),
+        price: priceNum,
+        salePrice: salePriceNum,
+        stock: stockNum,
         image: mainImage,
         featured: Boolean(featured),
 

@@ -30,7 +30,9 @@ export default async function AdminDashboard() {
         _count: { select: { items: true } },
       },
     }),
-    prisma.order.aggregate({ _sum: { total: true } }),
+    // Cancelled orders were never fulfilled/paid-through — excluding them
+    // matches how /admin/coupons already computes revenue elsewhere.
+    prisma.order.aggregate({ where: { status: { not: "CANCELLED" } }, _sum: { total: true } }),
   ]);
 
   const stats = [

@@ -13,34 +13,39 @@ export async function PATCH(request) {
   const userId = await requireUser();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { id } = await request.json();
-  if (!id || typeof id !== "string") {
-    return NextResponse.json({ error: "Address id required." }, { status: 400 });
+  try {
+    const { id } = await request.json();
+    if (!id || typeof id !== "string") {
+      return NextResponse.json({ error: "Address id required." }, { status: 400 });
+    }
+
+    const { prisma } = await import("@/lib/prisma");
+
+    const addresses = await prisma.$transaction(async (tx) => {
+      const existing = await tx.address.findFirst({
+        where: { id, userId },
+        select: { id: true },
+      });
+      if (!existing) return null;
+
+      await tx.address.updateMany({
+        where: { userId, isDefault: true },
+        data: { isDefault: false },
+      });
+      await tx.address.update({ where: { id }, data: { isDefault: true } });
+
+      return tx.address.findMany({
+        where: { userId },
+        orderBy: [{ isDefault: "desc" }, { createdAt: "desc" }],
+      });
+    });
+
+    if (!addresses) {
+      return NextResponse.json({ error: "Address not found." }, { status: 404 });
+    }
+    return NextResponse.json({ addresses });
+  } catch (err) {
+    console.error("PATCH /api/addresses/default error:", err);
+    return NextResponse.json({ error: "Could not update default address." }, { status: 500 });
   }
-
-  const { prisma } = await import("@/lib/prisma");
-
-  const addresses = await prisma.$transaction(async (tx) => {
-    const existing = await tx.address.findFirst({
-      where: { id, userId },
-      select: { id: true },
-    });
-    if (!existing) return null;
-
-    await tx.address.updateMany({
-      where: { userId, isDefault: true },
-      data: { isDefault: false },
-    });
-    await tx.address.update({ where: { id }, data: { isDefault: true } });
-
-    return tx.address.findMany({
-      where: { userId },
-      orderBy: [{ isDefault: "desc" }, { createdAt: "desc" }],
-    });
-  });
-
-  if (!addresses) {
-    return NextResponse.json({ error: "Address not found." }, { status: 404 });
-  }
-  return NextResponse.json({ addresses });
 }

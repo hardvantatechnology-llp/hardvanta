@@ -6,6 +6,24 @@ import { imageSrc } from "@/utils/imageSrc";
 
 export const dynamic = "force-dynamic";
 
+export async function generateMetadata({ params }) {
+  const { slug } = await params;
+  const { prisma } = await import("@/lib/prisma");
+  const blog = await prisma.blog.findUnique({ where: { slug } });
+  if (!blog || !blog.published) return { title: "Blog — hardvanta" };
+
+  const title = `${blog.title} — hardvanta`;
+  const description = blog.excerpt;
+  const image = imageSrc(blog.coverImage);
+
+  return {
+    title,
+    description,
+    openGraph: { title, description, images: [image], type: "article" },
+    twitter: { card: "summary_large_image", title, description, images: [image] },
+  };
+}
+
 export default async function BlogDetailPage({ params }) {
   const { slug } = await params;
   const { prisma } = await import("@/lib/prisma");

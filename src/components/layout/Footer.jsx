@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { Mail, Phone } from "lucide-react";
+import { Mail, Phone, Check } from "lucide-react";
 import Logo from "./Logo";
 import { socials } from "@/lib/socialLinks";
 
@@ -50,6 +51,29 @@ const columns = [
 
 export default function Footer() {
   const reduce = useReducedMotion();
+  const [newsletterEmail, setNewsletterEmail] = useState("");
+  const [newsletterStatus, setNewsletterStatus] = useState("idle"); // idle | loading | success | error
+  const [newsletterError, setNewsletterError] = useState("");
+
+  async function handleNewsletterSubmit() {
+    if (!newsletterEmail.trim() || newsletterStatus === "loading") return;
+    setNewsletterStatus("loading");
+    setNewsletterError("");
+    try {
+      const res = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: newsletterEmail.trim() }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || "Could not subscribe. Please try again.");
+      setNewsletterStatus("success");
+      setNewsletterEmail("");
+    } catch (err) {
+      setNewsletterStatus("error");
+      setNewsletterError(err.message || "Could not subscribe. Please try again.");
+    }
+  }
   const reveal = {
     initial: { opacity: 0, y: 16 },
     whileInView: { opacity: 1, y: 0 },
@@ -74,23 +98,30 @@ export default function Footer() {
               Get promotional offers &amp; discounts straight to your inbox.
             </p>
           </div>
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <input
-              type="text"
-              placeholder="First Name"
-              className="w-full rounded-lg glass px-4 py-2.5 text-sm text-white placeholder-white/40 outline-none transition-shadow focus:shadow-glow-electric sm:w-1/3"
-            />
-            <input
-              type="email"
-              placeholder="Email Id"
-              className="w-full flex-1 rounded-lg glass px-4 py-2.5 text-sm text-white placeholder-white/40 outline-none transition-shadow focus:shadow-glow-electric"
-            />
-            <button
-              type="button"
-              className="flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-electric to-liquid px-5 py-2.5 text-sm font-semibold text-white shadow-glow-electric transition-all hover:brightness-110"
-            >
-              <Mail size={15} /> Subscribe
-            </button>
+          <div>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <input
+                type="email"
+                value={newsletterEmail}
+                onChange={(e) => { setNewsletterEmail(e.target.value); setNewsletterStatus("idle"); }}
+                onKeyDown={(e) => e.key === "Enter" && handleNewsletterSubmit()}
+                placeholder="Email Id"
+                aria-label="Email address"
+                className="w-full flex-1 rounded-lg glass px-4 py-2.5 text-sm text-white placeholder-white/40 outline-none transition-shadow focus:shadow-glow-electric"
+              />
+              <button
+                type="button"
+                onClick={handleNewsletterSubmit}
+                disabled={newsletterStatus === "loading" || !newsletterEmail.trim()}
+                className="flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-electric to-liquid px-5 py-2.5 text-sm font-semibold text-white shadow-glow-electric transition-all hover:brightness-110 disabled:opacity-50 disabled:hover:brightness-100"
+              >
+                {newsletterStatus === "success" ? <Check size={15} /> : <Mail size={15} />}
+                {newsletterStatus === "loading" ? "Subscribing…" : newsletterStatus === "success" ? "Subscribed!" : "Subscribe"}
+              </button>
+            </div>
+            {newsletterStatus === "error" && (
+              <p className="mt-2 text-xs text-red-400">{newsletterError}</p>
+            )}
           </div>
         </div>
       </div>

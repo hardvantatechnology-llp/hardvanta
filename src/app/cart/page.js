@@ -14,6 +14,7 @@ import { imageSrc } from "@/utils/imageSrc";
 import Button from "@/components/ui/Button";
 import AvailableCoupons from "@/components/cart/AvailableCoupons";
 import CartDeliveryBlock from "@/components/delivery/CartDeliveryBlock";
+import { useShippingSettings } from "@/hooks/useShippingSettings";
 
 // ─── Quantity Modal ───────────────────────────────────────────────────────────
 function QuantityModal({ currentQty, onClose, onApply }) {
@@ -121,6 +122,8 @@ export default function CartPage() {
 
   const [couponCode, setCouponCode] = useState("");
 
+  const { freeShippingThreshold, deliveryCharge } = useShippingSettings();
+
   // Modal state — tracks which item's modal is open
   const [modalItemId, setModalItemId] = useState(null);
 
@@ -146,7 +149,7 @@ export default function CartPage() {
   const couponDiscount = coupon?.discountAmount ?? 0;
 
   // Shipping & grand total
-  const shipping = (subtotal - couponDiscount) >= 999 ? 0 : 49;
+  const shipping = (subtotal - couponDiscount) >= freeShippingThreshold ? 0 : deliveryCharge;
   const grandTotal = subtotal - couponDiscount + shipping;
   const totalSaved = productDiscount + couponDiscount;
 
@@ -351,21 +354,21 @@ export default function CartPage() {
             </AnimatePresence>
 
             {/* Free shipping progress bar */}
-            {(subtotal - couponDiscount) < 999 && (
+            {(subtotal - couponDiscount) < freeShippingThreshold && (
               <div className="glass-card rounded-3xl p-4">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2 text-sm font-semibold text-cyan">
                     <Truck size={16} />
-                    Add {formatPrice(999 - (subtotal - couponDiscount))} more for FREE shipping!
+                    Add {formatPrice(freeShippingThreshold - (subtotal - couponDiscount))} more for FREE shipping!
                   </div>
                   <span className="text-xs text-white/40 font-medium">
-                    {Math.round(((subtotal - couponDiscount) / 999) * 100)}%
+                    {Math.round(((subtotal - couponDiscount) / freeShippingThreshold) * 100)}%
                   </span>
                 </div>
                 <div className="h-2 w-full rounded-full bg-white/10 overflow-hidden">
                   <motion.div
                     initial={false}
-                    animate={{ width: `${Math.min(((subtotal - couponDiscount) / 999) * 100, 100)}%` }}
+                    animate={{ width: `${Math.min(((subtotal - couponDiscount) / freeShippingThreshold) * 100, 100)}%` }}
                     transition={{ duration: 0.5 }}
                     className="h-full rounded-full bg-gradient-to-r from-cyan to-electric"
                   />
@@ -373,7 +376,7 @@ export default function CartPage() {
               </div>
             )}
 
-            {(subtotal - couponDiscount) >= 999 && (
+            {(subtotal - couponDiscount) >= freeShippingThreshold && (
               <div className="glass-card rounded-3xl p-4 flex items-center gap-3">
                 <Truck size={20} className="text-cyan shrink-0" />
                 <p className="text-sm font-semibold text-cyan">🎉 You&apos;ve unlocked FREE shipping!</p>
@@ -509,7 +512,7 @@ export default function CartPage() {
                 <div className="space-y-3">
                   {[
                     { icon: <ShieldCheck size={16} className="text-cyan" />, text: "100% Secure Checkout" },
-                    { icon: <Truck size={16} className="text-electric-light" />, text: "Free Shipping above ₹999" },
+                    { icon: <Truck size={16} className="text-electric-light" />, text: `Free Shipping above ${formatPrice(freeShippingThreshold)}` },
                   ].map((badge) => (
                     <div key={badge.text} className="flex items-center gap-3 text-sm text-white/60">
                       {badge.icon}

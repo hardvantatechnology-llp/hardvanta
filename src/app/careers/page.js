@@ -488,7 +488,7 @@ export default function CareersPage() {
                   📩 Send Your Resume
                 </a>
                 <a
-                  href="mailto:careers@hardvantatechnology@gmail.com"
+                  href="mailto:careers@hardvantatechnology.com"
                   style={{
                     display: "inline-block",
                     background: "rgba(255,255,255,0.12)",
@@ -499,7 +499,7 @@ export default function CareersPage() {
                     textDecoration: "none", letterSpacing: "0.01em",
                   }}
                 >
-                  📧 careers@hardvantatechnology@gmail.com
+                  📧 careers@hardvantatechnology.com
                 </a>
               </div>
             </div>

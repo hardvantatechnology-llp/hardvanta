@@ -7,6 +7,7 @@ import { getAuthOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getRazorpay } from "@/lib/razorpay";
 import { getEligibility, computeDiscount } from "@/lib/couponEngine";
+import { checkServiceability, getDeliverySettings } from "@/lib/delivery";
 
 export async function POST(request) {
   const authOptions = await getAuthOptions();
@@ -22,7 +23,22 @@ export async function POST(request) {
     );
   }
 
-  const { couponCode } = await request.json().catch(() => ({}));
+  const { couponCode, address } = await request.json().catch(() => ({}));
+
+  // Hard business requirement: we only ship within Delhi NCR. Reject up
+  // front — before the Razorpay order (and the payment prompt shown to the
+  // customer) is even created — rather than only catching this later at
+  // /api/payment/verify, once money may already have been captured.
+  if (!address?.pincode) {
+    return NextResponse.json({ error: "Shipping address required." }, { status: 400 });
+  }
+  const serviceability = await checkServiceability(address.pincode);
+  if (!serviceability.serviceable) {
+    return NextResponse.json(
+      { error: "We currently deliver only within Delhi NCR. This address isn't serviceable." },
+      { status: 400 }
+    );
+  }
 
   const cartItems = await prisma.cartItem.findMany({
     where: { userId },
@@ -53,7 +69,8 @@ export async function POST(request) {
     couponCodeToStore = coupon.code;
   }
 
-  const shipping = (subtotal - discountAmount) > 999 ? 0 : 49;
+  const { freeShippingThreshold, deliveryCharge } = await getDeliverySettings();
+  const shipping = (subtotal - discountAmount) >= freeShippingThreshold ? 0 : deliveryCharge;
   const total = subtotal - discountAmount + shipping;
 
   let pendingOrder;
@@ -71,6 +88,9 @@ export async function POST(request) {
         const product = rows[0];
         if (!product || product.inStock === false) {
           throw new Error(`"${it.product.name}" out of stock.`);
+        }
+        if (product.stock < it.quantity) {
+          throw new Error(`Only ${product.stock} left in stock for "${it.product.name}". Please reduce the quantity.`);
         }
       }
 
@@ -117,7 +137,7 @@ export async function POST(request) {
       });
     });
   } catch (err) {
-    if (err.message?.includes("out of stock")) {
+    if (err.message?.includes("stock")) {
       return NextResponse.json({ error: err.message }, { status: 409 });
     }
     console.error("[payment/create-order] error:", err?.message || err);

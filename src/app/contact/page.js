@@ -106,9 +106,9 @@ export default function ContactPage() {
             {
               icon: "✉️",
               title: "Email Us",
-              info: "support@hardvantatechnology@gmail.com",
+              info: "support@hardvantatechnology.com",
               sub: "We reply within 24 hours",
-              href: "mailto:support@hardvantatechnology@gmail.com",
+              href: "mailto:support@hardvantatechnology.com",
               label: "Send Email",
             },
             {

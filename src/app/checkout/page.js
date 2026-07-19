@@ -11,6 +11,7 @@ import CheckoutStepper from "@/components/checkout/CheckoutStepper";
 import AddressBook from "@/components/checkout/AddressBook";
 import DeliveryUnavailableBanner from "@/components/delivery/DeliveryUnavailableBanner";
 import { useDeliveryServiceability } from "@/hooks/useDeliveryServiceability";
+import { useShippingSettings } from "@/hooks/useShippingSettings";
 
 const COD_LIMIT = 10000;
 
@@ -33,7 +34,8 @@ export default function CheckoutPage() {
   const [payMethod, setPayMethod] = useState("COD");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { unsupported: locationUnsupported } = useDeliveryServiceability(selectedAddress?.postalCode);
+  const { unsupported: locationUnsupported, result: deliveryResult } = useDeliveryServiceability(selectedAddress?.postalCode);
+  const { freeShippingThreshold, deliveryCharge } = useShippingSettings();
 
   // Coupon input text (the applied coupon itself now lives in CartContext,
   // shared with the cart page and AvailableCoupons).
@@ -53,10 +55,16 @@ export default function CheckoutPage() {
   }, 0);
   const subtotal = total;
   const couponDiscount = coupon?.discountAmount ?? 0;
-  const shipping = (subtotal - couponDiscount) >= 999 ? 0 : 49;
+  const shipping = (subtotal - couponDiscount) >= freeShippingThreshold ? 0 : deliveryCharge;
   const grandTotal = subtotal - couponDiscount + shipping;
   const totalSaved = productDiscount + couponDiscount;
-  const codBlocked = grandTotal > COD_LIMIT;
+  // Undefined (no result yet) defaults to "available" so the option doesn't
+  // flash disabled before the serviceability check for this address resolves.
+  const codAvailableHere =
+    deliveryResult?.serviceable === false
+      ? false
+      : deliveryResult?.settings?.codEnabled !== false && deliveryResult?.pincode?.codAvailable !== false;
+  const codBlocked = grandTotal > COD_LIMIT || !codAvailableHere;
 
   useEffect(() => {
     if (codBlocked && payMethod === "COD") setPayMethod("ONLINE");
@@ -124,14 +132,14 @@ export default function CheckoutPage() {
   async function handleOnlinePayment() {
     const ok = await loadRazorpayScript();
     if (!ok) throw new Error("Could not load payment gateway. Check your connection.");
+    const address = buildAddressPayload(selectedAddress);
     const res = await fetch("/api/payment/create-order", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ couponCode: coupon?.code ?? null }),
+      body: JSON.stringify({ couponCode: coupon?.code ?? null, address }),
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Could not start payment.");
-    const address = buildAddressPayload(selectedAddress);
     await new Promise((resolve, reject) => {
       const rzp = new window.Razorpay({
         key: data.keyId, amount: data.amount, currency: data.currency,
@@ -175,7 +183,11 @@ export default function CheckoutPage() {
       return;
     }
     if (payMethod === "COD" && codBlocked) {
-      setError(`Cash on Delivery is available only for orders up to ${formatPrice(COD_LIMIT)}. Please pay online.`);
+      setError(
+        !codAvailableHere
+          ? "Cash on Delivery isn't available for this location. Please pay online."
+          : `Cash on Delivery is available only for orders up to ${formatPrice(COD_LIMIT)}. Please pay online.`
+      );
       return;
     }
     setLoading(true);
@@ -243,7 +255,9 @@ export default function CheckoutPage() {
               </div>
               {codBlocked && (
                 <p className="mt-2 text-xs text-red-400">
-                  Cash on Delivery is available only for orders up to {formatPrice(COD_LIMIT)}. Please pay online for this order.
+                  {!codAvailableHere
+                    ? "Cash on Delivery isn't available for this location. Please pay online for this order."
+                    : `Cash on Delivery is available only for orders up to ${formatPrice(COD_LIMIT)}. Please pay online for this order.`}
                 </p>
               )}
             </div>

@@ -44,11 +44,14 @@ export default async function ReportsPage({ searchParams }) {
       take: PAGE_SIZE,
     }),
     prisma.order.count(),
-    prisma.order.aggregate({ _sum: { total: true } }),
+    // Cancelled orders were never fulfilled/paid-through — excluding them
+    // matches how /admin/coupons already computes revenue elsewhere.
+    prisma.order.aggregate({ where: { status: { not: "CANCELLED" } }, _sum: { total: true } }),
     prisma.order.aggregate({ where: { status: "DELIVERED" }, _sum: { total: true }, _count: true }),
     prisma.order.count({ where: { status: "CANCELLED" } }),
     prisma.orderItem.groupBy({
       by: ["productId", "productName"],
+      where: { order: { status: { not: "CANCELLED" } } },
       _sum: { quantity: true, price: true },
       orderBy: { _sum: { quantity: "desc" } },
       take: 10,
