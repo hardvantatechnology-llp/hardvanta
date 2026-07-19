@@ -182,56 +182,6 @@ export default function Navbar() {
       }`}
     >
 
-      {/* ── Row 1 MOBILE: Phone (centered) ── */}
-      <div className="border-b border-white/10 md:hidden">
-        <div className="flex flex-col items-center gap-1.5 py-2">
-          <a href="tel:+919170546395" className="flex items-center gap-2 text-sm font-bold text-white/90">
-            <Phone size={14} className="text-electric-light" />
-            <span>+91 91705 46395</span>
-            <span className="font-normal text-white/50">Customer Support</span>
-          </a>
-          <div className="flex items-center gap-4 text-white/70">
-            {socials.map(({ Icon, href }, i) => (
-              <a key={i} href={href} target="_blank" rel="noopener noreferrer"
-                className="hover:text-electric-light transition-colors duration-150">
-                <Icon size={18} />
-              </a>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* ── Row 1 DESKTOP: Phone + Socials single line ── */}
-      <div className="hidden border-b border-white/10 md:block">
-        <div className="container-page flex items-center justify-between py-2 text-sm">
-          <a href="tel:+919170546395" className="flex items-center gap-2 text-white/80 hover:text-electric-light transition-colors">
-            <Phone size={15} className="text-electric-light" />
-            <span className="font-semibold">+91 91705 46395</span>
-            <span className="text-white/40">· Customer Support</span>
-          </a>
-          <div className="flex items-center gap-3 text-white/50">
-            {mounted && isAdmin && (
-              <button
-                onClick={() => {
-                  if (userViewMode) { setUserView(false); router.push("/admin"); }
-                  else { setUserView(true); router.push("/"); }
-                }}
-                className="rounded-full bg-electric/10 px-3 py-1 text-xs font-semibold text-electric-light hover:bg-electric/20 transition-colors"
-                title={userViewMode ? "Switch back to admin" : "Browse the store as a normal customer"}
-              >
-                {userViewMode ? "🔧 Back to Admin" : "👁 View as customer"}
-              </button>
-            )}
-            {socials.map(({ Icon, href }, i) => (
-              <a key={i} href={href} target="_blank" rel="noopener noreferrer"
-                className="hover:text-electric-light transition-colors duration-150">
-                <Icon size={17} />
-              </a>
-            ))}
-          </div>
-        </div>
-      </div>
-
       {/* ── Row 2: Logo + Search + Icons ── */}
       <div className="border-b border-white/10">
         <div className="container-page flex items-center gap-3 py-2.5">
