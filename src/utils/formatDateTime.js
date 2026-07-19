@@ -5,7 +5,7 @@
 // component (the visitor's browser timezone). That mismatch is what made the
 // same order timestamp render as two different calendar dates on the same
 // order page.
-const TIME_ZONE = "Asia/Kolkata";
+export const TIME_ZONE = "Asia/Kolkata";
 
 // Date only, e.g. "19 Jul 2026".
 export function formatDate(date) {

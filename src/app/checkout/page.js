@@ -9,6 +9,8 @@ import { formatPrice } from "@/utils/formatPrice";
 import Button from "@/components/ui/Button";
 import CheckoutStepper from "@/components/checkout/CheckoutStepper";
 import AddressBook from "@/components/checkout/AddressBook";
+import DeliveryUnavailableBanner from "@/components/delivery/DeliveryUnavailableBanner";
+import { useDeliveryServiceability } from "@/hooks/useDeliveryServiceability";
 
 const COD_LIMIT = 10000;
 
@@ -31,6 +33,7 @@ export default function CheckoutPage() {
   const [payMethod, setPayMethod] = useState("COD");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const { unsupported: locationUnsupported } = useDeliveryServiceability(selectedAddress?.postalCode);
 
   // Coupon input text (the applied coupon itself now lives in CartContext,
   // shared with the cart page and AvailableCoupons).
@@ -167,6 +170,10 @@ export default function CheckoutPage() {
       setError("Please select or add a shipping address.");
       return;
     }
+    if (locationUnsupported) {
+      setError("Delivery is currently unavailable for this location.");
+      return;
+    }
     if (payMethod === "COD" && codBlocked) {
       setError(`Cash on Delivery is available only for orders up to ${formatPrice(COD_LIMIT)}. Please pay online.`);
       return;
@@ -218,6 +225,8 @@ export default function CheckoutPage() {
 
             <AddressBook enabled={status === "authenticated"} onChange={setSelectedAddress} />
 
+            {locationUnsupported && <DeliveryUnavailableBanner />}
+
             {/* Payment method */}
             <div className="pt-2">
               <h3 className="mb-2 text-sm font-semibold text-white/80">Payment Method</h3>
@@ -239,7 +248,7 @@ export default function CheckoutPage() {
               )}
             </div>
 
-            <Button type="button" onClick={handleSubmit} variant="gradient" size="lg" className="w-full" disabled={loading}>
+            <Button type="button" onClick={handleSubmit} variant="gradient" size="lg" className="w-full" disabled={loading || locationUnsupported}>
               {loading ? "Processing…" : payMethod === "ONLINE" ? `Pay ${formatPrice(grandTotal)}` : `Place Order · ${formatPrice(grandTotal)}`}
             </Button>
             <p className="text-center text-xs text-white/40">

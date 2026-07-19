@@ -28,6 +28,7 @@ model User {
   reviews       Review[]
   sessions      Session[]
   wishlists     Wishlist[]
+  userSelectedLocation UserSelectedLocation?
 }
 
 model Account {
@@ -421,6 +422,70 @@ model GSTDetails {
   phone       String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model DeliveryArea {
+  id            String                 @id @default(cuid())
+  name          String                 @unique
+  slug          String                 @unique
+  active        Boolean                @default(true)
+  sortOrder     Int                    @default(0)
+  createdAt     DateTime               @default(now())
+  updatedAt     DateTime               @updatedAt
+  pincodes      Pincode[]
+  userLocations UserSelectedLocation[]
+
+  @@index([active])
+}
+
+model Pincode {
+  id               String       @id @default(cuid())
+  code             String       @unique @db.VarChar(6)
+  areaLabel        String
+  deliveryAreaId   String
+  active           Boolean      @default(true)
+  codAvailable     Boolean      @default(true)
+  expressAvailable Boolean      @default(false)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  deliveryArea     DeliveryArea @relation(fields: [deliveryAreaId], references: [id], onDelete: Cascade)
+
+  @@index([deliveryAreaId])
+  @@index([active])
+}
+
+model DeliverySettings {
+  id                        String   @id @default("singleton")
+  cutoffTime                String   @default("14:00")
+  standardDeliveryDaysToAdd Int      @default(0)
+  freeShippingThreshold     Int      @default(999)
+  deliveryCharge            Int      @default(49)
+  codEnabled                Boolean  @default(true)
+  expressEnabled            Boolean  @default(false)
+  updatedAt                 DateTime @updatedAt
+}
+
+model Holiday {
+  id        String   @id @default(cuid())
+  date      DateTime @db.Date
+  reason    String?
+  createdAt DateTime @default(now())
+
+  @@unique([date])
+}
+
+model UserSelectedLocation {
+  id             String        @id @default(cuid())
+  userId         String        @unique
+  pincode        String        @db.VarChar(6)
+  areaLabel      String
+  city           String
+  deliveryAreaId String?
+  updatedAt      DateTime      @updatedAt
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deliveryArea   DeliveryArea? @relation(fields: [deliveryAreaId], references: [id], onDelete: SetNull)
+
+  @@index([deliveryAreaId])
 }
 
 enum Role {

@@ -16,6 +16,7 @@ import AddToCart from "@/components/products/AddToCart";
 import WishlistToggleButton from "@/components/products/WishlistToggleButton";
 import ShareButton from "@/components/products/ShareButton";
 import RecentlyViewed from "@/components/products/RecentlyViewed";
+import DeliveryInfoCard from "@/components/delivery/DeliveryInfoCard";
 
 // Product data is now served through unstable_cache (see src/lib/queries.js),
 // so the page itself can be revalidated on an interval instead of forcing a
@@ -140,6 +141,9 @@ export default async function ProductDetailPage({ params }) {
                 <AddToCart product={product} />
               </div>
             </div>
+
+            {/* Delivery information */}
+            <DeliveryInfoCard />
 
             {/* Trust badges */}
             <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">

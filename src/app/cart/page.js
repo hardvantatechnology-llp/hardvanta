@@ -13,6 +13,7 @@ import { formatPrice } from "@/utils/formatPrice";
 import { imageSrc } from "@/utils/imageSrc";
 import Button from "@/components/ui/Button";
 import AvailableCoupons from "@/components/cart/AvailableCoupons";
+import CartDeliveryBlock from "@/components/delivery/CartDeliveryBlock";
 
 // ─── Quantity Modal ───────────────────────────────────────────────────────────
 function QuantityModal({ currentQty, onClose, onApply }) {
@@ -378,6 +379,8 @@ export default function CartPage() {
                 <p className="text-sm font-semibold text-cyan">🎉 You&apos;ve unlocked FREE shipping!</p>
               </div>
             )}
+
+            <CartDeliveryBlock />
           </div>
 
           {/* Order Summary */}

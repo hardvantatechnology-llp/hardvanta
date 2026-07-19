@@ -9,6 +9,7 @@ import {
   Bell, Settings, FileText, CreditCard, Mail, BookOpen,
   TrendingUp, BarChart2, Image as ImageIcon, UserCog, Store,
   Menu, X, Building2, ClipboardList, CircuitBoard, FileBarChart,
+  MapPin, Hash, SlidersHorizontal, CalendarOff,
 } from "lucide-react";
 import SwitchToUserView from "./SwitchToUserView";
 
@@ -55,6 +56,15 @@ const SECTIONS = [
       { href: "/admin/payments", label: "Payments", icon: CreditCard },
       { href: "/admin/invoices", label: "Invoices", icon: FileText },
       { href: "/admin/reports",  label: "Reports",  icon: BarChart2 },
+    ],
+  },
+  {
+    label: "Logistics",
+    items: [
+      { href: "/admin/delivery/areas",     label: "Delivery Areas",    icon: MapPin },
+      { href: "/admin/delivery/pincodes",  label: "Pincodes",          icon: Hash },
+      { href: "/admin/delivery/settings",  label: "Delivery Settings", icon: SlidersHorizontal },
+      { href: "/admin/delivery/holidays",  label: "Holiday Calendar",  icon: CalendarOff },
     ],
   },
   {
