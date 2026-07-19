@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { sendOrderConfirmationEmail } from "@/lib/email";
 import { lockProductsForUpdate, applyStockDeltas } from "@/lib/stock";
-import { getEligibility, computeDiscount } from "@/lib/couponEngine";
+import { getEligibility, computeDiscount, buildUsageClaimWhere } from "@/lib/couponEngine";
 
 export async function GET() {
   const { getAuthOptions } = await import("@/lib/auth");
@@ -99,10 +99,7 @@ export async function POST(request) {
         // one of two concurrent orders can win the last available use).
         if (coupon) {
           const claim = await tx.coupon.updateMany({
-            where: {
-              id: coupon.id,
-              OR: [{ usageLimit: null }, { usedCount: { lt: coupon.usageLimit } }],
-            },
+            where: buildUsageClaimWhere(coupon.id, coupon.usageLimit),
             data: { usedCount: { increment: 1 } },
           });
           if (claim.count === 0) {

@@ -8,6 +8,7 @@ import { prisma } from "@/lib/prisma";
 import { sendOrderConfirmationEmail } from "@/lib/email";
 import { applyStockDeltas } from "@/lib/stock";
 import { buildOrderStatusPatch } from "@/lib/orderStatus";
+import { buildUsageClaimWhere } from "@/lib/couponEngine";
 
 export async function POST(request) {
   const authOptions = await getAuthOptions();
@@ -96,10 +97,7 @@ export async function POST(request) {
         const couponRecord = await tx.coupon.findUnique({ where: { code: updated.couponCode } });
         const claim = couponRecord
           ? await tx.coupon.updateMany({
-              where: {
-                id: couponRecord.id,
-                OR: [{ usageLimit: null }, { usedCount: { lt: couponRecord.usageLimit } }],
-              },
+              where: buildUsageClaimWhere(couponRecord.id, couponRecord.usageLimit),
               data: { usedCount: { increment: 1 } },
             })
           : { count: 0 };

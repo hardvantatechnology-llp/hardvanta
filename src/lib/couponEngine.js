@@ -47,3 +47,17 @@ export function getComputedStatus(coupon, now = new Date()) {
   if (coupon.startsAt && now < new Date(coupon.startsAt)) return "SCHEDULED";
   return coupon.active ? "ACTIVE" : "INACTIVE";
 }
+
+/**
+ * `where` clause for atomically claiming one coupon use (an `updateMany`
+ * guarded so two concurrent orders can't both win the last available use —
+ * see api/orders and api/payment/verify). Prisma rejects `lt: null` outright
+ * (it validates the argument shape even when a sibling OR branch would make
+ * it moot), so when there's no usage limit we must omit the `usedCount`
+ * condition entirely rather than pass `lt: coupon.usageLimit` unconditionally.
+ */
+export function buildUsageClaimWhere(couponId, usageLimit) {
+  return usageLimit != null
+    ? { id: couponId, usedCount: { lt: usageLimit } }
+    : { id: couponId };
+}
