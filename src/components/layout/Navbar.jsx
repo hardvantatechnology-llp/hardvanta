@@ -26,11 +26,14 @@ import {
   Instagram,
   Youtube,
   AlignJustify,
+  MapPin,
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { useDeliveryLocation } from "@/context/DeliveryLocationContext";
 import { getUserView, setUserView } from "@/lib/viewMode";
 import Logo from "./Logo";
 import SearchBar from "./SearchBar";
+import LocationPickerModal from "@/components/delivery/LocationPickerModal";
 
 // The drawer is closed on first paint on every page (Navbar is in the root
 // layout) — split it out so its code only loads once someone opens the cart.
@@ -76,6 +79,7 @@ export default function Navbar() {
   const { data: session, status } = useSession();
   const loggedIn = status === "authenticated";
   const isAdmin = session?.user?.role === "ADMIN";
+  const { location: deliveryLocation, hydrated: locationHydrated } = useDeliveryLocation();
 
   const [mobileOpen, setMobileOpen]       = useState(false); // Menu drawer
   const [catOpen, setCatOpen]             = useState(false); // Categories sidebar (desktop trigger)
@@ -84,6 +88,7 @@ export default function Navbar() {
   const [query, setQuery]                 = useState("");
   const [scrolled, setScrolled]           = useState(false);
   const [cartOpen, setCartOpen]           = useState(false); // Cart drawer
+  const [locationPickerOpen, setLocationPickerOpen] = useState(false); // Delivery location modal
 
   const categorySidebarOpen = catOpen || mobileCatOpen;
   const closeCategorySidebar = () => {
@@ -138,6 +143,14 @@ export default function Navbar() {
   }, []);
   const showAdmin = isAdmin && !userViewMode;
 
+  // Identical on server and client-before-hydration — the real location only
+  // ever swaps in after `locationHydrated` flips, avoiding a hydration mismatch.
+  const deliveryLocationLabel = !locationHydrated
+    ? "Select delivery location"
+    : deliveryLocation
+      ? `${deliveryLocation.areaLabel}, ${deliveryLocation.city}`
+      : "Select delivery location";
+
   // Measure the real navbar height live, so the mobile drawer can snap
   // exactly to its bottom edge instead of relying on a fixed pixel guess
   const headerRef = useRef(null);
@@ -181,6 +194,78 @@ export default function Navbar() {
           : "border-white/10 bg-obsidian/70 backdrop-blur-xl"
       }`}
     >
+
+      {/* ── Row 1 MOBILE: Support left, Location center, Socials right ── */}
+      <div className="border-b border-white/10 md:hidden">
+        <div className="flex items-center justify-between gap-2 px-4 py-2">
+          <a href="tel:+919170546395" className="flex shrink-0 items-center gap-1.5 text-sm font-bold text-white/90">
+            <Phone size={14} className="text-electric-light" />
+          </a>
+
+          <button
+            type="button"
+            onClick={() => setLocationPickerOpen(true)}
+            className="flex min-w-0 flex-1 items-center justify-center gap-1 truncate text-xs font-semibold text-white/90"
+          >
+            <MapPin size={12} className="shrink-0 text-electric-light" />
+            <span className="truncate">Deliver to {deliveryLocationLabel}</span>
+            <ChevronDown size={10} className="shrink-0 text-white/50" />
+          </button>
+
+          <div className="flex shrink-0 items-center gap-3 text-white/70">
+            {socials.map(({ Icon, href }, i) => (
+              <a key={i} href={href} target="_blank" rel="noopener noreferrer"
+                className="hover:text-electric-light transition-colors duration-150">
+                <Icon size={15} />
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Row 1 DESKTOP: Support left, Location center, Socials right ── */}
+      <div className="hidden border-b border-white/10 md:block">
+        <div className="container-page flex items-center justify-between py-2 text-sm">
+          <div className="flex flex-1 items-center">
+            <a href="tel:+919170546395" className="flex items-center gap-2 text-white/80 hover:text-electric-light transition-colors">
+              <Phone size={15} className="text-electric-light" />
+              <span className="font-semibold">+91 91705 46395</span>
+              <span className="text-white/40">· Customer Support</span>
+            </a>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setLocationPickerOpen(true)}
+            className="flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap font-semibold text-white/90 hover:text-electric-light transition-colors"
+          >
+            <MapPin size={14} className="text-electric-light" />
+            <span>Deliver to {deliveryLocationLabel}</span>
+            <ChevronDown size={12} className="text-white/50" />
+          </button>
+
+          <div className="flex flex-1 items-center justify-end gap-3 text-white/50">
+            {mounted && isAdmin && (
+              <button
+                onClick={() => {
+                  if (userViewMode) { setUserView(false); router.push("/admin"); }
+                  else { setUserView(true); router.push("/"); }
+                }}
+                className="rounded-full bg-electric/10 px-3 py-1 text-xs font-semibold text-electric-light hover:bg-electric/20 transition-colors"
+                title={userViewMode ? "Switch back to admin" : "Browse the store as a normal customer"}
+              >
+                {userViewMode ? "🔧 Back to Admin" : "👁 View as customer"}
+              </button>
+            )}
+            {socials.map(({ Icon, href }, i) => (
+              <a key={i} href={href} target="_blank" rel="noopener noreferrer"
+                className="hover:text-electric-light transition-colors duration-150">
+                <Icon size={17} />
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
 
       {/* ── Row 2: Logo + Search + Icons ── */}
       <div className="border-b border-white/10">
@@ -515,6 +600,7 @@ export default function Navbar() {
       )}
 
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
+      <LocationPickerModal open={locationPickerOpen} onClose={() => setLocationPickerOpen(false)} />
     </header>
   );
 }

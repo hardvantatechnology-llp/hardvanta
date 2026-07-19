@@ -1,7 +1,6 @@
 import localFont from "next/font/local";
 import "./globals.css";
 import Providers from "@/components/Providers";
-import TopDeliveryBar from "@/components/layout/TopDeliveryBar";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
@@ -31,7 +30,6 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
       >
         <Providers>
-          <TopDeliveryBar />
           <Navbar />
           <main className="min-h-screen bg-gradient-to-b from-graphite to-obsidian">
             <PageTransition>{children}</PageTransition>
