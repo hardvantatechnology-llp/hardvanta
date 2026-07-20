@@ -18,7 +18,7 @@ import { useShippingSettings } from "@/hooks/useShippingSettings";
 
 // ─── Quantity Modal ───────────────────────────────────────────────────────────
 function QuantityModal({ currentQty, onClose, onApply }) {
-  const [inputVal, setInputVal] = useState("");
+  const [inputVal, setInputVal] = useState(String(currentQty));
   const [error, setError] = useState("");
 
   function handleApply() {
@@ -73,6 +73,7 @@ function QuantityModal({ currentQty, onClose, onApply }) {
             value={inputVal}
             onChange={(e) => { setInputVal(e.target.value); setError(""); }}
             onKeyDown={(e) => e.key === "Enter" && handleApply()}
+            onFocus={(e) => e.target.select()}
             placeholder="Enter quantity"
             autoFocus
             className="w-full rounded-xl glass-card px-4 py-3 text-sm font-semibold text-white outline-none focus:shadow-glow-electric placeholder:font-normal placeholder:text-white/30"

@@ -3,11 +3,12 @@
 // (admin PATCH, Razorpay verify/webhook, cancel flow) goes through these
 // helpers so the two never drift apart.
 
-export const ORDER_STATUSES = ["PENDING", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED"];
+export const ORDER_STATUSES = ["PENDING", "PROCESSING", "SHIPPED", "OUT_FOR_DELIVERY", "DELIVERED", "CANCELLED"];
 
 export const STATUS_TIMESTAMP_FIELD = {
   PROCESSING: "processingAt",
   SHIPPED: "shippedAt",
+  OUT_FOR_DELIVERY: "outForDeliveryAt",
   DELIVERED: "deliveredAt",
   CANCELLED: "cancelledAt",
 };

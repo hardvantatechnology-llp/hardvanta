@@ -52,6 +52,12 @@ function ProductCard({ product, priority = false }) {
   const [addError, setAddError] = useState(false);
   const [compared, setCompared] = useState(false);
   const [quickView, setQuickView] = useState(false);
+  // Starts false on both the server render and the client's first (hydration)
+  // render, then updates after mount — computing this from Date.now() during
+  // render would make it depend on the exact instant the server rendered vs.
+  // the instant the client hydrates, which can disagree (and did) for a
+  // product whose createdAt sits close to the NEW_WINDOW_DAYS boundary.
+  const [isNew, setIsNew] = useState(false);
 
   useEffect(() => {
     setCompared(readCompareIds().includes(product.id));
@@ -59,6 +65,11 @@ function ProductCard({ product, priority = false }) {
     window.addEventListener(COMPARE_EVENT, sync);
     return () => window.removeEventListener(COMPARE_EVENT, sync);
   }, [product.id]);
+
+  useEffect(() => {
+    if (!product.createdAt) return;
+    setIsNew(Date.now() - new Date(product.createdAt).getTime() < NEW_WINDOW_DAYS * 24 * 60 * 60 * 1000);
+  }, [product.createdAt]);
 
   const toggleCompare = useCallback(
     (e) => {
@@ -85,9 +96,6 @@ function ProductCard({ product, priority = false }) {
     ? Math.round(((product.price - product.salePrice) / product.price) * 100)
     : 0;
   const outOfStock = product.inStock === false;
-  const isNew =
-    product.createdAt &&
-    Date.now() - new Date(product.createdAt).getTime() < NEW_WINDOW_DAYS * 24 * 60 * 60 * 1000;
 
   async function handleAdd() {
     if (outOfStock) return;

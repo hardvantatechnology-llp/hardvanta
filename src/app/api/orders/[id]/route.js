@@ -4,17 +4,29 @@ import { isAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 import { cancelOrder } from "@/app/api/orders/_cancel";
 import { buildOrderStatusPatch, buildPaymentSyncPatch } from "@/lib/orderStatus";
+import {
+  sendOrderShippedEmail,
+  sendOrderOutForDeliveryEmail,
+  sendOrderDeliveredEmail,
+} from "@/lib/email";
 
-const VALID = ["PENDING", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED"];
+const VALID = ["PENDING", "PROCESSING", "SHIPPED", "OUT_FOR_DELIVERY", "DELIVERED", "CANCELLED"];
 
 // Explicit allowed forward transitions: no jumping backwards out of a
 // terminal state, and no skipping straight from PENDING to DELIVERED.
 const ALLOWED_TRANSITIONS = {
   PENDING: ["PROCESSING", "SHIPPED", "CANCELLED"],
   PROCESSING: ["SHIPPED", "CANCELLED"],
-  SHIPPED: ["DELIVERED"],
+  SHIPPED: ["OUT_FOR_DELIVERY", "DELIVERED"],
+  OUT_FOR_DELIVERY: ["DELIVERED"],
   DELIVERED: [],
   CANCELLED: [],
+};
+
+const STATUS_EMAIL_SENDERS = {
+  SHIPPED: sendOrderShippedEmail,
+  OUT_FOR_DELIVERY: sendOrderOutForDeliveryEmail,
+  DELIVERED: sendOrderDeliveredEmail,
 };
 
 export async function PATCH(request, { params }) {
@@ -29,7 +41,7 @@ export async function PATCH(request, { params }) {
 
     const existing = await prisma.order.findUnique({
       where: { id: params.id },
-      include: { items: true, payment: true },
+      include: { items: true, payment: true, user: { select: { email: true, name: true } } },
     });
     if (!existing) {
       return NextResponse.json({ error: "Order not found." }, { status: 404 });
@@ -72,12 +84,27 @@ export async function PATCH(request, { params }) {
         if (paymentPatch) {
           await tx.payment.update({ where: { orderId: params.id }, data: paymentPatch });
         }
-        return tx.order.findUnique({ where: { id: params.id }, include: { payment: true } });
+        return tx.order.findUnique({
+          where: { id: params.id },
+          include: { payment: true, user: { select: { email: true, name: true } } },
+        });
       })
       .catch(() => null);
     if (!order) {
       return NextResponse.json({ error: "Order not found." }, { status: 404 });
     }
+
+    // Best-effort — a failed status-update email must never fail the
+    // already-committed status change.
+    const sendStatusEmail = STATUS_EMAIL_SENDERS[status];
+    if (sendStatusEmail && order.user?.email) {
+      try {
+        await sendStatusEmail(order.user.email, order);
+      } catch (err) {
+        console.error(`[orders/[id] PATCH] ${status} email failed:`, err?.message || err);
+      }
+    }
+
     return NextResponse.json({ order });
   } catch (err) {
     console.error("PATCH /api/orders/[id] error:", err);

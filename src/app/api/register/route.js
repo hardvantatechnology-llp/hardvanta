@@ -81,6 +81,14 @@ export async function POST(request) {
       throw err;
     }
 
+    // Best-effort — a failed welcome email must never fail the signup itself.
+    try {
+      const { sendWelcomeEmail } = await import("@/lib/email");
+      await sendWelcomeEmail(user.email, user.name);
+    } catch (err) {
+      console.error("[register] welcome email failed:", err?.message || err);
+    }
+
     return NextResponse.json({ user }, { status: 201 });
   } catch (err) {
     console.error("register error", err);

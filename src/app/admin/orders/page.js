@@ -10,7 +10,7 @@ import { formatDate } from "@/utils/formatDateTime";
 export const dynamic = "force-dynamic";
 
 const PAGE_SIZE = 20;
-const STATUSES = ["PENDING", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED"];
+const STATUSES = ["PENDING", "PROCESSING", "SHIPPED", "OUT_FOR_DELIVERY", "DELIVERED", "CANCELLED"];
 
 export default async function AdminOrdersPage({ searchParams }) {
   const { prisma } = await import("@/lib/prisma");

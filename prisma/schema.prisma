@@ -216,6 +216,7 @@ model Order {
   updatedAt         DateTime    @updatedAt
   processingAt      DateTime?
   shippedAt         DateTime?
+  outForDeliveryAt  DateTime?
   deliveredAt       DateTime?
   cancelledAt       DateTime?
   couponCode        String?
@@ -503,6 +504,7 @@ enum OrderStatus {
   PENDING
   PROCESSING
   SHIPPED
+  OUT_FOR_DELIVERY
   DELIVERED
   CANCELLED
 }

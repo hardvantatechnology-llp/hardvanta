@@ -7,11 +7,12 @@ import { prisma } from "@/lib/prisma";
 import { getRazorpay } from "@/lib/razorpay";
 import { applyStockDeltas } from "@/lib/stock";
 import { buildPaymentCancelPatch } from "@/lib/orderStatus";
+import { sendOrderCancelledEmail, sendRefundInitiatedEmail } from "@/lib/email";
 
 export const CANCELLABLE_STATUSES = ["PENDING", "PROCESSING"];
 
 /**
- * @param {object} order - must include { items: true, payment: true }
+ * @param {object} order - must include { items: true, payment: true, user: { select: { email, name } } }
  * @returns {Promise<{ ok: boolean, reason?: string }>}
  */
 export async function cancelOrder(order) {
@@ -68,6 +69,13 @@ export async function cancelOrder(order) {
           where: { orderId: order.id },
           data: { status: "REFUNDED", refundedAt: order.payment.refundedAt ?? new Date() },
         });
+        if (order.user?.email) {
+          try {
+            await sendRefundInitiatedEmail(order.user.email, order);
+          } catch (err) {
+            console.error("[cancelOrder] refund email failed:", err?.message || err);
+          }
+        }
       } catch (err) {
         // The order stays CANCELLED and the payment stays SUCCESS (not REFUNDED)
         // so this is visible for manual refund follow-up rather than silently lost.
@@ -84,6 +92,16 @@ export async function cancelOrder(order) {
     const paymentPatch = buildPaymentCancelPatch(order.payment);
     if (paymentPatch) {
       await prisma.payment.update({ where: { orderId: order.id }, data: paymentPatch });
+    }
+  }
+
+  // Best-effort — a failed cancellation email must never undo the
+  // already-committed cancellation.
+  if (order.user?.email) {
+    try {
+      await sendOrderCancelledEmail(order.user.email, order);
+    } catch (err) {
+      console.error("[cancelOrder] cancellation email failed:", err?.message || err);
     }
   }
 

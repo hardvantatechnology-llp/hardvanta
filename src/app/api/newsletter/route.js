@@ -28,5 +28,13 @@ export async function POST(request) {
     create: { email },
   });
 
+  // Best-effort — a failed confirmation email must never fail the signup.
+  try {
+    const { sendNewsletterConfirmationEmail } = await import("@/lib/email");
+    await sendNewsletterConfirmationEmail(email);
+  } catch (err) {
+    console.error("[newsletter] confirmation email failed:", err?.message || err);
+  }
+
   return NextResponse.json({ ok: true });
 }

@@ -1,6 +1,7 @@
 // POST /api/contact — saves a "Send Us a Message" submission from /contact.
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { sendEnquiryAdminNotification, sendContactConfirmationEmail } from "@/lib/email";
 
 // Best-effort in-memory rate limiter (per server instance) to curb spam
 // submissions to this public, unauthenticated endpoint.
@@ -99,6 +100,24 @@ export async function POST(request) {
         message: message.trim(),
       },
     });
+
+    // The message is already saved at this point — a failure sending either
+    // email must never turn a successful submission into an error response.
+    try {
+      await Promise.all([
+        sendEnquiryAdminNotification({
+          formType: "Contact",
+          id: contactMessage.id,
+          name: contactMessage.name,
+          email: contactMessage.email,
+          phone: contactMessage.phone,
+          message: contactMessage.message,
+        }),
+        sendContactConfirmationEmail({ to: contactMessage.email, name: contactMessage.name }),
+      ]);
+    } catch (emailErr) {
+      console.error("POST /api/contact email notification error:", emailErr);
+    }
 
     return NextResponse.json({ success: true, id: contactMessage.id }, { status: 201 });
   } catch (err) {

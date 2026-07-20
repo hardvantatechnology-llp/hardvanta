@@ -113,6 +113,20 @@ session.user.role = token.role;        }
       },
     },
 
+    // Fires once, the first time the PrismaAdapter creates a User row — i.e.
+    // a brand-new Google OAuth signup. Credentials signups never hit the
+    // adapter, so their welcome email is sent from /api/register instead.
+    events: {
+      async createUser({ user }) {
+        try {
+          const { sendWelcomeEmail } = await import("@/lib/email");
+          await sendWelcomeEmail(user.email, user.name);
+        } catch (err) {
+          console.error("[auth] welcome email failed:", err?.message || err);
+        }
+      },
+    },
+
     secret: process.env.NEXTAUTH_SECRET,
   };
 }

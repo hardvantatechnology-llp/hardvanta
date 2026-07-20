@@ -15,7 +15,26 @@
       "Bash(nohup npm run start)",
       "Read(//tmp/**)",
       "PowerShell(Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue | Where-Object { $_.LocalPort -eq 3000 } | Select-Object LocalPort, OwningProcess)",
-      "PowerShell(Stop-Process -Id 23504 -Force -Confirm:$false; Start-Sleep -Milliseconds 500; Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue | Where-Object { $_.LocalPort -eq 3000 })"
+      "PowerShell(Stop-Process -Id 23504 -Force -Confirm:$false; Start-Sleep -Milliseconds 500; Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue | Where-Object { $_.LocalPort -eq 3000 })",
+      "WebFetch(domain:hardvanta.vercel.app)",
+      "Bash(gh --version)",
+      "Bash(gh auth *)",
+      "Bash(node --experimental-vm-modules prisma/seed.mjs)",
+      "Bash(node -e \"const p=require\\('./package.json'\\); console.log\\(JSON.stringify\\({dep:p.dependencies, dev:p.devDependencies}, null, 2\\)\\)\")",
+      "Bash(npx --yes playwright install chromium --with-deps)",
+      "Bash(mkdir -p \"/c/Users/ITS/AppData/Local/Temp/claude/c--Users-ITS-hardvanta/dce888ce-99c1-449c-888b-485a058c4653/scratchpad/pw-check\")",
+      "Read(//c/Users/ITS/AppData/Local/Temp/claude/c--Users-ITS-hardvanta/dce888ce-99c1-449c-888b-485a058c4653/scratchpad/**)",
+      "Bash(cd \"/c/Users/ITS/AppData/Local/Temp/claude/c--Users-ITS-hardvanta/dce888ce-99c1-449c-888b-485a058c4653/scratchpad/pw-check\" && npx playwright install chromium 2>&1 | tail -30)",
+      "Read(//c/Users/ITS/AppData/Local/Temp/claude/c--Users-ITS-hardvanta/dce888ce-99c1-449c-888b-485a058c4653/scratchpad/pw-check/**)",
+      "Bash(npx playwright *)",
+      "Bash(echo \"EXIT:$?\")",
+      "PowerShell(Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue | Where-Object { $_.LocalPort -eq 3000 })",
+      "Bash(node check.js)",
+      "PowerShell(Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue | Where-Object { $_.LocalPort -eq 3000 } | Select-Object OwningProcess)",
+      "Bash(powershell -NoProfile -Command 'Stop-Process -Id 13984 -Force -Confirm:$false')",
+      "Bash(nohup npm run dev)",
+      "Bash(node check2.js)",
+      "Bash(node check-prod.js)"
     ]
   }
 }

@@ -21,7 +21,7 @@ export async function POST(request, { params }) {
     // Order fetch karo
     const order = await prisma.order.findUnique({
       where: { id: params.id },
-      include: { items: true, payment: true },
+      include: { items: true, payment: true, user: { select: { email: true, name: true } } },
     });
 
     // Order exist nahi ya doosre user ka hai

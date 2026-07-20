@@ -19,7 +19,7 @@ const csp = [
   "default-src 'self'",
   // Next.js needs 'unsafe-inline' for its hydration/runtime bootstrap scripts
   // without a nonce-based setup; Razorpay's checkout script is loaded from its CDN.
-  "script-src 'self' 'unsafe-inline' https://checkout.razorpay.com",
+  `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV !== "production" ? " 'unsafe-eval'" : ""} https://checkout.razorpay.com`,
   "style-src 'self' 'unsafe-inline'",
   `img-src 'self' data: blob: https://images.unsplash.com${supabaseOrigin ? " " + supabaseOrigin : ""}`,
   "font-src 'self' data:",
