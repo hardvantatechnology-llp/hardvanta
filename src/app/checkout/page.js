@@ -10,6 +10,9 @@ import { formatPrice } from "@/utils/formatPrice";
 import { lookupPincode } from "@/utils/pincode";
 import Button from "@/components/ui/Button";
 
+// Valid Indian mobile numbers: exactly 10 digits, starting with 6-9
+const INDIAN_PHONE_REGEX = /^[6-9]\d{9}$/;
+
 export default function CheckoutPage() {
   const router = useRouter();
   const { status } = useSession();
@@ -36,6 +39,7 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
   const [pinStatus, setPinStatus] = useState("idle");
   const [pinMessage, setPinMessage] = useState("");
+  const [phoneError, setPhoneError] = useState("");
 
   // Coupon state
   const [couponCode, setCouponCode] = useState("");
@@ -94,6 +98,22 @@ export default function CheckoutPage() {
 
   function update(key, value) {
     setForm((f) => ({ ...f, [key]: value }));
+  }
+
+  function handlePhoneChange(value) {
+    // Strip anything that isn't a digit, cap at 10 digits
+    const digitsOnly = value.replace(/\D/g, "").slice(0, 10);
+    update("phone", digitsOnly);
+
+    if (digitsOnly.length === 0) {
+      setPhoneError("");
+    } else if (digitsOnly.length < 10) {
+      setPhoneError("Phone number must be 10 digits");
+    } else if (!INDIAN_PHONE_REGEX.test(digitsOnly)) {
+      setPhoneError("Enter a valid Indian mobile number (must start with 6-9)");
+    } else {
+      setPhoneError("");
+    }
   }
 
   async function handlePincode(value) {
@@ -191,7 +211,8 @@ export default function CheckoutPage() {
   async function handleSubmit(e) {
     e.preventDefault();
     setError("");
-    if (!/^[6-9]\d{9}$/.test(form.phone)) {
+    if (!INDIAN_PHONE_REGEX.test(form.phone)) {
+      setPhoneError("Enter a valid 10-digit Indian mobile number");
       setError("Please enter a valid Indian mobile number (must start with 6, 7, 8 or 9).");
       return;
     }
@@ -244,7 +265,7 @@ export default function CheckoutPage() {
             <Field
               label="Phone" value={form.phone} type="tel" inputMode="numeric"
               placeholder="10-digit mobile number" minLength={10} maxLength={10}
-              onChange={(v) => update("phone", v.replace(/\D/g, "").slice(0, 10))} required
+              onChange={handlePhoneChange} required error={phoneError}
             />
           </div>
 
@@ -431,7 +452,7 @@ function PayOption({ active, onClick, title, desc }) {
   );
 }
 
-function Field({ label, value, onChange, required, type = "text", inputMode, placeholder, minLength, maxLength }) {
+function Field({ label, value, onChange, required, type = "text", inputMode, placeholder, minLength, maxLength, error }) {
   return (
     <div>
       <label className="mb-1 block text-sm font-medium text-navy">
@@ -441,8 +462,14 @@ function Field({ label, value, onChange, required, type = "text", inputMode, pla
         type={type} inputMode={inputMode} required={required}
         minLength={minLength} maxLength={maxLength} value={value}
         onChange={(e) => onChange(e.target.value)} placeholder={placeholder}
-        className="w-full rounded-lg border border-silver-dark px-3 py-2.5 text-sm outline-none placeholder:text-silver-dark/60 focus:border-royal focus:ring-2 focus:ring-royal/30"
+        aria-invalid={error ? "true" : "false"}
+        className={`w-full rounded-lg border px-3 py-2.5 text-sm outline-none placeholder:text-silver-dark/60 focus:ring-2 ${
+          error
+            ? "border-red-400 focus:border-red-400 focus:ring-red-200"
+            : "border-silver-dark focus:border-royal focus:ring-royal/30"
+        }`}
       />
+      {error && <p className="mt-1 text-xs font-medium text-red-600">{error}</p>}
     </div>
   );
 }

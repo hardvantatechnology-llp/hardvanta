@@ -56,7 +56,7 @@ export default function ProductCard({ product }) {
               fill
               loading="lazy"
               sizes="(max-width: 1024px) 50vw, 25vw"
-              className="object-contain p-3 transition-transform duration-300 group-hover:scale-105"
+              className="object-cover transition-transform duration-300 group-hover:scale-105"
             />
           </div>
         </Link>

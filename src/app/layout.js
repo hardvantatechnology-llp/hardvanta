@@ -17,9 +17,68 @@ const geistMono = localFont({
 });
 
 export const metadata = {
-  title: "hardvanta — Electronics & Robotics Store",
+  metadataBase: new URL("https://hvkart.hardvantatechnologies.in"),
+
+  title: {
+    default: "hardvanta — Electronics & Robotics Store",
+    template: "%s | hardvanta",
+  },
+
   description:
     "Shop Arduino, Raspberry Pi, sensors, motors, drone parts and DIY electronics. Fast delivery across India.",
+
+  keywords: [
+    "Arduino India",
+    "Raspberry Pi India",
+    "electronic components online",
+    "robotics parts India",
+    "sensors and motors",
+    "drone parts India",
+    "DIY electronics store",
+  ],
+
+  authors: [{ name: "hardvanta" }],
+  creator: "hardvanta",
+  publisher: "hardvanta",
+
+  alternates: {
+    canonical: "https://hvkart.hardvantatechnologies.in",
+  },
+
+  openGraph: {
+    title: "hardvanta — Electronics & Robotics Store",
+    description:
+      "Shop Arduino, Raspberry Pi, sensors, motors, drone parts and DIY electronics. Fast delivery across India.",
+    url: "https://hvkart.hardvantatechnologies.in",
+    siteName: "hardvanta",
+    locale: "en_IN",
+    type: "website",
+    images: [
+      {
+        url: "/images/hardvanta.png",
+        width: 1200,
+        height: 630,
+        alt: "hardvanta — Electronics & Robotics Store",
+      },
+    ],
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "hardvanta — Electronics & Robotics Store",
+    description:
+      "Shop Arduino, Raspberry Pi, sensors, motors, drone parts and DIY electronics.",
+    images: ["/images/hardvanta.png"],
+  },
+
+  robots: {
+    index: true,
+    follow: true,
+  },
+
+  // verification: {
+  //   google: "your-google-search-console-code-here",
+  // },
 };
 
 export default function RootLayout({ children }) {
