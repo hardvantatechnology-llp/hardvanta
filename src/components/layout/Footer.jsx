@@ -1,14 +1,11 @@
+"use client";
+
 import Link from "next/link";
-import {
-  Facebook,
-  Instagram,
-  Youtube,
-  Twitter,
-  Linkedin,
-  Mail,
-  Phone,
-} from "lucide-react";
+import { useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
+import { Mail, Phone, Check } from "lucide-react";
 import Logo from "./Logo";
+import { socials } from "@/lib/socialLinks";
 
 const columns = [
   {
@@ -52,85 +49,113 @@ const columns = [
   },
 ];
 
-const socials = [
-  { Icon: Facebook, href: "#", label: "Facebook" },
-  { Icon: Twitter, href: "#", label: "Twitter" },
-  {
-    Icon: Linkedin,
-    href: "https://www.linkedin.com/company/hardvanta-technologies-llp/posts/?feedView=all",
-    label: "LinkedIn",
-  },
-  {
-    Icon: Instagram,
-    href: "https://www.instagram.com/hardvantatechnologies",
-    label: "Instagram",
-  },
-  { Icon: Youtube, href: "#", label: "YouTube" },
-];
-
 export default function Footer() {
+  const reduce = useReducedMotion();
+  const [newsletterEmail, setNewsletterEmail] = useState("");
+  const [newsletterStatus, setNewsletterStatus] = useState("idle"); // idle | loading | success | error
+  const [newsletterError, setNewsletterError] = useState("");
+
+  async function handleNewsletterSubmit() {
+    if (!newsletterEmail.trim() || newsletterStatus === "loading") return;
+    setNewsletterStatus("loading");
+    setNewsletterError("");
+    try {
+      const res = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: newsletterEmail.trim() }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || "Could not subscribe. Please try again.");
+      setNewsletterStatus("success");
+      setNewsletterEmail("");
+    } catch (err) {
+      setNewsletterStatus("error");
+      setNewsletterError(err.message || "Could not subscribe. Please try again.");
+    }
+  }
+  const reveal = {
+    initial: { opacity: 0, y: 16 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, margin: "-80px" },
+    transition: { duration: 0.5, ease: "easeOut" },
+  };
+
   return (
-    <footer className="mt-16 bg-navy text-silver-light">
+    <footer className="relative overflow-hidden bg-gradient-to-b from-graphite to-obsidian text-silver-light">
+      {/* Ambient top glow */}
+      <div className="liquid-blob left-1/4 top-[-160px] h-72 w-72 bg-electric/20" />
+      <div className="liquid-blob right-1/4 top-[-120px] h-72 w-72 bg-liquid/15" style={{ animationDelay: "-6s" }} />
 
       {/* Newsletter strip */}
-      <div className="border-b border-white/10 bg-navy-dark">
+      <div className="relative border-b border-white/10">
         <div className="container-page grid items-center gap-6 py-8 md:grid-cols-2">
           <div>
             <h3 className="text-lg font-bold text-white">
               Subscribe to our Newsletter
             </h3>
-            <p className="mt-1 text-sm text-silver">
+            <p className="mt-1 text-sm text-white/50">
               Get promotional offers &amp; discounts straight to your inbox.
             </p>
           </div>
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <input
-              type="text"
-              placeholder="First Name"
-              className="w-full rounded-lg border border-white/10 bg-white/10 px-4 py-2.5 text-sm text-white placeholder-silver outline-none focus:border-royal sm:w-1/3"
-            />
-            <input
-              type="email"
-              placeholder="Email Id"
-              className="w-full flex-1 rounded-lg border border-white/10 bg-white/10 px-4 py-2.5 text-sm text-white placeholder-silver outline-none focus:border-royal"
-            />
-            <button
-              type="button"
-              className="flex items-center justify-center gap-2 rounded-lg bg-royal px-5 py-2.5 text-sm font-semibold text-white hover:bg-royal-light transition-colors"
-            >
-              <Mail size={15} /> Subscribe
-            </button>
+          <div>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <input
+                type="email"
+                value={newsletterEmail}
+                onChange={(e) => { setNewsletterEmail(e.target.value); setNewsletterStatus("idle"); }}
+                onKeyDown={(e) => e.key === "Enter" && handleNewsletterSubmit()}
+                placeholder="Email Id"
+                aria-label="Email address"
+                className="w-full flex-1 rounded-lg glass px-4 py-2.5 text-sm text-white placeholder-white/40 outline-none transition-shadow focus:shadow-glow-electric"
+              />
+              <button
+                type="button"
+                onClick={handleNewsletterSubmit}
+                disabled={newsletterStatus === "loading" || !newsletterEmail.trim()}
+                className="flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-electric to-liquid px-5 py-2.5 text-sm font-semibold text-white shadow-glow-electric transition-all hover:brightness-110 disabled:opacity-50 disabled:hover:brightness-100"
+              >
+                {newsletterStatus === "success" ? <Check size={15} /> : <Mail size={15} />}
+                {newsletterStatus === "loading" ? "Subscribing…" : newsletterStatus === "success" ? "Subscribed!" : "Subscribe"}
+              </button>
+            </div>
+            {newsletterStatus === "error" && (
+              <p className="mt-2 text-xs text-red-400">{newsletterError}</p>
+            )}
           </div>
         </div>
       </div>
 
       {/* Main grid */}
-      <div className="container-page grid grid-cols-2 gap-8 py-12 sm:grid-cols-2 md:grid-cols-6">
+      <motion.div
+        {...(reduce ? {} : reveal)}
+        className="relative container-page grid grid-cols-2 gap-8 py-12 sm:grid-cols-2 md:grid-cols-6"
+      >
 
         {/* Brand col */}
         <div className="col-span-2">
           <Logo size={56} dark />
-          <p className="mt-4 max-w-xs text-sm leading-relaxed text-silver">
+          <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/50">
             India&apos;s store for robotics, electronics and DIY engineering
             products. Your ideas, our parts!
           </p>
-          <p className="mt-1 text-xs text-silver/70">
+          <p className="mt-1 text-xs text-white/30">
             A unit of Hardvanta Technologies
           </p>
 
           {/* Contact */}
           <div className="mt-6">
-            <p className="text-xs font-semibold uppercase tracking-wider text-silver/60">
+            <p className="text-xs font-semibold uppercase tracking-wider text-white/40">
               Got Questions?
             </p>
-            <p className="mt-0.5 text-xs text-silver">
+            <p className="mt-0.5 text-xs text-white/50">
               Call us 9:15 AM – 6:15 PM, Mon–Sat
             </p>
             <a
               href="tel:+919170546395"
-              className="mt-2 flex items-center gap-2 text-white hover:text-royal-light transition-colors"
+              className="mt-2 flex items-center gap-2 text-white hover:text-electric-light transition-colors"
             >
-              <Phone size={15} className="text-royal-light" />
+              <Phone size={15} className="text-electric-light" />
               <span className="font-semibold">+91 91705 46395</span>
             </a>
           </div>
@@ -139,13 +164,13 @@ export default function Footer() {
           <div className="mt-5 flex gap-3">
             <a
               href="#"
-              className="flex items-center gap-2 rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-xs text-white hover:border-royal hover:bg-white/10 transition-colors"
+              className="flex items-center gap-2 rounded-lg glass px-3 py-2 text-xs text-white hover:shadow-glow-electric transition-all"
             >
               <span>▶</span> Google Play
             </a>
             <a
               href="#"
-              className="flex items-center gap-2 rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-xs text-white hover:border-royal hover:bg-white/10 transition-colors"
+              className="flex items-center gap-2 rounded-lg glass px-3 py-2 text-xs text-white hover:shadow-glow-electric transition-all"
             >
               <span></span> App Store
             </a>
@@ -163,7 +188,7 @@ export default function Footer() {
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-silver hover:text-royal-light transition-colors"
+                    className="text-white/50 hover:text-electric-light transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -172,12 +197,12 @@ export default function Footer() {
             </ul>
           </div>
         ))}
-      </div>
+      </motion.div>
 
       {/* Bottom bar */}
-      <div className="border-t border-white/10">
+      <div className="relative border-t border-white/10">
         <div className="container-page flex flex-col items-center justify-between gap-4 py-5 sm:flex-row">
-          <p className="text-xs text-silver/70">
+          <p className="text-xs text-white/30">
             © 2026 Hardvanta — All Rights Reserved.
           </p>
 
@@ -190,7 +215,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={label}
-                className="flex h-8 w-8 items-center justify-center rounded-full border border-white/20 bg-white/5 text-white hover:border-royal hover:bg-royal transition-colors"
+                className="flex h-8 w-8 items-center justify-center rounded-full glass text-white hover:shadow-glow-electric hover:-translate-y-0.5 transition-all"
               >
                 <Icon size={15} />
               </a>

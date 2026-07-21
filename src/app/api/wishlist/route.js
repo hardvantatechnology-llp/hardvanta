@@ -9,16 +9,32 @@ export async function GET() {
     const session = await getServerSession(authOptions);
     if (!session) return NextResponse.json({ error: "Login karo" }, { status: 401 });
 
+    // Only the fields the wishlist page actually renders — the nav's heart
+    // icon only needs `productId`, and the full wishlist grid only needs
+    // these few product fields, not the entire Product row.
     const wishlist = await prisma.wishlist.findMany({
       where: { userId: session.user.id },
-      include: { product: true },
+      select: {
+        id: true,
+        productId: true,
+        product: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            image: true,
+            price: true,
+            salePrice: true,
+          },
+        },
+      },
       orderBy: { createdAt: "desc" },
     });
 
     return NextResponse.json(wishlist);
   } catch (err) {
     console.error("Wishlist GET error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -40,7 +56,7 @@ export async function POST(req) {
     return NextResponse.json(item, { status: 201 });
   } catch (err) {
     console.error("Wishlist POST error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -59,6 +75,6 @@ export async function DELETE(req) {
     return NextResponse.json({ message: "Removed" });
   } catch (err) {
     console.error("Wishlist DELETE error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

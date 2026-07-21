@@ -4,6 +4,7 @@
 
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
+import { cancelOrder } from "@/app/api/orders/_cancel";
 
 export async function POST(request, { params }) {
   const { getAuthOptions } = await import("@/lib/auth");
@@ -14,50 +15,57 @@ export async function POST(request, { params }) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { prisma } = await import("@/lib/prisma");
+  try {
+    const { prisma } = await import("@/lib/prisma");
 
-  // Order fetch karo
-  const order = await prisma.order.findUnique({
-    where: { id: params.id },
-    include: { items: true },
-  });
+    // Order fetch karo
+    const order = await prisma.order.findUnique({
+      where: { id: params.id },
+      include: { items: true, payment: true, user: { select: { email: true, name: true } } },
+    });
 
-  // Order exist nahi ya doosre user ka hai
-  if (!order || order.userId !== session.user.id) {
-    return NextResponse.json({ error: "Order not found." }, { status: 404 });
-  }
-
-  // ✅ Shipping policy check
-  const cancellableStatuses = ["PENDING", "PROCESSING"];
-  if (!cancellableStatuses.includes(order.status)) {
-    return NextResponse.json(
-      {
-        error:
-          order.status === "SHIPPED"
-            ? "Order already shipped. Cannot cancel after shipping."
-            : order.status === "DELIVERED"
-            ? "Order already delivered. Cannot cancel."
-            : "This order cannot be cancelled.",
-      },
-      { status: 400 }
-    );
-  }
-
-  // ✅ Stock wapas karo (cancel hone pe stock restore)
-  await prisma.$transaction(async (tx) => {
-    for (const item of order.items) {
-      await tx.product.update({
-        where: { id: item.productId },
-        data: { stock: { increment: item.quantity } },
-      });
+    // Order exist nahi ya doosre user ka hai
+    if (!order || order.userId !== session.user.id) {
+      return NextResponse.json({ error: "Order not found." }, { status: 404 });
     }
 
-    // Order status CANCELLED kar do
-    await tx.order.update({
-      where: { id: params.id },
-      data: { status: "CANCELLED" },
-    });
-  });
+    // Stock restore + refund (if paid online) happen inside cancelOrder, guarded
+    // against double-cancel races.
+    let result;
+    try {
+      result = await cancelOrder(order);
+    } catch (err) {
+      console.error("[orders/cancel] error:", err?.message || err);
+      return NextResponse.json(
+        { error: "Could not cancel order. Please try again." },
+        { status: 500 }
+      );
+    }
 
-  return NextResponse.json({ success: true });
+    if (!result.ok) {
+      if (result.reason === "already-processed") {
+        return NextResponse.json(
+          { error: "This order cannot be cancelled." },
+          { status: 409 }
+        );
+      }
+      // ✅ Shipping policy check
+      return NextResponse.json(
+        {
+          error:
+            order.status === "SHIPPED"
+              ? "Order already shipped. Cannot cancel after shipping."
+              : order.status === "DELIVERED"
+              ? "Order already delivered. Cannot cancel."
+              : "This order cannot be cancelled.",
+        },
+        { status: 400 }
+      );
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    console.error("POST /api/orders/[id]/cancel error:", err);
+    return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+  }
 }

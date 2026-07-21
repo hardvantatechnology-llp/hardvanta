@@ -1,7 +1,7 @@
 generator client {
   provider = "prisma-client-js"
 }
-
+ 
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
@@ -15,6 +15,7 @@ model User {
   phone         String?
   emailVerified DateTime?
   password      String?
+  passwordChangedAt DateTime?
   role          Role           @default(USER)
   image         String?
   createdAt     DateTime       @default(now())
@@ -27,6 +28,7 @@ model User {
   reviews       Review[]
   sessions      Session[]
   wishlists     Wishlist[]
+  userSelectedLocation UserSelectedLocation?
 }
 
 model Account {
@@ -64,14 +66,20 @@ model VerificationToken {
 }
 
 model LoginOtp {
-  id        String   @id @default(cuid())
+  id        String     @id @default(cuid())
   email     String
   code      String
+  purpose   OtpPurpose @default(LOGIN)
   expires   DateTime
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 
-  @@index([email])
+  @@index([email, purpose])
+}
+
+enum OtpPurpose {
+  LOGIN
+  RESET
 }
 
 model Category {
@@ -132,6 +140,8 @@ model Product {
   @@index([categoryId])
   @@index([brandId])
   @@index([featured])
+  @@index([active])
+  @@index([active, featured, createdAt])
 }
 
 model ProductImage {
@@ -204,15 +214,26 @@ model Order {
   invoiceNumber     String?     @unique
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt
+  processingAt      DateTime?
+  shippedAt         DateTime?
+  outForDeliveryAt  DateTime?
+  deliveredAt       DateTime?
+  cancelledAt       DateTime?
+  couponCode        String?
+  discountAmount    Int         @default(0)
   invoice           Invoice?
   user              User        @relation(fields: [userId], references: [id])
   items             OrderItem[]
   payment           Payment?
+
+  @@index([userId])
+  @@index([status])
 }
 
 model Address {
   id           String   @id @default(cuid())
   userId       String
+  label        String   @default("Home")
   fullName     String
   phone        String
   addressLine1 String
@@ -225,6 +246,8 @@ model Address {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model OrderItem {
@@ -239,6 +262,9 @@ model OrderItem {
   updatedAt   DateTime @updatedAt
   order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product     Product  @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  @@index([orderId])
+  @@index([productId])
 }
 
 model Review {
@@ -251,6 +277,8 @@ model Review {
   updatedAt DateTime @updatedAt
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
 }
 
 model BulkEnquiry {
@@ -266,6 +294,24 @@ model BulkEnquiry {
   status       EnquiryStatus @default(NEW)
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
+}
+
+model AtlKitsEnquiry {
+  id            String        @id @default(cuid())
+  schoolName    String
+  contactPerson String
+  designation   String?
+  phone         String
+  email         String
+  state         String
+  kits          String
+  quantity      Int
+  budgetRange   String?
+  udise         String?
+  message       String?
+  status        EnquiryStatus @default(NEW)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
 }
 
 model Blog {
@@ -296,6 +342,8 @@ model Payment {
   razorpaySignature String?
   amount            Int
   status            PaymentStatus @default(PENDING)
+  paidAt            DateTime?
+  refundedAt        DateTime?
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @updatedAt
   order             Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
@@ -306,13 +354,21 @@ model Coupon {
   code        String    @unique
   description String?
   discount    Int
-  type        String    @default("flat")   // 
-  minOrder    Int       @default(0)        // 
-  maxDiscount Int?                         // 
+  type        String    @default("flat")   //
+  minOrder    Int       @default(0)        //
+  maxDiscount Int?                         //
   active      Boolean   @default(true)
+  startsAt    DateTime?
   expiresAt   DateTime?
+  usageLimit  Int?
+  usedCount   Int       @default(0)
+  deletedAt   DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+
+  @@index([active])
+  @@index([expiresAt])
+  @@index([deletedAt])
 }
 
 model Invoice {
@@ -338,6 +394,14 @@ model Notification {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   user      User?    @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model NewsletterSubscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
 }
 
 model ContactMessage {
@@ -367,6 +431,70 @@ model GSTDetails {
   updatedAt   DateTime @updatedAt
 }
 
+model DeliveryArea {
+  id            String                 @id @default(cuid())
+  name          String                 @unique
+  slug          String                 @unique
+  active        Boolean                @default(true)
+  sortOrder     Int                    @default(0)
+  createdAt     DateTime               @default(now())
+  updatedAt     DateTime               @updatedAt
+  pincodes      Pincode[]
+  userLocations UserSelectedLocation[]
+
+  @@index([active])
+}
+
+model Pincode {
+  id               String       @id @default(cuid())
+  code             String       @unique @db.VarChar(6)
+  areaLabel        String
+  deliveryAreaId   String
+  active           Boolean      @default(true)
+  codAvailable     Boolean      @default(true)
+  expressAvailable Boolean      @default(false)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  deliveryArea     DeliveryArea @relation(fields: [deliveryAreaId], references: [id], onDelete: Cascade)
+
+  @@index([deliveryAreaId])
+  @@index([active])
+}
+
+model DeliverySettings {
+  id                        String   @id @default("singleton")
+  cutoffTime                String   @default("14:00")
+  standardDeliveryDaysToAdd Int      @default(0)
+  freeShippingThreshold     Int      @default(999)
+  deliveryCharge            Int      @default(49)
+  codEnabled                Boolean  @default(true)
+  expressEnabled            Boolean  @default(false)
+  updatedAt                 DateTime @updatedAt
+}
+
+model Holiday {
+  id        String   @id @default(cuid())
+  date      DateTime @db.Date
+  reason    String?
+  createdAt DateTime @default(now())
+
+  @@unique([date])
+}
+
+model UserSelectedLocation {
+  id             String        @id @default(cuid())
+  userId         String        @unique
+  pincode        String        @db.VarChar(6)
+  areaLabel      String
+  city           String
+  deliveryAreaId String?
+  updatedAt      DateTime      @updatedAt
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deliveryArea   DeliveryArea? @relation(fields: [deliveryAreaId], references: [id], onDelete: SetNull)
+
+  @@index([deliveryAreaId])
+}
+
 enum Role {
   USER
   ADMIN
@@ -376,6 +504,7 @@ enum OrderStatus {
   PENDING
   PROCESSING
   SHIPPED
+  OUT_FOR_DELIVERY
   DELIVERED
   CANCELLED
 }
@@ -383,8 +512,10 @@ enum OrderStatus {
 enum EnquiryStatus {
   NEW
   CONTACTED
-  QUOTED
-  CLOSED
+  QUOTATION_SENT
+  WON
+  LOST
+  COMPLETED
 }
 
 enum PaymentStatus {
@@ -392,4 +523,5 @@ enum PaymentStatus {
   SUCCESS
   FAILED
   REFUNDED
+  CANCELLED
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 /* ─── Data ─────────────────────────────────────────────────── */
 
@@ -104,12 +105,13 @@ function SectionCard({ section, index }) {
     <div
       id={section.id}
       style={{
-        background: "#ffffff",
-        border: "1px solid #e5e7eb",
+        background: "rgba(255,255,255,0.06)",
+        backdropFilter: "blur(20px)",
+        border: "1px solid rgba(255,255,255,0.1)",
         borderRadius: "14px",
         padding: "clamp(20px, 4vw, 32px)",
         marginBottom: "18px",
-        boxShadow: "0 1px 6px rgba(0,0,0,0.05)",
+        boxShadow: "0 1px 6px rgba(0,0,0,0.45)",
         scrollMarginTop: "24px",
       }}
     >
@@ -121,7 +123,7 @@ function SectionCard({ section, index }) {
           fontWeight: 700,
           letterSpacing: "0.1em",
           textTransform: "uppercase",
-          color: "#9ca3af",
+          color: "rgba(255,255,255,0.4)",
         }}
       >
         SECTION {String(index + 1).padStart(2, "0")}
@@ -135,7 +137,7 @@ function SectionCard({ section, index }) {
             width: "42px",
             height: "42px",
             borderRadius: "10px",
-            background: "linear-gradient(135deg,#eff3ff 0%,#e0e7ff 100%)",
+            background: "linear-gradient(135deg, rgba(59,130,246,0.2) 0%, rgba(168,85,247,0.2) 100%)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -149,7 +151,7 @@ function SectionCard({ section, index }) {
             margin: 0,
             fontSize: "clamp(16px, 4vw, 20px)",
             fontWeight: 800,
-            color: "#111827",
+            color: "#ffffff",
             lineHeight: 1.3,
           }}
         >
@@ -158,7 +160,7 @@ function SectionCard({ section, index }) {
       </div>
 
       {/* Body */}
-      <p style={{ margin: "0 0 12px", fontSize: "clamp(13.5px, 3vw, 15px)", color: "#374151", lineHeight: 1.8 }}>
+      <p style={{ margin: "0 0 12px", fontSize: "clamp(13.5px, 3vw, 15px)", color: "rgba(255,255,255,0.7)", lineHeight: 1.8 }}>
         {section.body}
       </p>
 
@@ -172,18 +174,18 @@ function SectionCard({ section, index }) {
                 display: "flex",
                 gap: "12px",
                 alignItems: "flex-start",
-                background: "#f9fafb",
+                background: "rgba(255,255,255,0.06)",
                 borderRadius: "10px",
                 padding: "12px 16px",
-                border: "1px solid #f3f4f6",
+                border: "1px solid rgba(255,255,255,0.1)",
               }}
             >
               <span style={{ fontSize: "20px", flexShrink: 0 }}>{item.icon}</span>
               <div>
-                <p style={{ margin: "0 0 2px", fontWeight: 700, fontSize: "clamp(13px, 3vw, 14px)", color: "#111827" }}>
+                <p style={{ margin: "0 0 2px", fontWeight: 700, fontSize: "clamp(13px, 3vw, 14px)", color: "#ffffff" }}>
                   {item.label}
                 </p>
-                <p style={{ margin: 0, fontSize: "clamp(12.5px, 2.8vw, 13.5px)", color: "#6b7280", lineHeight: 1.6 }}>
+                <p style={{ margin: 0, fontSize: "clamp(12.5px, 2.8vw, 13.5px)", color: "rgba(255,255,255,0.5)", lineHeight: 1.6 }}>
                   {item.desc}
                 </p>
               </div>
@@ -194,7 +196,7 @@ function SectionCard({ section, index }) {
 
       {/* Extra paragraph */}
       {section.extra && (
-        <p style={{ margin: "12px 0", fontSize: "clamp(13.5px, 3vw, 15px)", color: "#374151", lineHeight: 1.8 }}>
+        <p style={{ margin: "12px 0", fontSize: "clamp(13.5px, 3vw, 15px)", color: "rgba(255,255,255,0.7)", lineHeight: 1.8 }}>
           {section.extra}
         </p>
       )}
@@ -203,13 +205,13 @@ function SectionCard({ section, index }) {
       {section.highlight && (
         <div
           style={{
-            background: "#eff6ff",
-            borderLeft: "3px solid #3b5bdb",
+            background: "rgba(59,130,246,0.1)",
+            borderLeft: "3px solid #3b82f6",
             borderRadius: "6px",
             padding: "12px 16px",
             marginTop: "14px",
             fontSize: "clamp(12.5px, 2.8vw, 13.5px)",
-            color: "#1e3a8a",
+            color: "rgba(255,255,255,0.8)",
             lineHeight: 1.65,
           }}
         >
@@ -223,7 +225,7 @@ function SectionCard({ section, index }) {
           style={{
             marginTop: "22px",
             paddingTop: "20px",
-            borderTop: "1px solid #f3f4f6",
+            borderTop: "1px solid rgba(255,255,255,0.1)",
           }}
         >
           <h3
@@ -231,7 +233,7 @@ function SectionCard({ section, index }) {
               margin: "0 0 10px",
               fontSize: "clamp(14px, 3.5vw, 16px)",
               fontWeight: 700,
-              color: "#1e2a6e",
+              color: "#ffffff",
             }}
           >
             {section.sub.title}
@@ -248,13 +250,13 @@ function SectionCard({ section, index }) {
                     gap: "10px",
                     alignItems: "flex-start",
                     padding: "10px 14px",
-                    background: "#f9fafb",
+                    background: "rgba(255,255,255,0.06)",
                     borderRadius: "8px",
-                    border: "1px solid #f3f4f6",
+                    border: "1px solid rgba(255,255,255,0.1)",
                   }}
                 >
                   <span style={{ fontSize: "18px", flexShrink: 0 }}>{item.icon}</span>
-                  <p style={{ margin: 0, fontSize: "clamp(13px, 3vw, 14px)", color: "#374151", lineHeight: 1.6 }}>
+                  <p style={{ margin: 0, fontSize: "clamp(13px, 3vw, 14px)", color: "rgba(255,255,255,0.7)", lineHeight: 1.6 }}>
                     {item.text}
                   </p>
                 </div>
@@ -264,7 +266,7 @@ function SectionCard({ section, index }) {
 
           {/* Sub paragraph */}
           {section.sub.paragraph && (
-            <p style={{ margin: 0, fontSize: "clamp(13.5px, 3vw, 15px)", color: "#374151", lineHeight: 1.8 }}>
+            <p style={{ margin: 0, fontSize: "clamp(13.5px, 3vw, 15px)", color: "rgba(255,255,255,0.7)", lineHeight: 1.8 }}>
               {section.sub.paragraph}
             </p>
           )}
@@ -286,8 +288,7 @@ export default function PaymentOptionsPage() {
 
   return (
     <>
-      <style>{`
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+      <style dangerouslySetInnerHTML={{ __html: `
         body { font-family: Inter, system-ui, -apple-system, sans-serif; }
 
         .pay-hero { padding: 44px 20px 56px; }
@@ -317,14 +318,14 @@ export default function PaymentOptionsPage() {
         @media (min-width: 640px) { .cta-card { padding: 44px 36px; } }
 
         a:focus-visible, button:focus-visible {
-          outline: 2px solid #3b5bdb;
+          outline: 2px solid #3b82f6;
           outline-offset: 3px;
           border-radius: 6px;
         }
         @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
-      `}</style>
+      `}} />
 
-      <div style={{ background: "#f3f4f6", minHeight: "100vh" }}>
+      <div style={{ background: "#0d0f16", minHeight: "100vh" }}>
 
         {/* ══════ HERO ══════ */}
         <div
@@ -415,12 +416,12 @@ export default function PaymentOptionsPage() {
           {/* "On this page" nav card */}
           <div
             style={{
-              background: "#ffffff", border: "1px solid #e5e7eb",
+              background: "rgba(255,255,255,0.06)", backdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.1)",
               borderRadius: "14px", padding: "22px 24px", marginBottom: "24px",
-              boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
+              boxShadow: "0 1px 4px rgba(0,0,0,0.45)",
             }}
           >
-            <p style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#9ca3af", marginBottom: "14px" }}>
+            <p style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)", marginBottom: "14px" }}>
               ON THIS PAGE
             </p>
             <nav className="nav-grid" aria-label="Payment sections">
@@ -430,12 +431,12 @@ export default function PaymentOptionsPage() {
                   href={`#${link.id}`}
                   onClick={(e) => { e.preventDefault(); scrollTo(link.id); }}
                   style={{
-                    fontSize: "clamp(12px,3vw,13px)", color: "#3b5bdb",
+                    fontSize: "clamp(12px,3vw,13px)", color: "#3b82f6",
                     textDecoration: "none",
                     display: "flex", alignItems: "flex-start", gap: "5px", lineHeight: 1.45,
                   }}
                 >
-                  <span style={{ color: "#9ca3af", fontSize: "11px", marginTop: "2px", flexShrink: 0 }}>›</span>
+                  <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "11px", marginTop: "2px", flexShrink: 0 }}>›</span>
                   {link.emoji} {link.label}
                 </a>
               ))}
@@ -477,7 +478,7 @@ export default function PaymentOptionsPage() {
                 }}
               >
                 📧 <strong>Email</strong><br />
-                <span style={{ color: "rgba(255,255,255,0.8)" }}>support@hardvanta.com</span>
+                <span style={{ color: "rgba(255,255,255,0.8)" }}>support@hardvantatechnology.com</span>
               </div>
               <div
                 style={{
@@ -495,8 +496,8 @@ export default function PaymentOptionsPage() {
               When contacting us, please have your <strong style={{ color: "rgba(255,255,255,0.8)" }}>Order ID</strong> and <strong style={{ color: "rgba(255,255,255,0.8)" }}>transaction reference number</strong> ready.
             </p>
 
-            <a
-              href="mailto:support@hardvanta.com"
+            <Link
+              href="/contact"
               style={{
                 display: "inline-block", background: "#ffffff",
                 color: "#1e2a6e", fontWeight: 700,
@@ -506,7 +507,7 @@ export default function PaymentOptionsPage() {
               }}
             >
               📧 Contact Support
-            </a>
+            </Link>
           </div>
         </div>
       </div>

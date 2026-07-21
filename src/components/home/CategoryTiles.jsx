@@ -4,7 +4,7 @@ import {
   CircuitBoard,
   Radio,
   Cog,
-  Plane,
+  Satellite,
   Box,
   Boxes,
   BatteryCharging,
@@ -14,14 +14,14 @@ import {
   RotateCcw,
   MonitorSmartphone,
 } from "lucide-react";
-import { categories } from "@/lib/data";
+import { getCategories } from "@/lib/queries";
 
 const iconMap = {
   Cpu,
   CircuitBoard,
   Radio,
   Cog,
-  Plane,
+  Satellite,
   Box,
   Boxes,
   BatteryCharging,
@@ -32,57 +32,62 @@ const iconMap = {
   MonitorSmartphone,
 };
 
-// Per-box background + contrasting icon colors (cycled across categories).
-// Full literal class strings so Tailwind keeps them during build.
+// Vivid chip colors cycled across categories; glow matches the chip hue family.
 const palette = [
-  { box: "bg-blue-50 border-blue-100", chip: "bg-blue-600 text-white" },
-  { box: "bg-amber-50 border-amber-100", chip: "bg-amber-500 text-white" },
-  { box: "bg-emerald-50 border-emerald-100", chip: "bg-emerald-600 text-white" },
-  { box: "bg-violet-50 border-violet-100", chip: "bg-violet-600 text-white" },
-  { box: "bg-rose-50 border-rose-100", chip: "bg-rose-500 text-white" },
-  { box: "bg-cyan-50 border-cyan-100", chip: "bg-cyan-600 text-white" },
-  { box: "bg-orange-50 border-orange-100", chip: "bg-orange-500 text-white" },
-  { box: "bg-indigo-50 border-indigo-100", chip: "bg-indigo-600 text-white" },
-  { box: "bg-teal-50 border-teal-100", chip: "bg-teal-600 text-white" },
-  { box: "bg-fuchsia-50 border-fuchsia-100", chip: "bg-fuchsia-600 text-white" },
-  { box: "bg-sky-50 border-sky-100", chip: "bg-sky-600 text-white" },
-  { box: "bg-lime-50 border-lime-100", chip: "bg-lime-600 text-white" },
-  { box: "bg-pink-50 border-pink-100", chip: "bg-pink-500 text-white" },
+  { chip: "bg-blue-500", glow: "hover:shadow-glow-electric" },
+  { chip: "bg-amber-500", glow: "hover:shadow-[0_0_40px_-8px_rgba(245,158,11,0.45)]" },
+  { chip: "bg-emerald-500", glow: "hover:shadow-[0_0_40px_-8px_rgba(16,185,129,0.45)]" },
+  { chip: "bg-violet-500", glow: "hover:shadow-glow-purple" },
+  { chip: "bg-rose-500", glow: "hover:shadow-[0_0_40px_-8px_rgba(244,63,94,0.45)]" },
+  { chip: "bg-cyan-500", glow: "hover:shadow-glow-cyan" },
+  { chip: "bg-orange-500", glow: "hover:shadow-[0_0_40px_-8px_rgba(249,115,22,0.45)]" },
+  { chip: "bg-indigo-500", glow: "hover:shadow-glow-electric" },
+  { chip: "bg-teal-500", glow: "hover:shadow-glow-cyan" },
+  { chip: "bg-fuchsia-500", glow: "hover:shadow-glow-purple" },
+  { chip: "bg-sky-500", glow: "hover:shadow-glow-electric" },
+  { chip: "bg-lime-500", glow: "hover:shadow-[0_0_40px_-8px_rgba(132,204,22,0.45)]" },
+  { chip: "bg-pink-500", glow: "hover:shadow-glow-purple" },
 ];
 
-export default function CategoryTiles() {
+export default async function CategoryTiles() {
+  const categories = await getCategories();
   return (
-    <section className="container-page py-12">
-      <div className="mb-8 flex items-center justify-between">
-        <h2 className="heading-accent">Shop by Category</h2>
-        <Link
-          href="/products"
-          className="text-sm font-semibold text-royal hover:underline"
-        >
-          View all
-        </Link>
-      </div>
-      <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent">
-        {categories.map((c, i) => {
-          const Icon = iconMap[c.icon] ?? Box;
-          const color = palette[i % palette.length];
-          return (
-            <Link
-              key={c.slug}
-              href={`/products?category=${c.slug}`}
-              className={`group flex flex-col items-center gap-3 rounded-2xl border p-5 text-center transition-all hover:-translate-y-1 hover:shadow-card-hover ${color.box}`}
-            >
-              <span
-                className={`flex h-16 w-16 items-center justify-center rounded-2xl shadow-sm transition-transform group-hover:scale-110 ${color.chip}`}
+    <section className="relative overflow-hidden bg-gradient-to-b from-obsidian to-graphite py-12">
+      <div className="liquid-blob right-[-10%] top-[-40%] h-72 w-72 bg-liquid/10" />
+      <div className="container-page relative">
+        <div className="mb-8 flex items-center justify-between">
+          <h2 className="relative inline-block text-2xl font-bold text-white after:absolute after:-bottom-2 after:left-0 after:h-1 after:w-12 after:rounded-full after:bg-gradient-to-r after:from-electric after:to-liquid">
+            Shop by Category
+          </h2>
+          <Link
+            href="/products"
+            className="text-sm font-semibold text-electric-light hover:text-cyan"
+          >
+            View all
+          </Link>
+        </div>
+        <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar">
+          {categories.map((c, i) => {
+            const Icon = iconMap[c.icon] ?? Box;
+            const color = palette[i % palette.length];
+            return (
+              <Link
+                key={c.slug}
+                href={`/products?category=${c.slug}`}
+                className={`glass group flex shrink-0 flex-col items-center gap-3 rounded-3xl p-5 text-center transition-all duration-300 hover:-translate-y-1.5 ${color.glow}`}
               >
-                <Icon size={28} />
-              </span>
-              <span className="text-xs font-semibold leading-tight text-navy">
-                {c.name}
-              </span>
-            </Link>
-          );
-        })}
+                <span
+                  className={`flex h-16 w-16 items-center justify-center rounded-2xl text-white shadow-sm transition-transform duration-300 group-hover:scale-110 ${color.chip}`}
+                >
+                  <Icon size={28} />
+                </span>
+                <span className="text-xs font-semibold leading-tight text-white/85">
+                  {c.name}
+                </span>
+              </Link>
+            );
+          })}
+        </div>
       </div>
     </section>
   );

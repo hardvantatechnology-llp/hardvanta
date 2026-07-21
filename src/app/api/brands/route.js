@@ -1,5 +1,12 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { isAdmin } from "@/lib/admin";
+
+// Without this, Next.js statically caches GET's response at build time (no
+// dynamic function/request param is used here) — a brand added via POST
+// would never show up in the storefront until the next deploy. Matches the
+// same directive already on /api/categories and /api/products.
+export const dynamic = "force-dynamic";
 
 function slugify(str) {
   return str
@@ -22,28 +29,49 @@ export async function GET() {
 
     return NextResponse.json({ brands });
   } catch (err) {
+    console.error("GET /api/brands error:", err);
     return NextResponse.json(
-      { error: err.message },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }
 }
 
 export async function POST(req) {
+  if (!(await isAdmin())) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   try {
     const { name } = await req.json();
+    const trimmed = String(name || "").trim();
+    if (!trimmed) {
+      return NextResponse.json(
+        { error: "Brand name is required." },
+        { status: 400 }
+      );
+    }
 
-    const brand = await prisma.brand.create({
-      data: {
-        name,
-        slug: slugify(name),
-      },
+    const slug = slugify(trimmed);
+    if (!slug) {
+      return NextResponse.json(
+        { error: "Invalid brand name." },
+        { status: 400 }
+      );
+    }
+
+    // Create it, or return the existing one if the slug already exists.
+    const brand = await prisma.brand.upsert({
+      where: { slug },
+      update: {},
+      create: { name: trimmed, slug },
     });
 
     return NextResponse.json({ brand });
   } catch (err) {
+    console.error("POST /api/brands error:", err);
     return NextResponse.json(
-      { error: err.message },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }

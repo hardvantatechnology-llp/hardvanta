@@ -6,12 +6,14 @@ import Image from "next/image";
 import { Upload, X } from "lucide-react";
 import Button from "@/components/ui/Button";
 import { imageSrc } from "@/utils/imageSrc";
+import { useToast } from "@/components/ui/Toast";
 
 const NEW_CATEGORY = "__new__";
 const NEW_BRAND = "__new__";
 
 export default function ProductForm({ product }) {
   const router = useRouter();
+  const toast = useToast();
   const isEdit = Boolean(product);
 
   const [form, setForm] = useState({
@@ -60,8 +62,8 @@ export default function ProductForm({ product }) {
           categoryId: f.categoryId || cats[0]?.id || "",
           brandId: f.brandId || brands[0]?.id || "",
         }));
-      } catch (err) {
-        console.log(err);
+      } catch {
+        // categories/brands failed to load — form still usable, dropdowns just stay empty
       }
     }
     loadData();
@@ -204,6 +206,7 @@ export default function ProductForm({ product }) {
       }
 
       setLoading(false);
+      toast.success(isEdit ? "Product updated." : "Product created.");
       router.push("/admin/products");
       router.refresh();
     } catch (err) {
@@ -214,9 +217,9 @@ export default function ProductForm({ product }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-2xl space-y-4 rounded-xl border border-silver-light bg-white p-6">
+    <form onSubmit={handleSubmit} className="max-w-2xl space-y-4 glass-strong rounded-3xl p-6">
       {error && (
-        <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>
+        <p className="rounded-lg bg-red-500/10 border border-red-500/20 px-3 py-2 text-sm text-red-400">{error}</p>
       )}
 
       <L label="Name">
@@ -254,9 +257,9 @@ export default function ProductForm({ product }) {
                 name="inStock"
                 checked={form.inStock === true}
                 onChange={() => set("inStock", true)}
-                className="accent-royal"
+                className="accent-electric"
               />
-              <span className="font-medium text-green-600">In Stock</span>
+              <span className="font-medium text-cyan">In Stock</span>
             </label>
             <label className="flex cursor-pointer items-center gap-1.5 text-sm">
               <input
@@ -264,9 +267,9 @@ export default function ProductForm({ product }) {
                 name="inStock"
                 checked={form.inStock === false}
                 onChange={() => set("inStock", false)}
-                className="accent-royal"
+                className="accent-electric"
               />
-              <span className="font-medium text-red-500">Out of Stock</span>
+              <span className="font-medium text-red-400">Out of Stock</span>
             </label>
           </div>
         </L>
@@ -276,9 +279,9 @@ export default function ProductForm({ product }) {
         <L label="Brand">
           <select className={inputCls} value={form.brandId} onChange={(e) => set("brandId", e.target.value)}>
             {brands.map((b) => (
-              <option key={b.id} value={b.id}>{b.name}</option>
+              <option key={b.id} value={b.id} className="bg-graphite text-white">{b.name}</option>
             ))}
-            <option value={NEW_BRAND}>+ Create New Brand</option>
+            <option value={NEW_BRAND} className="bg-graphite text-white">+ Create New Brand</option>
           </select>
           {creatingBrand && (
             <input className={`${inputCls} mt-2`} value={newBrand} onChange={(e) => setNewBrand(e.target.value)} placeholder="Brand name" />
@@ -287,9 +290,9 @@ export default function ProductForm({ product }) {
         <L label="Category">
           <select className={inputCls} value={form.categoryId} onChange={(e) => set("categoryId", e.target.value)}>
             {categories.map((c) => (
-              <option key={c.id} value={c.id}>{c.name}</option>
+              <option key={c.id} value={c.id} className="bg-graphite text-white">{c.name}</option>
             ))}
-            <option value={NEW_CATEGORY}>+ Create new category…</option>
+            <option value={NEW_CATEGORY} className="bg-graphite text-white">+ Create new category…</option>
           </select>
           {creatingCategory && (
             <input
@@ -309,25 +312,25 @@ export default function ProductForm({ product }) {
           {form.images.map((url, idx) => (
             <div
               key={`${url}-${idx}`}
-              className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg border border-silver-light bg-cloud"
+              className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg glass-card"
             >
               <Image src={imageSrc(url)} alt={`Image ${idx + 1}`} fill sizes="80px" className="object-cover" />
               {idx === 0 && (
-                <span className="absolute bottom-0 left-0 right-0 bg-royal/80 py-0.5 text-center text-[9px] font-semibold text-white">
+                <span className="absolute bottom-0 left-0 right-0 bg-gradient-to-r from-electric to-liquid py-0.5 text-center text-[9px] font-semibold text-white">
                   Main
                 </span>
               )}
               <button
                 type="button"
                 onClick={() => removeImage(idx)}
-                className="absolute right-0.5 top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-white/90 text-silver-dark shadow hover:text-red-500"
+                className="absolute right-0.5 top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-obsidian/80 text-white/70 shadow hover:text-red-400"
                 aria-label="Remove image"
               >
                 <X size={12} />
               </button>
             </div>
           ))}
-          <label className="flex h-20 w-20 shrink-0 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-royal text-xs font-semibold text-royal hover:bg-royal/5">
+          <label className="flex h-20 w-20 shrink-0 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-electric/40 text-xs font-semibold text-electric-light hover:bg-electric/5">
             <Upload size={18} />
             {uploading ? "…" : "Add"}
             <input
@@ -341,7 +344,7 @@ export default function ProductForm({ product }) {
           </label>
         </div>
         {uploadMsg && (
-          <p className="mt-2 rounded-lg bg-green-50 px-3 py-2 text-sm font-medium text-green-700">{uploadMsg}</p>
+          <p className="mt-2 rounded-lg bg-cyan/10 border border-cyan/20 px-3 py-2 text-sm font-medium text-cyan">{uploadMsg}</p>
         )}
         {/* Add by URL */}
         <div className="mt-2 flex gap-2">
@@ -355,27 +358,27 @@ export default function ProductForm({ product }) {
           <button
             type="button"
             onClick={addUrl}
-            className="shrink-0 rounded-lg border border-silver-dark px-4 text-sm font-semibold text-navy hover:border-royal hover:text-royal"
+            className="shrink-0 rounded-lg glass-card px-4 text-sm font-semibold text-white/80 hover:shadow-glow-electric transition-all"
           >
             Add
           </button>
         </div>
-        <p className="mt-1 text-xs text-silver-dark">
+        <p className="mt-1 text-xs text-white/40">
           Upload multiple photos at once (Ctrl/Cmd-click to select several). The first
           image is used as the main product photo. Drag isn&apos;t needed — just remove and re-add to reorder.
         </p>
       </L>
 
-      <label className="flex items-center gap-2 text-sm text-navy">
-        <input type="checkbox" checked={form.featured} onChange={(e) => set("featured", e.target.checked)} />
+      <label className="flex items-center gap-2 text-sm text-white/80">
+        <input type="checkbox" checked={form.featured} onChange={(e) => set("featured", e.target.checked)} className="accent-electric" />
         Featured product (shows on homepage)
       </label>
 
       <div className="flex gap-3 pt-2">
-        <Button type="submit" disabled={loading}>
+        <Button type="submit" variant="gradient" disabled={loading}>
           {loading ? "Saving…" : isEdit ? "Save changes" : "Create product"}
         </Button>
-        <Button type="button" variant="outline" onClick={() => router.push("/admin/products")}>
+        <Button type="button" variant="glass" onClick={() => router.push("/admin/products")}>
           Cancel
         </Button>
       </div>
@@ -383,12 +386,12 @@ export default function ProductForm({ product }) {
   );
 }
 
-const inputCls = "w-full rounded-lg border border-silver-dark px-3 py-2 text-sm outline-none focus:border-royal focus:ring-2 focus:ring-royal/30";
+const inputCls = "w-full rounded-lg glass-card px-3 py-2 text-sm text-white outline-none focus:shadow-glow-electric placeholder:text-white/30";
 
 function L({ label, children }) {
   return (
     <div>
-      <label className="mb-1 block text-sm font-medium text-navy">{label}</label>
+      <label className="mb-1 block text-sm font-medium text-white/80">{label}</label>
       {children}
     </div>
   );

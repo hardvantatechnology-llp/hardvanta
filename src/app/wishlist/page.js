@@ -8,6 +8,7 @@ import { Heart, Trash2, ShoppingCart, Lock } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { formatPrice } from "@/utils/formatPrice";
 import { imageSrc } from "@/utils/imageSrc";
+import Button from "@/components/ui/Button";
 
 export default function WishlistPage() {
   const { data: session, status } = useSession();
@@ -43,103 +44,109 @@ export default function WishlistPage() {
   // ---------------- Login required ----------------
   if (status !== "loading" && !session) {
     return (
-      <div className="container-page flex flex-col items-center py-24 text-center">
-        <Lock size={52} className="text-silver-dark" />
-        <h1 className="mt-4 text-2xl font-bold text-navy">Login required</h1>
-        <p className="mt-2 max-w-sm text-silver-dark">
+      <div className="min-h-[70vh] bg-gradient-to-b from-graphite to-obsidian container-page flex flex-col items-center justify-center py-24 text-center">
+        <div className="flex h-20 w-20 items-center justify-center rounded-full glass-card">
+          <Lock size={32} className="text-electric-light" />
+        </div>
+        <h1 className="mt-4 text-2xl font-bold text-white">Login required</h1>
+        <p className="mt-2 max-w-sm text-white/50">
           Please sign in to view your wishlist and save your favourite products.
         </p>
-        <Link
-          href="/login?callbackUrl=/wishlist"
-          className="mt-6 rounded-lg bg-royal px-6 py-3 font-semibold text-white hover:bg-royal-dark"
-        >
+        <Button href="/login?callbackUrl=/wishlist" variant="gradient" className="mt-6">
           Login
-        </Link>
+        </Button>
       </div>
     );
   }
 
   return (
-    <div className="container-page py-8">
-      <h1 className="heading-accent mb-8">
-        My Wishlist{!loading ? ` (${wishlist.length})` : ""}
-      </h1>
+    <div className="relative overflow-hidden bg-gradient-to-b from-graphite to-obsidian min-h-screen">
+      <div className="liquid-blob left-1/4 top-[-15%] h-96 w-96 bg-liquid/10" />
+      <div className="container-page relative py-8">
+        <h1 className="relative mb-8 inline-block text-2xl font-bold text-white after:absolute after:-bottom-2 after:left-0 after:h-1 after:w-12 after:rounded-full after:bg-gradient-to-r after:from-electric after:to-liquid">
+          My Wishlist{!loading ? ` (${wishlist.length})` : ""}
+        </h1>
 
-      {loading && (
-        <p className="py-16 text-center text-silver-dark">Loading your wishlist…</p>
-      )}
+        {loading && (
+          <p className="py-16 text-center text-white/50">Loading your wishlist…</p>
+        )}
 
-      {!loading && wishlist.length === 0 && (
-        <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-silver py-20 text-center">
-          <Heart size={48} className="text-silver-dark" />
-          <p className="text-xl font-bold text-navy">Your wishlist is empty</p>
-          <p className="max-w-sm text-sm text-silver-dark">
-            Tap the ♥ on any product to save it here for later.
-          </p>
-          <Link
-            href="/products"
-            className="mt-2 rounded-lg bg-royal px-6 py-3 font-semibold text-white hover:bg-royal-dark"
-          >
-            Browse Products
-          </Link>
-        </div>
-      )}
+        {!loading && wishlist.length === 0 && (
+          <div className="glass-card flex flex-col items-center gap-3 rounded-3xl py-20 text-center">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-electric/20 to-liquid/20 shadow-glow-purple">
+              <Heart size={30} className="text-liquid" />
+            </div>
+            <p className="text-xl font-bold text-white">Your wishlist is empty</p>
+            <p className="max-w-sm text-sm text-white/50">
+              Tap the ♥ on any product to save it here for later.
+            </p>
+            <Button href="/products" variant="gradient" className="mt-2">
+              Browse Products
+            </Button>
+          </div>
+        )}
 
-      {!loading && wishlist.length > 0 && (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-          {wishlist.map((item) => {
-            const p = item.product;
-            if (!p) return null;
-            const price = p.salePrice ?? p.price;
-            return (
-              <div
-                key={item.id}
-                className="flex flex-col overflow-hidden rounded-2xl border border-silver-light bg-white shadow-card"
-              >
-                <Link
-                  href={`/products/${p.slug}`}
-                  className="relative aspect-square overflow-hidden bg-cloud"
+        {!loading && wishlist.length > 0 && (
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            {wishlist.map((item) => {
+              const p = item.product;
+              if (!p) return null;
+              const price = p.salePrice ?? p.price;
+              return (
+                <div
+                  key={item.id}
+                  className="glass-card flex flex-col overflow-hidden rounded-3xl transition-all hover:shadow-glow-purple"
                 >
-                  <Image
-                    src={imageSrc(p.image)}
-                    alt={p.name}
-                    fill
-                    sizes="(max-width: 640px) 50vw, 25vw"
-                    className="object-contain p-3"
-                  />
-                </Link>
-                <div className="flex flex-1 flex-col p-3.5">
-                  <Link href={`/products/${p.slug}`}>
-                    <h3 className="line-clamp-2 min-h-[2.5rem] text-sm font-semibold text-navy hover:text-royal">
-                      {p.name}
-                    </h3>
+                  <Link
+                    href={`/products/${p.slug}`}
+                    className="relative aspect-square overflow-hidden bg-white/5"
+                  >
+                    <Image
+                      src={imageSrc(p.image)}
+                      alt={p.name}
+                      fill
+                      sizes="(max-width: 640px) 50vw, 25vw"
+                      className="object-contain p-3"
+                    />
                   </Link>
-                  <span className="mt-2 text-lg font-bold text-navy">
-                    {formatPrice(price)}
-                  </span>
-                  <div className="mt-3 flex flex-col gap-2">
-                    <button
-                      onClick={() => {
-                        addItem(p);
-                        handleRemove(item.productId);
-                      }}
-                      className="flex items-center justify-center gap-2 rounded-lg bg-royal px-3 py-2 text-sm font-semibold text-white hover:bg-royal-dark"
-                    >
-                      <ShoppingCart size={15} /> Add to Cart
-                    </button>
-                    <button
-                      onClick={() => handleRemove(item.productId)}
-                      className="flex items-center justify-center gap-2 rounded-lg border border-silver px-3 py-2 text-sm font-semibold text-silver-dark hover:border-red-300 hover:text-red-500"
-                    >
-                      <Trash2 size={15} /> Remove
-                    </button>
+                  <div className="flex flex-1 flex-col p-3.5">
+                    <Link href={`/products/${p.slug}`}>
+                      <h3 className="line-clamp-2 min-h-[2.5rem] text-sm font-semibold text-white/90 hover:text-electric-light">
+                        {p.name}
+                      </h3>
+                    </Link>
+                    <span className="mt-2 text-lg font-bold text-white">
+                      {formatPrice(price)}
+                    </span>
+                    <div className="mt-3 flex flex-col gap-2">
+                      <Button
+                        onClick={async () => {
+                          try {
+                            await addItem(p);
+                          } catch (e) {
+                            console.error("add to cart failed", e);
+                          }
+                          handleRemove(item.productId);
+                        }}
+                        variant="gradient"
+                        size="sm"
+                      >
+                        <ShoppingCart size={15} /> Add to Cart
+                      </Button>
+                      <button
+                        onClick={() => handleRemove(item.productId)}
+                        className="flex items-center justify-center gap-2 rounded-lg border border-white/10 px-3 py-2 text-sm font-semibold text-white/50 hover:border-red-400/40 hover:text-red-400 transition-colors"
+                      >
+                        <Trash2 size={15} /> Remove
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

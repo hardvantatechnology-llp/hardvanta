@@ -7,7 +7,7 @@ export const categories = [
   { slug: "3d-printers", name: "3D Printers and Parts", icon: "Box" },
   { slug: "batteries", name: "Batteries, Power Supply and Accessories", icon: "BatteryCharging" },
   { slug: "motors", name: "Motors | Drivers | Pumps | Actuators", icon: "Cog" },
-  { slug: "drones", name: "Drone Parts", icon: "Plane" },
+  { slug: "drones", name: "Drone Parts", icon: "Satellite" },
   { slug: "ev-parts", name: "Electric Vehicle Parts", icon: "Bike" },
   { slug: "components", name: "Electronic Components", icon: "CircuitBoard" },
   { slug: "dev-boards", name: "Development Boards", icon: "Cpu" },

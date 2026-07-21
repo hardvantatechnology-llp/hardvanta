@@ -4,6 +4,7 @@ import Providers from "@/components/Providers";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
+import PageTransition from "@/components/ui/PageTransition";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -16,16 +17,23 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXTAUTH_URL || "http://localhost:3000";
+const siteTitle = "hardvanta — Electronics & Robotics Store";
+const siteDescription =
+  "Shop Arduino, Raspberry Pi, sensors, motors, drone parts and DIY electronics. Fast delivery across India.";
+
 export const metadata = {
-  metadataBase: new URL("https://hvkart.hardvantatechnologies.in"),
+  // Lets any relative image URL passed to a page's `metadata.openGraph.images`
+  // (e.g. a product image served from /uploads or Supabase Storage) resolve
+  // to an absolute URL — required for social-share previews to load the image.
+  metadataBase: new URL(siteUrl),
 
   title: {
-    default: "hardvanta — Electronics & Robotics Store",
+    default: siteTitle,
     template: "%s | hardvanta",
   },
 
-  description:
-    "Shop Arduino, Raspberry Pi, sensors, motors, drone parts and DIY electronics. Fast delivery across India.",
+  description: siteDescription,
 
   keywords: [
     "Arduino India",
@@ -42,32 +50,23 @@ export const metadata = {
   publisher: "hardvanta",
 
   alternates: {
-    canonical: "https://hvkart.hardvantatechnologies.in",
+    canonical: siteUrl,
   },
 
   openGraph: {
-    title: "hardvanta — Electronics & Robotics Store",
-    description:
-      "Shop Arduino, Raspberry Pi, sensors, motors, drone parts and DIY electronics. Fast delivery across India.",
-    url: "https://hvkart.hardvantatechnologies.in",
+    title: siteTitle,
+    description: siteDescription,
+    url: siteUrl,
     siteName: "hardvanta",
     locale: "en_IN",
     type: "website",
-    images: [
-      {
-        url: "/images/hardvanta.png",
-        width: 1200,
-        height: 630,
-        alt: "hardvanta — Electronics & Robotics Store",
-      },
-    ],
+    images: ["/images/hardvanta.png"],
   },
 
   twitter: {
     card: "summary_large_image",
-    title: "hardvanta — Electronics & Robotics Store",
-    description:
-      "Shop Arduino, Raspberry Pi, sensors, motors, drone parts and DIY electronics.",
+    title: siteTitle,
+    description: siteDescription,
     images: ["/images/hardvanta.png"],
   },
 
@@ -89,7 +88,9 @@ export default function RootLayout({ children }) {
       >
         <Providers>
           <Navbar />
-          <main className="min-h-screen bg-cloud">{children}</main>
+          <main className="min-h-screen bg-gradient-to-b from-graphite to-obsidian">
+            <PageTransition>{children}</PageTransition>
+          </main>
           <Footer />
           <WhatsAppButton />
         </Providers>

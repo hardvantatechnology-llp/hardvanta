@@ -11,7 +11,7 @@ export default async function EditBlogPage({ params }) {
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold text-navy">Edit Blog</h1>
+      <h1 className="mb-6 text-2xl font-bold text-white">Edit Blog</h1>
       <BlogForm initial={blog} />
     </div>
   );

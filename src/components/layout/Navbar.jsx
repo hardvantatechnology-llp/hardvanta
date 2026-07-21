@@ -1,10 +1,12 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Search,
   ShoppingBag,
@@ -24,11 +26,18 @@ import {
   Instagram,
   Youtube,
   AlignJustify,
+  MapPin,
 } from "lucide-react";
-import { categories } from "@/lib/data";
 import { useCart } from "@/context/CartContext";
+import { useDeliveryLocation } from "@/context/DeliveryLocationContext";
 import { getUserView, setUserView } from "@/lib/viewMode";
 import Logo from "./Logo";
+import SearchBar from "./SearchBar";
+import LocationPickerModal from "@/components/delivery/LocationPickerModal";
+
+// The drawer is closed on first paint on every page (Navbar is in the root
+// layout) — split it out so its code only loads once someone opens the cart.
+const CartDrawer = dynamic(() => import("@/components/cart/CartDrawer"), { ssr: false });
 
 // X (Twitter) official SVG — lucide mein Twitter icon nahi hota
 function XIcon({ size = 16 }) {
@@ -60,7 +69,7 @@ const socials = [
   { Icon: Facebook,  href: "#" },
   { Icon: XIcon,     href: "#" },
   { Icon: Linkedin,  href: "https://www.linkedin.com/company/hardvanta-technologies-llp/posts/?feedView=all" },
-  { Icon: Instagram, href: "https://www.instagram.com/hardvantatechnology" },
+  { Icon: Instagram, href: "https://www.instagram.com/hardvantatechnologies?utm_source=qr&igsh=ZG92b3oxZzczeXZw" },
   { Icon: Youtube,   href: "#" },
 ];
 
@@ -70,12 +79,16 @@ export default function Navbar() {
   const { data: session, status } = useSession();
   const loggedIn = status === "authenticated";
   const isAdmin = session?.user?.role === "ADMIN";
+  const { location: deliveryLocation, hydrated: locationHydrated } = useDeliveryLocation();
 
   const [mobileOpen, setMobileOpen]       = useState(false); // Menu drawer
   const [catOpen, setCatOpen]             = useState(false); // Categories sidebar (desktop trigger)
   const [shopOpen, setShopOpen]           = useState(false);
   const [mobileCatOpen, setMobileCatOpen] = useState(false); // Categories sidebar (mobile trigger)
   const [query, setQuery]                 = useState("");
+  const [scrolled, setScrolled]           = useState(false);
+  const [cartOpen, setCartOpen]           = useState(false); // Cart drawer
+  const [locationPickerOpen, setLocationPickerOpen] = useState(false); // Delivery location modal
 
   const categorySidebarOpen = catOpen || mobileCatOpen;
   const closeCategorySidebar = () => {
@@ -85,6 +98,36 @@ export default function Navbar() {
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
+
+  // Purely visual: intensify the glass bar once the page has scrolled.
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Live categories — fetched from the DB-backed API route instead of the
+  // legacy mock array, so admin-managed categories show up here.
+  const [categories, setCategories] = useState([]);
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/categories")
+      .then((res) => (res.ok ? res.json() : { categories: [] }))
+      .then((data) => {
+        if (cancelled) return;
+        const list = (data.categories || [])
+          .filter((c) => c.active !== false)
+          .sort((a, b) => a.name.localeCompare(b.name));
+        setCategories(list);
+      })
+      .catch(() => {
+        if (!cancelled) setCategories([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // "User view": when an admin switches to user view, hide admin-only UI.
   const [userViewMode, setUserViewMode] = useState(false);
@@ -99,6 +142,14 @@ export default function Navbar() {
     };
   }, []);
   const showAdmin = isAdmin && !userViewMode;
+
+  // Identical on server and client-before-hydration — the real location only
+  // ever swaps in after `locationHydrated` flips, avoiding a hydration mismatch.
+  const deliveryLocationLabel = !locationHydrated
+    ? "Select delivery location"
+    : deliveryLocation
+      ? `${deliveryLocation.areaLabel}, ${deliveryLocation.city}`
+      : "Select delivery location";
 
   // Measure the real navbar height live, so the mobile drawer can snap
   // exactly to its bottom edge instead of relying on a fixed pixel guess
@@ -135,43 +186,72 @@ export default function Navbar() {
   }
 
   return (
-    <header ref={headerRef} className="sticky top-0 z-50 w-full bg-white">
+    <header
+      ref={headerRef}
+      className={`sticky top-0 z-50 w-full border-b transition-all duration-300 ${
+        scrolled
+          ? "border-electric/20 bg-obsidian/90 backdrop-blur-2xl shadow-glass"
+          : "border-white/10 bg-obsidian/70 backdrop-blur-xl"
+      }`}
+    >
 
-      {/* ── Row 1 MOBILE: Phone (centered) ── */}
-      <div className="border-b border-silver-light bg-white md:hidden">
-        <div className="flex flex-col items-center gap-1.5 py-2">
-          <a href="tel:+919170546395" className="flex items-center gap-2 text-sm font-bold text-navy">
-            <Phone size={14} className="text-navy" />
-            <span>+91 91705 46395</span>
-            <span className="font-normal text-navy">Customer Support</span>
+      {/* ── Row 1 MOBILE: Support left, Location center, Socials right ── */}
+      <div className="border-b border-white/10 md:hidden">
+        <div className="flex items-center justify-between gap-2 px-4 py-2">
+          <a href="tel:+919170546395" className="flex shrink-0 items-center gap-1.5 text-sm font-bold text-white/90">
+            <Phone size={14} className="text-electric-light" />
           </a>
-          <div className="flex items-center gap-4 text-navy">
+
+          <button
+            type="button"
+            onClick={() => setLocationPickerOpen(true)}
+            className="flex min-w-0 flex-1 items-center justify-center gap-1 truncate text-xs font-semibold text-white/90"
+          >
+            <MapPin size={12} className="shrink-0 text-electric-light" />
+            <span className="truncate">Deliver to {deliveryLocationLabel}</span>
+            <ChevronDown size={10} className="shrink-0 text-white/50" />
+          </button>
+
+          <div className="flex shrink-0 items-center gap-3 text-white/70">
             {socials.map(({ Icon, href }, i) => (
               <a key={i} href={href} target="_blank" rel="noopener noreferrer"
-                className="hover:text-royal transition-colors duration-150">
-                <Icon size={18} />
+                className="hover:text-electric-light transition-colors duration-150">
+                <Icon size={15} />
               </a>
             ))}
           </div>
         </div>
       </div>
 
-      {/* ── Row 1 DESKTOP: Phone + Socials single line ── */}
-      <div className="hidden border-b border-silver-light bg-white md:block">
+      {/* ── Row 1 DESKTOP: Support left, Location center, Socials right ── */}
+      <div className="hidden border-b border-white/10 md:block">
         <div className="container-page flex items-center justify-between py-2 text-sm">
-          <a href="tel:+919170546395" className="flex items-center gap-2 text-navy hover:text-royal transition-colors">
-            <Phone size={15} className="text-royal" />
-            <span className="font-semibold">+91 91705 46395</span>
-            <span className="text-silver-dark">· Customer Support</span>
-          </a>
-          <div className="flex items-center gap-3 text-silver-dark">
+          <div className="flex flex-1 items-center">
+            <a href="tel:+919170546395" className="flex items-center gap-2 text-white/80 hover:text-electric-light transition-colors">
+              <Phone size={15} className="text-electric-light" />
+              <span className="font-semibold">+91 91705 46395</span>
+              <span className="text-white/40">· Customer Support</span>
+            </a>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setLocationPickerOpen(true)}
+            className="flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap font-semibold text-white/90 hover:text-electric-light transition-colors"
+          >
+            <MapPin size={14} className="text-electric-light" />
+            <span>Deliver to {deliveryLocationLabel}</span>
+            <ChevronDown size={12} className="text-white/50" />
+          </button>
+
+          <div className="flex flex-1 items-center justify-end gap-3 text-white/50">
             {mounted && isAdmin && (
               <button
                 onClick={() => {
                   if (userViewMode) { setUserView(false); router.push("/admin"); }
                   else { setUserView(true); router.push("/"); }
                 }}
-                className="rounded-full bg-royal/10 px-3 py-1 text-xs font-semibold text-royal hover:bg-royal/20 transition-colors"
+                className="rounded-full bg-electric/10 px-3 py-1 text-xs font-semibold text-electric-light hover:bg-electric/20 transition-colors"
                 title={userViewMode ? "Switch back to admin" : "Browse the store as a normal customer"}
               >
                 {userViewMode ? "🔧 Back to Admin" : "👁 View as customer"}
@@ -179,7 +259,7 @@ export default function Navbar() {
             )}
             {socials.map(({ Icon, href }, i) => (
               <a key={i} href={href} target="_blank" rel="noopener noreferrer"
-                className="hover:text-royal transition-colors duration-150">
+                className="hover:text-electric-light transition-colors duration-150">
                 <Icon size={17} />
               </a>
             ))}
@@ -188,107 +268,111 @@ export default function Navbar() {
       </div>
 
       {/* ── Row 2: Logo + Search + Icons ── */}
-      <div className="border-b border-silver-light bg-white">
+      <div className="border-b border-white/10">
         <div className="container-page flex items-center gap-3 py-2.5">
 
-          <Logo size={60} />
+          <Logo size={60} dark />
 
           {/* Search — inline on all screens */}
-          <form onSubmit={handleSearch}
-            className="flex flex-1 items-center overflow-hidden rounded-full border border-silver bg-white shadow-sm focus-within:border-royal focus-within:ring-2 focus-within:ring-royal/20 transition-all duration-200">
-            <span className="pl-3 md:pl-4 text-silver-dark"><Search size={17} /></span>
-            <input type="text" value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search for Products..."
-              className="w-full px-2 py-2 text-sm text-navy outline-none bg-transparent placeholder:text-silver-dark md:px-3"
-            />
-            <button type="submit" aria-label="Search"
-              className="m-1 rounded-full bg-royal px-3 py-2 text-sm font-semibold text-white hover:bg-royal-dark active:scale-95 transition-all duration-150 md:px-5">
-              <Search size={16} className="md:hidden" />
-              <span className="hidden md:inline">Search</span>
-            </button>
-          </form>
+          <SearchBar />
 
           {/* Desktop action icons */}
-          <div className="hidden md:flex items-center gap-5 text-navy">
-            <Link href="/compare" className="group flex flex-col items-center text-xs hover:text-royal transition-colors duration-150">
+          <div className="hidden md:flex items-center gap-5 text-white/80">
+            <Link href="/compare" className="group flex flex-col items-center text-xs hover:text-electric-light transition-colors duration-150">
               <Repeat size={20} className="group-hover:scale-110 transition-transform duration-150" />
               <span className="mt-0.5">Compare</span>
             </Link>
-            <Link href="/orders" className="group flex flex-col items-center text-xs hover:text-royal transition-colors duration-150">
+            <Link href="/orders" className="group flex flex-col items-center text-xs hover:text-electric-light transition-colors duration-150">
               <Package size={20} className="group-hover:scale-110 transition-transform duration-150" />
               <span className="mt-0.5">Orders</span>
             </Link>
             {showAdmin && (
-              <Link href="/admin" className="group flex flex-col items-center text-xs font-semibold text-royal hover:text-royal-dark transition-colors duration-150">
+              <Link href="/admin" className="group flex flex-col items-center text-xs font-semibold text-electric-light hover:text-cyan transition-colors duration-150">
                 <LayoutDashboard size={20} className="group-hover:scale-110 transition-transform duration-150" />
                 <span className="mt-0.5">Admin</span>
               </Link>
             )}
-            <Link href={loggedIn ? "/account" : "/login"} className="group flex flex-col items-center text-xs hover:text-royal transition-colors duration-150">
+            <Link href={loggedIn ? "/account" : "/login"} className="group flex flex-col items-center text-xs hover:text-electric-light transition-colors duration-150">
               <User size={20} className="group-hover:scale-110 transition-transform duration-150" />
               <span className="mt-0.5">{loggedIn ? "Account" : "Login"}</span>
             </Link>
             {loggedIn && (
               <button onClick={() => signOut({ callbackUrl: "/" })}
-                className="group flex flex-col items-center text-xs hover:text-royal transition-colors duration-150">
+                className="group flex flex-col items-center text-xs hover:text-electric-light transition-colors duration-150">
                 <LogOut size={20} className="group-hover:scale-110 transition-transform duration-150" />
                 <span className="mt-0.5">Logout</span>
               </button>
             )}
-            <Link href="/wishlist" className="group flex flex-col items-center text-xs hover:text-royal transition-colors duration-150">
-              <Heart size={20} className="group-hover:scale-110 group-hover:fill-royal/20 transition-all duration-150" />
+            <Link href="/wishlist" className="group flex flex-col items-center text-xs hover:text-electric-light transition-colors duration-150">
+              <Heart size={20} className="group-hover:scale-110 group-hover:fill-liquid/30 transition-all duration-150" />
               <span className="mt-0.5">Wishlist</span>
             </Link>
-            <Link href="/cart" className="group relative flex flex-col items-center text-xs hover:text-royal transition-colors duration-150">
+            <button
+              type="button"
+              onClick={() => setCartOpen(true)}
+              className="group relative flex flex-col items-center text-xs hover:text-electric-light transition-colors duration-150"
+            >
               <ShoppingBag size={20} className="group-hover:scale-110 transition-transform duration-150" />
               <span className="mt-0.5">Cart</span>
-              {count > 0 && (
-                <span className="absolute -right-2 -top-1.5 flex min-w-[18px] h-[18px] items-center justify-center rounded-full bg-royal px-1 text-[10px] font-bold text-white">
-                  {count}
-                </span>
-              )}
-            </Link>
+              <AnimatePresence>
+                {count > 0 && (
+                  <motion.span
+                    key={count}
+                    initial={{ scale: 0.4, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.4, opacity: 0 }}
+                    transition={{ type: "spring", stiffness: 500, damping: 20 }}
+                    className="absolute -right-2 -top-1.5 flex min-w-[18px] h-[18px] items-center justify-center rounded-full bg-gradient-to-br from-electric to-liquid px-1 text-[10px] font-bold text-white shadow-glow-electric"
+                  >
+                    {count}
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </button>
           </div>
 
           {/* Mobile icons: cart only (search is in Row 3) */}
           <div className="flex md:hidden items-center gap-3 ml-auto">
-            <Link href={loggedIn ? "/account" : "/login"} className="text-navy hover:text-royal transition-colors">
+            <Link href={loggedIn ? "/account" : "/login"} className="text-white/80 hover:text-electric-light transition-colors">
               <User size={22} />
             </Link>
-            <Link href="/cart" className="relative text-navy hover:text-royal transition-colors">
+            <button
+              type="button"
+              onClick={() => setCartOpen(true)}
+              className="relative text-white/80 hover:text-electric-light transition-colors"
+            >
               <ShoppingBag size={22} />
               {count > 0 && (
-                <span className="absolute -right-0.5 -top-0.5 flex min-w-[16px] h-[16px] items-center justify-center rounded-full bg-royal text-[9px] font-bold text-white">
+                <span className="absolute -right-0.5 -top-0.5 flex min-w-[16px] h-[16px] items-center justify-center rounded-full bg-gradient-to-br from-electric to-liquid text-[9px] font-bold text-white">
                   {count}
                 </span>
               )}
-            </Link>
+            </button>
           </div>
         </div>
       </div>
 
       {/* ── Row 3 MOBILE: ≡ All Categories  icons  ≡ Menu ── */}
-      <div className="border-b border-silver-light bg-white md:hidden">
+      <div className="border-b border-white/10 md:hidden">
         <div className="flex items-center justify-between px-4 py-2">
           {/* All Categories — opens the categories sidebar */}
           <button
             onClick={() => { setMobileCatOpen(true); setMobileOpen(false); }}
-            className="flex items-center gap-1.5 text-sm font-semibold text-navy">
+            className="flex items-center gap-1.5 text-sm font-semibold text-white/90">
             <AlignJustify size={18} />
             <span>All Categories</span>
             <ChevronRight size={14} />
           </button>
 
-          <div className="flex items-center gap-5 text-navy">
+          <div className="flex items-center gap-5 text-white/80">
             <Link href="/compare" title="Compare"><Repeat size={20} /></Link>
             <Link href="/orders" title="Orders"><Package size={20} /></Link>
-            {showAdmin && <Link href="/admin"><LayoutDashboard size={20} className="text-royal" /></Link>}
+            {showAdmin && <Link href="/admin"><LayoutDashboard size={20} className="text-electric-light" /></Link>}
           </div>
 
           <button
             onClick={() => { setMobileOpen((v) => !v); setMobileCatOpen(false); }}
-            className="flex items-center gap-1.5 text-sm font-semibold text-navy">
+            className="flex items-center gap-1.5 text-sm font-semibold text-white/90">
             <Menu size={18} />
             <span>Menu</span>
           </button>
@@ -296,11 +380,11 @@ export default function Navbar() {
       </div>
 
       {/* ── Row 3 DESKTOP: Full nav bar ── */}
-      <div className="hidden border-b border-silver-light bg-white shadow-sm md:block">
+      <div className="hidden border-b border-white/10 md:block">
         <div className="container-page flex items-stretch">
           <button
             onClick={() => setCatOpen(true)}
-            className="flex h-full items-center gap-2 bg-navy px-5 py-3 text-sm font-semibold text-white hover:bg-navy-dark transition-colors">
+            className="flex h-full items-center gap-2 bg-gradient-to-r from-electric to-liquid px-5 py-3 text-sm font-semibold text-white shadow-glow-electric transition-all hover:brightness-110">
             <AlignJustify size={16} /> All Categories <ChevronDown size={14} />
           </button>
 
@@ -309,19 +393,25 @@ export default function Navbar() {
               l.label === "Shop" ? (
                 <div key={l.label} className="relative"
                   onMouseEnter={() => setShopOpen(true)}
-                  onMouseLeave={() => setShopOpen(false)}>
+                  onMouseLeave={() => setShopOpen(false)}
+                  onFocus={() => setShopOpen(true)}
+                  onBlur={(e) => {
+                    if (!e.currentTarget.contains(e.relatedTarget)) setShopOpen(false);
+                  }}>
                   <Link href={l.href}
-                    className="flex items-center gap-1 whitespace-nowrap px-3 py-3 text-sm font-medium text-navy hover:text-royal transition-colors duration-150">
+                    aria-haspopup="true"
+                    aria-expanded={shopOpen}
+                    className="flex items-center gap-1 whitespace-nowrap px-3 py-3 text-sm font-medium text-white/85 hover:text-electric-light transition-colors duration-150">
                     {l.label} <ChevronDown size={13} className={`transition-transform duration-200 ${shopOpen ? "rotate-180" : ""}`} />
                   </Link>
                   <div
-                    className={`absolute left-0 top-full z-50 w-52 rounded-b-lg border border-silver-light bg-white py-2 shadow-xl transition-all duration-200 origin-top ${
+                    className={`absolute left-0 top-full z-50 w-52 rounded-b-2xl glass-strong py-2 transition-all duration-200 origin-top ${
                       shopOpen ? "opacity-100 scale-y-100 pointer-events-auto" : "opacity-0 scale-y-95 pointer-events-none"
                     }`}
                   >
                     {shopMenu.map((m) => (
                       <Link key={m.label} href={m.href}
-                        className="block px-4 py-2.5 text-sm text-navy hover:bg-cloud hover:text-royal hover:pl-6 transition-all duration-150">
+                        className="block px-4 py-2.5 text-sm text-white/80 hover:bg-white/10 hover:text-electric-light hover:pl-6 transition-all duration-150">
                         {m.label}
                       </Link>
                     ))}
@@ -329,7 +419,7 @@ export default function Navbar() {
                 </div>
               ) : (
                 <Link key={l.label} href={l.href}
-                  className="flex items-center gap-1 whitespace-nowrap px-3 py-3 text-sm font-medium text-navy hover:text-royal transition-colors duration-150">
+                  className="flex items-center gap-1 whitespace-nowrap px-3 py-3 text-sm font-medium text-white/85 hover:text-electric-light transition-colors duration-150">
                   {l.label}
                   {l.dropdown && <ChevronDown size={13} />}
                 </Link>
@@ -338,7 +428,7 @@ export default function Navbar() {
           </nav>
 
           <Link href="/sell"
-            className="flex items-center gap-2 border-l border-silver-light bg-cloud px-5 py-3 text-sm font-semibold text-navy hover:text-royal hover:bg-silver-light transition-colors duration-150">
+            className="flex items-center gap-2 border-l border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white/90 hover:text-electric-light hover:bg-white/10 transition-colors duration-150">
             <ShoppingBag size={16} /> Sell on Hardvanta
           </Link>
         </div>
@@ -347,109 +437,108 @@ export default function Navbar() {
       {/* ── Mobile drawer ── */}
       {/* Portalled to document.body and pinned to the live-measured navbar height
           so it always sits flush against the bottom of the navbar. */}
-      {mounted && mobileOpen && createPortal(
-        <div
-          className="fixed inset-x-0 bottom-0 z-40 overflow-y-auto bg-white md:hidden"
-          style={{ top: headerHeight }}
-        >
-          <div className="px-4 pb-8 pt-3">
+      {mounted && createPortal(
+        <AnimatePresence>
+          {mobileOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+              className="fixed inset-x-0 bottom-0 z-40 overflow-y-auto bg-obsidian/95 backdrop-blur-2xl md:hidden"
+              style={{ top: headerHeight }}
+            >
+              <div className="px-4 pb-8 pt-3">
 
-            <form onSubmit={handleSearch}
-              className="mb-4 flex items-center overflow-hidden rounded-full border border-silver shadow-sm focus-within:border-royal focus-within:ring-2 focus-within:ring-royal/20 transition-all duration-200">
-              <span className="pl-4 text-silver-dark"><Search size={16} /></span>
-              <input type="text" value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search for Products..."
-                className="w-full px-3 py-2.5 text-sm outline-none bg-transparent"
-              />
-              <button type="submit" className="m-1 rounded-full bg-royal px-4 py-2 text-white hover:bg-royal-dark transition-colors">
-                <Search size={16} />
-              </button>
-            </form>
+                <div className="mb-4">
+                  <SearchBar />
+                </div>
 
-            {/* Nav Links */}
-            <div className="mb-4 rounded-xl border border-silver-light overflow-hidden">
-              {navLinks.map((l, i) => (
-                <Link key={l.label} href={l.href} onClick={() => setMobileOpen(false)}
-                  className={`flex items-center justify-between px-4 py-3 text-sm font-medium text-navy hover:bg-cloud hover:text-royal transition-colors ${
-                    i !== navLinks.length - 1 ? "border-b border-silver-light" : ""}`}>
-                  <span>{l.label}</span>
-                  {l.dropdown && <ChevronDown size={14} className="text-silver-dark" />}
-                </Link>
-              ))}
-            </div>
+                {/* Nav Links */}
+                <div className="mb-4 rounded-2xl glass overflow-hidden">
+                  {navLinks.map((l, i) => (
+                    <Link key={l.label} href={l.href} onClick={() => setMobileOpen(false)}
+                      className={`flex items-center justify-between px-4 py-3 text-sm font-medium text-white/85 hover:bg-white/10 hover:text-electric-light transition-colors ${
+                        i !== navLinks.length - 1 ? "border-b border-white/10" : ""}`}>
+                      <span>{l.label}</span>
+                      {l.dropdown && <ChevronDown size={14} className="text-white/40" />}
+                    </Link>
+                  ))}
+                </div>
 
-            {/* All Categories — opens the categories sidebar */}
-            <button
-              onClick={() => { setMobileCatOpen(true); setMobileOpen(false); }}
-              className="mb-4 flex w-full items-center justify-between rounded-xl bg-navy px-4 py-3 text-sm font-semibold text-white">
-              <span className="flex items-center gap-2"><AlignJustify size={15} /> All Categories</span>
-              <ChevronRight size={15} />
-            </button>
-
-            {/* Account */}
-            <div className="mb-4 rounded-xl border border-silver-light overflow-hidden">
-              <Link href={loggedIn ? "/account" : "/login"} onClick={() => setMobileOpen(false)}
-                className="flex items-center gap-3 border-b border-silver-light px-4 py-3 text-sm font-medium text-navy hover:bg-cloud">
-                <User size={18} className="text-royal" />
-                {loggedIn ? "My Account" : "Login / Register"}
-              </Link>
-              <Link href="/orders" onClick={() => setMobileOpen(false)}
-                className="flex items-center gap-3 border-b border-silver-light px-4 py-3 text-sm font-medium text-navy hover:bg-cloud">
-                <Package size={18} className="text-royal" /> My Orders
-              </Link>
-              <Link href="/wishlist" onClick={() => setMobileOpen(false)}
-                className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-navy hover:bg-cloud">
-                <Heart size={18} className="text-royal" /> Wishlist
-              </Link>
-              {showAdmin && (
-                <Link href="/admin" onClick={() => setMobileOpen(false)}
-                  className="flex items-center gap-3 border-t border-silver-light px-4 py-3 text-sm font-semibold text-royal hover:bg-cloud">
-                  <LayoutDashboard size={18} /> Admin Dashboard
-                </Link>
-              )}
-              {mounted && isAdmin && (
+                {/* All Categories — opens the categories sidebar */}
                 <button
-                  onClick={() => {
-                    setMobileOpen(false);
-                    if (userViewMode) { setUserView(false); router.push("/admin"); }
-                    else { setUserView(true); router.push("/"); }
-                  }}
-                  className="flex w-full items-center gap-3 border-t border-silver-light px-4 py-3 text-sm font-medium text-navy hover:bg-cloud">
-                  {userViewMode
-                    ? <><LayoutDashboard size={18} className="text-royal" /> Back to Admin</>
-                    : <><User size={18} className="text-royal" /> View as customer</>}
+                  onClick={() => { setMobileCatOpen(true); setMobileOpen(false); }}
+                  className="mb-4 flex w-full items-center justify-between rounded-2xl bg-gradient-to-r from-electric to-liquid px-4 py-3 text-sm font-semibold text-white shadow-glow-electric">
+                  <span className="flex items-center gap-2"><AlignJustify size={15} /> All Categories</span>
+                  <ChevronRight size={15} />
                 </button>
-              )}
-              {loggedIn && (
-                <button onClick={() => { signOut({ callbackUrl: "/" }); setMobileOpen(false); }}
-                  className="flex w-full items-center gap-3 border-t border-silver-light px-4 py-3 text-sm font-medium text-navy hover:bg-cloud">
-                  <LogOut size={18} className="text-royal" /> Logout
-                </button>
-              )}
-            </div>
 
-            {/* Socials */}
-            <div className="flex items-center justify-center gap-4 py-2">
-              {socials.map(({ Icon, href }, i) => (
-                <a key={i} href={href} target="_blank" rel="noopener noreferrer"
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-silver-light text-navy hover:border-royal hover:text-royal transition-colors">
-                  <Icon size={17} />
-                </a>
-              ))}
-            </div>
+                {/* Account */}
+                <div className="mb-4 rounded-2xl glass overflow-hidden">
+                  <Link href={loggedIn ? "/account" : "/login"} onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-3 border-b border-white/10 px-4 py-3 text-sm font-medium text-white/85 hover:bg-white/10">
+                    <User size={18} className="text-electric-light" />
+                    {loggedIn ? "My Account" : "Login / Register"}
+                  </Link>
+                  <Link href="/orders" onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-3 border-b border-white/10 px-4 py-3 text-sm font-medium text-white/85 hover:bg-white/10">
+                    <Package size={18} className="text-electric-light" /> My Orders
+                  </Link>
+                  <Link href="/wishlist" onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-white/85 hover:bg-white/10">
+                    <Heart size={18} className="text-electric-light" /> Wishlist
+                  </Link>
+                  {showAdmin && (
+                    <Link href="/admin" onClick={() => setMobileOpen(false)}
+                      className="flex items-center gap-3 border-t border-white/10 px-4 py-3 text-sm font-semibold text-electric-light hover:bg-white/10">
+                      <LayoutDashboard size={18} /> Admin Dashboard
+                    </Link>
+                  )}
+                  {mounted && isAdmin && (
+                    <button
+                      onClick={() => {
+                        setMobileOpen(false);
+                        if (userViewMode) { setUserView(false); router.push("/admin"); }
+                        else { setUserView(true); router.push("/"); }
+                      }}
+                      className="flex w-full items-center gap-3 border-t border-white/10 px-4 py-3 text-sm font-medium text-white/85 hover:bg-white/10">
+                      {userViewMode
+                        ? <><LayoutDashboard size={18} className="text-electric-light" /> Back to Admin</>
+                        : <><User size={18} className="text-electric-light" /> View as customer</>}
+                    </button>
+                  )}
+                  {loggedIn && (
+                    <button onClick={() => { signOut({ callbackUrl: "/" }); setMobileOpen(false); }}
+                      className="flex w-full items-center gap-3 border-t border-white/10 px-4 py-3 text-sm font-medium text-white/85 hover:bg-white/10">
+                      <LogOut size={18} className="text-electric-light" /> Logout
+                    </button>
+                  )}
+                </div>
 
-            {/* Contact */}
-            <div className="mt-2 rounded-xl border border-silver-light bg-cloud px-4 py-3 text-center">
-              <p className="text-xs text-silver-dark">Customer Support · 9:15 AM – 6:15 PM, Mon–Sat</p>
-              <a href="tel:+919170546395"
-                className="mt-1 flex items-center justify-center gap-2 font-semibold text-navy hover:text-royal">
-                <Phone size={15} className="text-royal" /> +91 91705 46395
-              </a>
-            </div>
+                {/* Socials */}
+                <div className="flex items-center justify-center gap-4 py-2">
+                  {socials.map(({ Icon, href }, i) => (
+                    <a key={i} href={href} target="_blank" rel="noopener noreferrer"
+                      className="flex h-9 w-9 items-center justify-center rounded-full glass text-white/80 hover:text-electric-light transition-colors">
+                      <Icon size={17} />
+                    </a>
+                  ))}
+                </div>
 
-          </div>
-        </div>,
+                {/* Contact */}
+                <div className="mt-2 rounded-2xl glass px-4 py-3 text-center">
+                  <p className="text-xs text-white/50">Customer Support · 9:15 AM – 6:15 PM, Mon–Sat</p>
+                  <a href="tel:+919170546395"
+                    className="mt-1 flex items-center justify-center gap-2 font-semibold text-white/90 hover:text-electric-light">
+                    <Phone size={15} className="text-electric-light" /> +91 91705 46395
+                  </a>
+                </div>
+
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>,
         document.body
       )}
 
@@ -462,7 +551,7 @@ export default function Navbar() {
           <div
             onClick={closeCategorySidebar}
             aria-hidden={!categorySidebarOpen}
-            className={`fixed inset-0 z-[90] h-screen w-screen bg-navy/50 backdrop-blur-[2px] transition-opacity duration-300 ${
+            className={`fixed inset-0 z-[90] h-screen w-screen bg-obsidian/60 backdrop-blur-sm transition-opacity duration-300 ${
               categorySidebarOpen ? "opacity-100" : "pointer-events-none opacity-0"
             }`}
           />
@@ -472,19 +561,19 @@ export default function Navbar() {
             role="dialog"
             aria-label="All Categories"
             aria-hidden={!categorySidebarOpen}
-            className={`fixed left-0 top-0 z-[100] flex h-screen w-[86%] max-w-[300px] flex-col bg-white shadow-2xl transition-transform duration-300 ease-in-out sm:max-w-[320px] ${
+            className={`fixed left-0 top-0 z-[100] flex h-screen w-[86%] max-w-[300px] flex-col glass-strong shadow-2xl transition-transform duration-300 ease-in-out sm:max-w-[320px] ${
               categorySidebarOpen ? "translate-x-0" : "-translate-x-full"
             }`}
           >
             {/* Sidebar header */}
-            <div className="flex shrink-0 items-center justify-between bg-navy px-5 py-4">
+            <div className="flex shrink-0 items-center justify-between bg-gradient-to-r from-electric to-liquid px-5 py-4">
               <span className="flex items-center gap-2 text-base font-semibold text-white">
                 <AlignJustify size={18} /> All Categories
               </span>
               <button
                 onClick={closeCategorySidebar}
                 aria-label="Close categories"
-                className="rounded-full p-1.5 text-white transition-colors hover:bg-navy-dark hover:text-royal-light">
+                className="rounded-full p-1.5 text-white transition-colors hover:bg-white/20">
                 <X size={20} />
               </button>
             </div>
@@ -496,12 +585,12 @@ export default function Navbar() {
                   key={c.slug}
                   href={`/products?category=${c.slug}`}
                   onClick={closeCategorySidebar}
-                  className={`flex items-center justify-between px-5 py-3.5 text-sm font-medium text-navy transition-colors hover:bg-cloud hover:text-royal ${
-                    i !== categories.length - 1 ? "border-b border-silver-light" : ""
+                  className={`flex items-center justify-between px-5 py-3.5 text-sm font-medium text-white/85 transition-colors hover:bg-white/10 hover:text-electric-light ${
+                    i !== categories.length - 1 ? "border-b border-white/10" : ""
                   }`}
                 >
                   <span>{c.name}</span>
-                  <ChevronRight size={15} className="text-silver-dark" />
+                  <ChevronRight size={15} className="text-white/40" />
                 </Link>
               ))}
             </div>
@@ -509,6 +598,9 @@ export default function Navbar() {
         </>,
         document.body
       )}
+
+      <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
+      <LocationPickerModal open={locationPickerOpen} onClose={() => setLocationPickerOpen(false)} />
     </header>
   );
 }

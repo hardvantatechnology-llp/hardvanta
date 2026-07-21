@@ -1,10 +1,13 @@
 "use client";
 
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 
 const CartContext = createContext(null);
 const STORAGE_KEY = "hardvanta_cart";
+export function clampQuantity(quantity) {
+  return Math.max(1, quantity);
+}
 
 export function CartProvider({ children }) {
   const { status } = useSession();
@@ -12,6 +15,9 @@ export function CartProvider({ children }) {
 
   const [items, setItems] = useState([]);
 const [coupon, setCoupon] = useState(null);
+const [couponError, setCouponError] = useState("");
+const [couponLoading, setCouponLoading] = useState(false);
+const [availableCoupons, setAvailableCoupons] = useState([]);
 
 const [hydrated, setHydrated] = useState(false);
 const mergedRef = useRef(false);
@@ -70,64 +76,129 @@ const mergedRef = useRef(false);
     if (status === "unauthenticated") mergedRef.current = false;
   }, [status]);
 
-  async function addItem(product, quantity = 1) {
-    if (isAuthed) {
-      const res = await fetch("/api/cart", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId: product.id, quantity }),
-      });
-      const data = await res.json();
-      setItems(data.items || []);
-      return;
-    }
-    setItems((prev) => {
-      const existing = prev.find((i) => i.id === product.id);
-      if (existing) {
-        return prev.map((i) =>
-          i.id === product.id ? { ...i, quantity: i.quantity + quantity } : i
-        );
+  const addItem = useCallback(
+    async (product, quantity = 1) => {
+      if (isAuthed) {
+        try {
+          const res = await fetch("/api/cart", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ productId: product.id, quantity }),
+          });
+          let data = null;
+          try { data = await res.json(); } catch {}
+          if (!res.ok || !data || !Array.isArray(data.items)) {
+            throw new Error(data?.error || "Could not add item to cart. Please try again.");
+          }
+          setItems(data.items);
+        } catch (e) {
+          console.error("addItem failed", e);
+          // Keep the previous cart state intact and let the caller surface an error.
+          throw e instanceof Error ? e : new Error("Could not add item to cart. Please try again.");
+        }
+        return;
       }
-      return [...prev, { ...product, quantity }];
-    });
-  }
-
-  async function removeItem(id) {
-    if (isAuthed) {
-      const res = await fetch(`/api/cart?productId=${id}`, { method: "DELETE" });
-      const data = await res.json();
-      setItems(data.items || []);
-      return;
-    }
-    setItems((prev) => prev.filter((i) => i.id !== id));
-  }
-
-  async function updateQuantity(id, quantity) {
-    if (quantity < 1) return removeItem(id);
-    if (isAuthed) {
-      const res = await fetch("/api/cart", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId: id, quantity }),
+      setItems((prev) => {
+        const existing = prev.find((i) => i.id === product.id);
+        if (existing) {
+          return prev.map((i) =>
+            i.id === product.id
+              ? { ...i, quantity: clampQuantity(i.quantity + quantity) }
+              : i
+          );
+        }
+        return [...prev, { ...product, quantity: clampQuantity(quantity) }];
       });
-      const data = await res.json();
-      setItems(data.items || []);
-      return;
-    }
-    setItems((prev) =>
-      prev.map((i) => (i.id === id ? { ...i, quantity } : i))
-    );
-  }
+    },
+    [isAuthed]
+  );
 
-  async function clearCart() {
-    if (isAuthed) {
-      const res = await fetch("/api/cart", { method: "DELETE" });
+  const removeItem = useCallback(
+    async (id) => {
+      if (isAuthed) {
+        try {
+          const res = await fetch(`/api/cart?productId=${id}`, { method: "DELETE" });
+          let data = null;
+          try { data = await res.json(); } catch {}
+          if (!res.ok || !data || !Array.isArray(data.items)) {
+            throw new Error(data?.error || "Could not remove item from cart. Please try again.");
+          }
+          setItems(data.items);
+        } catch (e) {
+          console.error("removeItem failed", e);
+          throw e instanceof Error ? e : new Error("Could not remove item from cart. Please try again.");
+        }
+        return;
+      }
+      setItems((prev) => prev.filter((i) => i.id !== id));
+    },
+    [isAuthed]
+  );
+
+  const updateQuantity = useCallback(
+    async (id, quantity) => {
+      if (quantity < 1) return removeItem(id);
+      if (isAuthed) {
+        try {
+          const res = await fetch("/api/cart", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ productId: id, quantity }),
+          });
+          let data = null;
+          try { data = await res.json(); } catch {}
+          if (!res.ok || !data || !Array.isArray(data.items)) {
+            throw new Error(data?.error || "Could not update quantity. Please try again.");
+          }
+          setItems(data.items);
+        } catch (e) {
+          console.error("updateQuantity failed", e);
+          throw e instanceof Error ? e : new Error("Could not update quantity. Please try again.");
+        }
+        return;
+      }
+      setItems((prev) =>
+        prev.map((i) => (i.id === id ? { ...i, quantity: clampQuantity(quantity) } : i))
+      );
+    },
+    [isAuthed, removeItem]
+  );
+
+  const clearCart = useCallback(
+    async () => {
+      if (isAuthed) {
+        try {
+          const res = await fetch("/api/cart", { method: "DELETE" });
+          let data = null;
+          try { data = await res.json(); } catch {}
+          if (!res.ok || !data || !Array.isArray(data.items)) {
+            throw new Error(data?.error || "Could not clear cart. Please try again.");
+          }
+          setItems(data.items);
+        } catch (e) {
+          console.error("clearCart failed", e);
+          throw e instanceof Error ? e : new Error("Could not clear cart. Please try again.");
+        }
+        return;
+      }
+      setItems([]);
+    },
+    [isAuthed]
+  );
+
+  // Re-syncs local cart state from the server cart — used after checkout,
+  // where the order transaction already cleared the purchased items in the
+  // DB but this context's local `items` state has no way to know that yet.
+  const refreshCart = useCallback(async () => {
+    if (!isAuthed) return;
+    try {
+      const res = await fetch("/api/cart");
       const data = await res.json();
-      setItems(data.items || []);
-      return;
+      if (res.ok && Array.isArray(data.items)) setItems(data.items);
+    } catch (e) {
+      console.error("refreshCart failed", e);
     }
-    setItems([]);
-  }
+  }, [isAuthed]);
 
   const count = items.reduce((sum, i) => sum + i.quantity, 0);
   const total = items.reduce(
@@ -135,21 +206,98 @@ const mergedRef = useRef(false);
     0
   );
 
-  return (
-    <CartContext.Provider
-  value={{
-    items,
-    addItem,
-    removeItem,
-    updateQuantity,
-    clearCart,
-    count,
-    total,
+  // Fetch the "available coupons" feed whenever the cart subtotal changes —
+  // each entry already comes back with a precomputed discountAmount for
+  // this subtotal (see GET /api/coupons), so the best-offer pick below is a
+  // simple max() with no client-side discount math duplicated.
+  useEffect(() => {
+    if (count === 0) {
+      setAvailableCoupons([]);
+      return;
+    }
+    let cancelled = false;
+    fetch(`/api/coupons?subtotal=${total}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (!cancelled && Array.isArray(data.coupons)) setAvailableCoupons(data.coupons);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [total, count]);
 
-    coupon,
-    setCoupon,
-  }}
->
+  const bestCoupon = availableCoupons.reduce(
+    (best, c) => (!best || c.discountAmount > best.discountAmount ? c : best),
+    null
+  );
+
+  // Returns { ok, message } — callers get the outcome synchronously instead
+  // of reading back context state, which may not have re-rendered yet.
+  const applyCoupon = useCallback(async (code) => {
+    const trimmed = String(code || "").trim().toUpperCase();
+    if (!trimmed) return { ok: false, message: "" };
+    setCouponError("");
+    setCouponLoading(true);
+    try {
+      const res = await fetch("/api/coupons/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: trimmed, subtotal: total }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.valid) {
+        const message = data.message || "Invalid coupon.";
+        setCouponError(message);
+        setCoupon(null);
+        return { ok: false, message };
+      }
+      setCoupon(data);
+      return { ok: true, message: data.message };
+    } catch {
+      const message = "Something went wrong. Try again.";
+      setCouponError(message);
+      return { ok: false, message };
+    } finally {
+      setCouponLoading(false);
+    }
+  }, [total]);
+
+  const removeCoupon = useCallback(() => {
+    setCoupon(null);
+    setCouponError("");
+  }, []);
+
+  // Stable reference unless the cart itself actually changes — lets consumers
+  // that only read unrelated context fields (or are wrapped in memo) skip
+  // re-rendering on every unrelated provider re-render.
+  const value = useMemo(
+    () => ({
+      items,
+      addItem,
+      removeItem,
+      updateQuantity,
+      clearCart,
+      refreshCart,
+      count,
+      total,
+      coupon,
+      setCoupon,
+      couponError,
+      couponLoading,
+      applyCoupon,
+      removeCoupon,
+      availableCoupons,
+      bestCoupon,
+    }),
+    [
+      items, addItem, removeItem, updateQuantity, clearCart, refreshCart, count, total, coupon,
+      couponError, couponLoading, applyCoupon, removeCoupon, availableCoupons, bestCoupon,
+    ]
+  );
+
+  return (
+    <CartContext.Provider value={value}>
       {children}
     </CartContext.Provider>
   );
