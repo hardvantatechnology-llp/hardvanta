@@ -42,6 +42,17 @@ const Button = forwardRef(function Button({
       "glass text-white hover:border-white/25 hover:shadow-glow-electric",
     gradient:
       "gradient-mesh bg-gradient-to-r from-electric via-liquid to-cyan bg-[length:200%_100%] text-white shadow-glow-electric hover:shadow-glow-purple",
+    // HV Kart brand variants — storefront only, kept separate from the
+    // variants above so /admin (which still uses "gradient"/"glass") is unaffected.
+    "brand-gradient":
+      "gradient-mesh bg-gradient-to-r from-brand-blue via-brand-navy to-brand-steel bg-[length:200%_100%] text-white shadow-brand-glow hover:brightness-110",
+    "brand-glass":
+      "glass-brand text-brand-text hover:border-brand-blue/40 hover:shadow-brand-glow",
+    "brand-outline":
+      "border border-brand-blue/40 bg-transparent text-brand-blue hover:border-brand-blue hover:bg-brand-blue/5",
+    "brand-ghost": "text-brand-muted hover:bg-brand-silver hover:text-brand-text",
+    "brand-secondary":
+      "bg-brand-steel text-white shadow-sm hover:bg-brand-navy hover:shadow-brand-glow",
   };
 
   const sizes = {

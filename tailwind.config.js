@@ -58,6 +58,21 @@ module.exports = {
           light: "#c084fc",
           dark: "#8b5cf6",
         },
+
+        // HV Kart brand palette — used only by storefront-facing components
+        // (kept separate from the tokens above so /admin, which reuses those
+        // same tokens, is unaffected by this recolor).
+        brand: {
+          blue: "#163E6E",
+          navy: "#0F2747",
+          steel: "#3F6E9C",
+          silver: "#E8ECEF",
+          grey: "#C7CDD5",
+          bg: "#F7F8FA",
+          text: "#1F2937",
+          muted: "#6B7280",
+          border: "#D9DEE5",
+        },
       },
       fontFamily: {
         sans: ["var(--font-geist-sans)", "system-ui", "sans-serif"],
@@ -69,6 +84,11 @@ module.exports = {
         "glow-cyan": "0 0 40px -8px rgba(34, 211, 238, 0.45)",
         "glow-purple": "0 0 40px -8px rgba(168, 85, 247, 0.45)",
         glass: "0 8px 32px -8px rgba(0, 0, 0, 0.45), inset 0 1px 0 0 rgba(255, 255, 255, 0.08)",
+        "brand-sm": "0 2px 12px rgba(15, 39, 71, 0.08)",
+        "brand-md": "0 8px 28px rgba(15, 39, 71, 0.16)",
+        "brand-glow": "0 0 32px -8px rgba(22, 62, 110, 0.35)",
+        "brand-glass": "0 8px 32px -8px rgba(15, 39, 71, 0.12), inset 0 1px 0 0 rgba(255, 255, 255, 0.6)",
+        "brand-glass-strong": "0 16px 48px -12px rgba(15, 39, 71, 0.18), inset 0 1px 0 0 rgba(255, 255, 255, 0.7)",
       },
       borderRadius: {
         "3xl": "1.75rem",
