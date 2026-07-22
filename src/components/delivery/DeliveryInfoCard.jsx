@@ -52,17 +52,17 @@ export default function DeliveryInfoCard() {
 
   if (!hydrated) {
     return (
-      <div className="glass-card mt-5 rounded-3xl p-5 text-sm text-white/40">Checking delivery options…</div>
+      <div className="glass-brand-card mt-5 rounded-3xl p-5 text-sm text-brand-muted">Checking delivery options…</div>
     );
   }
 
   if (!location) {
     return (
-      <div className="glass-card mt-5 rounded-3xl p-5">
+      <div className="glass-brand-card mt-5 rounded-3xl p-5">
         <button
           type="button"
           onClick={() => setPickerOpen(true)}
-          className="flex items-center gap-2 text-sm font-semibold text-electric-light hover:text-cyan transition-colors"
+          className="flex items-center gap-2 text-sm font-semibold text-brand-blue hover:text-brand-steel transition-colors"
         >
           <MapPin size={15} /> Select a delivery location to see availability
         </button>
@@ -74,42 +74,42 @@ export default function DeliveryInfoCard() {
   const serviceable = estimate?.serviceable !== false;
 
   return (
-    <div className="glass-card mt-5 rounded-3xl p-5">
-      <p className="flex items-center gap-1.5 text-sm font-semibold text-white/90">
-        <MapPin size={15} className="text-electric-light" />
+    <div className="glass-brand-card mt-5 rounded-3xl p-5">
+      <p className="flex items-center gap-1.5 text-sm font-semibold text-brand-text">
+        <MapPin size={15} className="text-brand-blue" />
         Deliver to: {location.areaLabel}, {location.city} - {location.pincode}
       </p>
 
       {!serviceable ? (
-        <p className="mt-2 text-sm font-semibold text-red-400">❌ Currently unavailable at this location.</p>
+        <p className="mt-2 text-sm font-semibold text-red-600">❌ Currently unavailable at this location.</p>
       ) : estimate ? (
         <>
-          <p className="mt-2 text-sm font-semibold text-cyan">
+          <p className="mt-2 text-sm font-semibold text-brand-steel">
             {estimate.settings.deliveryCharge > 0
               ? `${formatPrice(estimate.settings.deliveryCharge)} delivery · FREE above ${formatPrice(estimate.settings.freeShippingThreshold)}`
               : "FREE Delivery"}
           </p>
-          <p className="mt-1 text-sm text-white/70">
-            Delivery by <span className="font-semibold text-white">{estimate.delivery.label}</span>
+          <p className="mt-1 text-sm text-brand-muted">
+            Delivery by <span className="font-semibold text-brand-text">{estimate.delivery.label}</span>
           </p>
           {countdownLabel && (
-            <p className="mt-0.5 flex items-center gap-1.5 text-xs text-white/40">
+            <p className="mt-0.5 flex items-center gap-1.5 text-xs text-brand-muted">
               <Clock size={12} /> if ordered within {countdownLabel}
             </p>
           )}
 
           <div className="mt-4 grid grid-cols-2 gap-2 text-xs">
-            <div className="flex items-center gap-1.5 text-white/70">
-              <Banknote size={14} className={estimate.settings.codEnabled && estimate.pincode.codAvailable ? "text-cyan" : "text-white/20"} />
+            <div className="flex items-center gap-1.5 text-brand-muted">
+              <Banknote size={14} className={estimate.settings.codEnabled && estimate.pincode.codAvailable ? "text-brand-steel" : "text-brand-muted/40"} />
               Cash on Delivery {estimate.settings.codEnabled && estimate.pincode.codAvailable ? "Available" : "Unavailable"}
             </div>
-            <div className="flex items-center gap-1.5 text-white/70">
-              <Zap size={14} className={estimate.settings.expressEnabled && estimate.pincode.expressAvailable ? "text-cyan" : "text-white/20"} />
+            <div className="flex items-center gap-1.5 text-brand-muted">
+              <Zap size={14} className={estimate.settings.expressEnabled && estimate.pincode.expressAvailable ? "text-brand-steel" : "text-brand-muted/40"} />
               Express Delivery {estimate.settings.expressEnabled && estimate.pincode.expressAvailable ? "Available" : "Unavailable"}
             </div>
           </div>
 
-          <div className="mt-3 flex flex-wrap gap-3 text-xs text-white/50">
+          <div className="mt-3 flex flex-wrap gap-3 text-xs text-brand-muted">
             <span className="flex items-center gap-1"><RotateCcw size={12} /> 7 Days Easy Returns</span>
             <span className="flex items-center gap-1"><ShieldCheck size={12} /> Genuine Product</span>
             <span className="flex items-center gap-1"><Truck size={12} /> Fast Shipping</span>
@@ -120,7 +120,7 @@ export default function DeliveryInfoCard() {
       <button
         type="button"
         onClick={() => setPickerOpen(true)}
-        className="mt-4 text-xs font-semibold text-electric-light hover:text-cyan transition-colors"
+        className="mt-4 text-xs font-semibold text-brand-blue hover:text-brand-steel transition-colors"
       >
         Change Location
       </button>

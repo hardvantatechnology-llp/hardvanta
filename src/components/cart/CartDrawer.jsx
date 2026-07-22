@@ -37,7 +37,7 @@ export default function CartDrawer({ open, onClose }) {
       <div
         onClick={onClose}
         aria-hidden={!open}
-        className={`fixed inset-0 z-[90] h-screen w-screen bg-obsidian/60 backdrop-blur-sm transition-opacity duration-300 ${
+        className={`fixed inset-0 z-[90] h-screen w-screen bg-brand-navy/60 backdrop-blur-sm transition-opacity duration-300 ${
           open ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
       />
@@ -47,12 +47,12 @@ export default function CartDrawer({ open, onClose }) {
         role="dialog"
         aria-label="Cart"
         aria-hidden={!open}
-        className={`fixed right-0 top-0 z-[100] flex h-screen w-[90%] max-w-[400px] flex-col glass-strong shadow-2xl transition-transform duration-300 ease-in-out ${
+        className={`fixed right-0 top-0 z-[100] flex h-screen w-[90%] max-w-[400px] flex-col glass-brand-strong shadow-2xl transition-transform duration-300 ease-in-out ${
           open ? "translate-x-0" : "translate-x-full"
         }`}
       >
         {/* Header */}
-        <div className="flex shrink-0 items-center justify-between border-b border-white/10 bg-gradient-to-r from-electric to-liquid px-5 py-4">
+        <div className="flex shrink-0 items-center justify-between border-b border-brand-border bg-gradient-to-r from-brand-blue to-brand-navy px-5 py-4">
           <span className="flex items-center gap-2 text-base font-semibold text-white">
             <ShoppingBag size={18} /> Your Cart {count > 0 && `(${count})`}
           </span>
@@ -68,12 +68,12 @@ export default function CartDrawer({ open, onClose }) {
         {/* Items */}
         {count === 0 ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 text-center">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-electric/20 to-liquid/20 shadow-glow-electric">
-              <ShoppingBag size={28} className="text-electric-light" />
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-brand-blue/20 to-brand-navy/20 shadow-brand-glow">
+              <ShoppingBag size={28} className="text-brand-blue" />
             </div>
-            <p className="font-semibold text-white">Your cart is empty</p>
-            <p className="text-sm text-white/50">Add some products to get started.</p>
-            <Button href="/products" variant="gradient" onClick={onClose} className="mt-2">
+            <p className="font-semibold text-brand-text">Your cart is empty</p>
+            <p className="text-sm text-brand-muted">Add some products to get started.</p>
+            <Button href="/products" variant="brand-gradient" onClick={onClose} className="mt-2">
               Browse Products
             </Button>
           </div>
@@ -91,46 +91,46 @@ export default function CartDrawer({ open, onClose }) {
                       animate={{ opacity: 1, height: "auto" }}
                       exit={{ opacity: 0, height: 0 }}
                       transition={{ duration: 0.2 }}
-                      className="mb-3 flex gap-3 overflow-hidden rounded-2xl glass-card p-3"
+                      className="mb-3 flex gap-3 overflow-hidden rounded-2xl glass-brand-card p-3"
                     >
                       <Link
                         href={`/products/${item.id}`}
                         onClick={onClose}
-                        className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-white/5"
+                        className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-brand-silver"
                       >
                         <Image src={imageSrc(item.image)} alt={item.name} fill sizes="64px" className="object-contain p-1" />
                       </Link>
                       <div className="flex min-w-0 flex-1 flex-col">
                         <Link href={`/products/${item.id}`} onClick={onClose}>
-                          <p className="line-clamp-1 text-sm font-medium text-white/90 hover:text-electric-light">
+                          <p className="line-clamp-1 text-sm font-medium text-brand-text hover:text-brand-blue">
                             {item.name}
                           </p>
                         </Link>
                         <div className="mt-auto flex items-center justify-between">
-                          <div className="flex items-center gap-1 rounded-lg bg-white/5">
+                          <div className="flex items-center gap-1 rounded-lg bg-brand-silver">
                             <button
                               onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                              className="flex h-6 w-6 items-center justify-center text-white/70 hover:text-white"
+                              className="flex h-6 w-6 items-center justify-center text-brand-muted hover:text-brand-text"
                               aria-label="Decrease quantity"
                             >
                               <Minus size={12} />
                             </button>
-                            <span className="w-5 text-center text-xs font-semibold text-white">{item.quantity}</span>
+                            <span className="w-5 text-center text-xs font-semibold text-brand-text">{item.quantity}</span>
                             <button
                               onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                              className="flex h-6 w-6 items-center justify-center text-white/70 hover:text-white"
+                              className="flex h-6 w-6 items-center justify-center text-brand-muted hover:text-brand-text"
                               aria-label="Increase quantity"
                             >
                               <Plus size={12} />
                             </button>
                           </div>
-                          <span className="text-sm font-bold text-white">{formatPrice(price * item.quantity)}</span>
+                          <span className="text-sm font-bold text-brand-text">{formatPrice(price * item.quantity)}</span>
                         </div>
                       </div>
                       <button
                         onClick={() => removeItem(item.id)}
                         aria-label="Remove item"
-                        className="shrink-0 text-white/30 transition-colors hover:text-red-400"
+                        className="shrink-0 text-brand-muted transition-colors hover:text-red-600"
                       >
                         <Trash2 size={15} />
                       </button>
@@ -141,15 +141,15 @@ export default function CartDrawer({ open, onClose }) {
             </div>
 
             {/* Footer */}
-            <div className="shrink-0 border-t border-white/10 p-5">
+            <div className="shrink-0 border-t border-brand-border p-5">
               <div className="mb-4 flex items-center justify-between">
-                <span className="text-sm text-white/60">Subtotal</span>
-                <span className="text-xl font-bold text-white">{formatPrice(total)}</span>
+                <span className="text-sm text-brand-muted">Subtotal</span>
+                <span className="text-xl font-bold text-brand-text">{formatPrice(total)}</span>
               </div>
-              <Button href="/checkout" variant="gradient" onClick={onClose} className="w-full">
+              <Button href="/checkout" variant="brand-gradient" onClick={onClose} className="w-full">
                 Checkout <ArrowRight size={16} />
               </Button>
-              <Button href="/cart" variant="glass" onClick={onClose} className="mt-2 w-full">
+              <Button href="/cart" variant="brand-glass" onClick={onClose} className="mt-2 w-full">
                 View Cart
               </Button>
             </div>

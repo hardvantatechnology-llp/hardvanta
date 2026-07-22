@@ -19,20 +19,20 @@ export default function CheckoutStepper({ step = 2 }) {
               <div
                 className={`flex h-9 w-9 items-center justify-center rounded-full text-sm font-semibold transition-all ${
                   done
-                    ? "bg-gradient-to-r from-electric to-liquid text-white"
+                    ? "bg-gradient-to-r from-brand-blue to-brand-navy text-white"
                     : active
-                      ? "glass-card text-white shadow-glow-electric ring-1 ring-electric/50"
-                      : "glass-card text-white/30"
+                      ? "glass-brand-card text-brand-text shadow-brand-glow ring-1 ring-brand-blue/50"
+                      : "glass-brand-card text-brand-muted"
                 }`}
               >
                 {done ? <Check size={16} /> : <s.Icon size={15} />}
               </div>
-              <span className={`hidden text-xs font-medium sm:block ${active || done ? "text-white/80" : "text-white/30"}`}>
+              <span className={`hidden text-xs font-medium sm:block ${active || done ? "text-brand-text" : "text-brand-muted"}`}>
                 {s.label}
               </span>
             </div>
             {n < STEPS.length && (
-              <div className={`h-0.5 w-8 rounded-full sm:w-16 ${done ? "bg-gradient-to-r from-electric to-liquid" : "bg-white/10"}`} />
+              <div className={`h-0.5 w-8 rounded-full sm:w-16 ${done ? "bg-gradient-to-r from-brand-blue to-brand-navy" : "bg-brand-border"}`} />
             )}
           </div>
         );

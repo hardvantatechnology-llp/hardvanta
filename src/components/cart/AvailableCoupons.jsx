@@ -18,9 +18,9 @@ export default function AvailableCoupons() {
   }
 
   return (
-    <div className="glass-card rounded-3xl p-4">
-      <h3 className="mb-3 flex items-center gap-2 text-sm font-bold text-white">
-        <Ticket size={16} className="text-electric-light" /> Available Coupons
+    <div className="glass-brand-card rounded-3xl p-4">
+      <h3 className="mb-3 flex items-center gap-2 text-sm font-bold text-brand-text">
+        <Ticket size={16} className="text-brand-blue" /> Available Coupons
       </h3>
       <div className="space-y-2.5">
         {availableCoupons.map((c) => {
@@ -30,25 +30,25 @@ export default function AvailableCoupons() {
             <div
               key={c.code}
               className={`rounded-2xl border p-3 transition-all ${
-                isApplied ? "border-cyan/40 bg-cyan/5" : isBest ? "border-electric/40 bg-electric/5" : "border-white/10"
+                isApplied ? "border-brand-steel/40 bg-brand-steel/5" : isBest ? "border-brand-blue/40 bg-brand-blue/5" : "border-brand-border"
               }`}
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-bold text-white">{c.code}</span>
+                    <span className="font-bold text-brand-text">{c.code}</span>
                     {isBest && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-electric to-liquid px-2 py-0.5 text-[10px] font-bold text-white">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-brand-blue to-brand-navy px-2 py-0.5 text-[10px] font-bold text-white">
                         <Star size={10} fill="currentColor" /> Best Offer
                       </span>
                     )}
                   </div>
-                  <p className="mt-0.5 text-xs font-semibold text-cyan">
+                  <p className="mt-0.5 text-xs font-semibold text-brand-steel">
                     Save {formatPrice(c.discountAmount)}
                     {c.type === "percent" ? ` (${c.discount}% off)` : ""}
                   </p>
-                  {c.description && <p className="mt-1 text-xs text-white/50 line-clamp-2">{c.description}</p>}
-                  <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-white/40">
+                  {c.description && <p className="mt-1 text-xs text-brand-muted line-clamp-2">{c.description}</p>}
+                  <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-brand-muted">
                     {c.minOrder > 0 && <span>Min order {formatPrice(c.minOrder)}</span>}
                     {c.expiresAt && (
                       <span className="flex items-center gap-1">
@@ -60,14 +60,14 @@ export default function AvailableCoupons() {
                 </div>
 
                 {isApplied ? (
-                  <span className="flex shrink-0 items-center gap-1 rounded-lg bg-cyan/10 px-3 py-1.5 text-xs font-semibold text-cyan">
+                  <span className="flex shrink-0 items-center gap-1 rounded-lg bg-brand-steel/10 px-3 py-1.5 text-xs font-semibold text-brand-steel">
                     <CheckCircle2 size={13} /> Applied ✓
                   </span>
                 ) : (
                   <button
                     type="button"
                     onClick={() => handleApply(c.code)}
-                    className="shrink-0 rounded-lg bg-gradient-to-r from-electric to-liquid px-3 py-1.5 text-xs font-semibold text-white shadow-glow-electric hover:brightness-110 transition-all"
+                    className="shrink-0 rounded-lg bg-gradient-to-r from-brand-blue to-brand-navy px-3 py-1.5 text-xs font-semibold text-white shadow-brand-glow hover:brightness-110 transition-all"
                   >
                     Apply
                   </button>

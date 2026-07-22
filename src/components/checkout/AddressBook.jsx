@@ -108,7 +108,7 @@ export default function AddressBook({ enabled = true, onChange }) {
     return (
       <div className="space-y-3">
         {[0, 1].map((i) => (
-          <div key={i} className="h-28 animate-pulse rounded-2xl bg-white/5" />
+          <div key={i} className="h-28 animate-pulse rounded-2xl bg-brand-silver" />
         ))}
       </div>
     );
@@ -116,7 +116,7 @@ export default function AddressBook({ enabled = true, onChange }) {
 
   if (error) {
     return (
-      <p className="rounded-lg bg-red-500/10 border border-red-500/20 px-3 py-2 text-sm text-red-400">
+      <p className="rounded-lg bg-red-500/10 border border-red-500/20 px-3 py-2 text-sm text-red-600">
         {error}
       </p>
     );
@@ -125,7 +125,7 @@ export default function AddressBook({ enabled = true, onChange }) {
   if (mode === "form") {
     return (
       <div>
-        <h3 className="mb-3 text-sm font-semibold text-white/80">
+        <h3 className="mb-3 text-sm font-semibold text-brand-text">
           {editingAddress ? "Edit Address" : "Add New Address"}
         </h3>
         <AddressForm
@@ -140,10 +140,10 @@ export default function AddressBook({ enabled = true, onChange }) {
 
   return (
     <div className="space-y-3">
-      <h3 className="text-sm font-semibold text-white/80">Saved Addresses</h3>
+      <h3 className="text-sm font-semibold text-brand-text">Saved Addresses</h3>
 
       {actionError && (
-        <p className="rounded-lg bg-red-500/10 border border-red-500/20 px-3 py-2 text-sm text-red-400">
+        <p className="rounded-lg bg-red-500/10 border border-red-500/20 px-3 py-2 text-sm text-red-600">
           {actionError}
         </p>
       )}
@@ -167,7 +167,7 @@ export default function AddressBook({ enabled = true, onChange }) {
       <button
         type="button"
         onClick={() => { setEditingAddress(null); setMode("form"); }}
-        className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-white/15 py-3 text-sm font-semibold text-white/60 hover:border-electric/40 hover:text-electric-light transition-colors"
+        className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-brand-border py-3 text-sm font-semibold text-brand-muted hover:border-brand-blue/40 hover:text-brand-blue transition-colors"
       >
         <Plus size={16} /> Add New Address
       </button>

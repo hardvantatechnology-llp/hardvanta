@@ -33,26 +33,26 @@ export default function CartDeliveryBlock() {
   if (!hydrated) return null;
 
   return (
-    <div className="glass-card rounded-3xl p-4">
+    <div className="glass-brand-card rounded-3xl p-4">
       {location ? (
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
-            <p className="flex items-center gap-1.5 text-sm font-semibold text-white/90">
-              <MapPin size={14} className="text-electric-light shrink-0" />
+            <p className="flex items-center gap-1.5 text-sm font-semibold text-brand-text">
+              <MapPin size={14} className="text-brand-blue shrink-0" />
               Delivering to {location.areaLabel}, {location.city}
             </p>
             {estimate?.serviceable === false ? (
-              <p className="mt-1 text-xs font-semibold text-red-400">❌ Currently unavailable at this location.</p>
+              <p className="mt-1 text-xs font-semibold text-red-600">❌ Currently unavailable at this location.</p>
             ) : estimate?.delivery ? (
-              <p className="mt-1 flex items-center gap-1.5 text-xs text-white/50">
-                <Truck size={12} className="text-cyan" /> Expected Delivery: {estimate.delivery.label}
+              <p className="mt-1 flex items-center gap-1.5 text-xs text-brand-muted">
+                <Truck size={12} className="text-brand-steel" /> Expected Delivery: {estimate.delivery.label}
               </p>
             ) : null}
           </div>
           <button
             type="button"
             onClick={() => setPickerOpen(true)}
-            className="shrink-0 text-xs font-semibold text-electric-light hover:text-cyan transition-colors"
+            className="shrink-0 text-xs font-semibold text-brand-blue hover:text-brand-steel transition-colors"
           >
             Change Location
           </button>
@@ -61,7 +61,7 @@ export default function CartDeliveryBlock() {
         <button
           type="button"
           onClick={() => setPickerOpen(true)}
-          className="flex items-center gap-2 text-sm font-semibold text-electric-light hover:text-cyan transition-colors"
+          className="flex items-center gap-2 text-sm font-semibold text-brand-blue hover:text-brand-steel transition-colors"
         >
           <MapPin size={15} /> Select a delivery location
         </button>
