@@ -27,21 +27,57 @@ export const metadata = {
   // (e.g. a product image served from /uploads or Supabase Storage) resolve
   // to an absolute URL — required for social-share previews to load the image.
   metadataBase: new URL(siteUrl),
-  title: siteTitle,
+
+  title: {
+    default: siteTitle,
+    template: "%s | hardvanta",
+  },
+
   description: siteDescription,
+
+  keywords: [
+    "Arduino India",
+    "Raspberry Pi India",
+    "electronic components online",
+    "robotics parts India",
+    "sensors and motors",
+    "drone parts India",
+    "DIY electronics store",
+  ],
+
+  authors: [{ name: "hardvanta" }],
+  creator: "hardvanta",
+  publisher: "hardvanta",
+
+  alternates: {
+    canonical: siteUrl,
+  },
+
   openGraph: {
     title: siteTitle,
     description: siteDescription,
+    url: siteUrl,
     siteName: "hardvanta",
+    locale: "en_IN",
     type: "website",
     images: ["/images/hardvanta.png"],
   },
+
   twitter: {
     card: "summary_large_image",
     title: siteTitle,
     description: siteDescription,
     images: ["/images/hardvanta.png"],
   },
+
+  robots: {
+    index: true,
+    follow: true,
+  },
+
+  // verification: {
+  //   google: "your-google-search-console-code-here",
+  // },
 };
 
 export default function RootLayout({ children }) {
