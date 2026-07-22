@@ -9,16 +9,16 @@ const benefits = [
 
 export default function BenefitsStrip() {
   return (
-    <section className="border-b border-white/10 bg-obsidian">
+    <section className="border-b border-brand-border bg-white">
       <div className="container-page grid grid-cols-2 gap-4 py-6 md:grid-cols-4">
         {benefits.map(({ Icon, title, sub }) => (
           <div key={title} className="flex items-center gap-3">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl glass text-electric-light">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl glass-brand text-brand-blue">
               <Icon size={22} />
             </span>
             <div>
-              <p className="text-sm font-bold text-white/90">{title}</p>
-              <p className="text-xs text-white/40">{sub}</p>
+              <p className="text-sm font-bold text-brand-text">{title}</p>
+              <p className="text-xs text-brand-muted">{sub}</p>
             </div>
           </div>
         ))}

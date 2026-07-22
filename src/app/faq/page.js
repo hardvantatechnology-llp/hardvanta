@@ -47,15 +47,15 @@ function FAQCard({ faq, index, isOpen, onToggle }) {
     <div
       id={`faq-${index}`}
       style={{
-        background: "rgba(255,255,255,0.06)",
+        background: "#FFFFFF",
         backdropFilter: "blur(20px)",
-        border: "1px solid rgba(255,255,255,0.1)",
+        border: "1px solid #D9DEE5",
         borderRadius: "14px",
         marginBottom: "14px",
         overflow: "hidden",
         boxShadow: isOpen
-          ? "0 4px 20px rgba(59,130,246,0.25)"
-          : "0 1px 4px rgba(0,0,0,0.45)",
+          ? "0 4px 20px rgba(22,62,110,0.20)"
+          : "0 1px 4px rgba(15,39,71,0.10)",
         transition: "box-shadow 0.25s ease",
         scrollMarginTop: "20px",
       }}
@@ -89,7 +89,7 @@ function FAQCard({ faq, index, isOpen, onToggle }) {
               height: "44px",
               borderRadius: "10px",
               background:
-                "linear-gradient(135deg, rgba(59,130,246,0.18) 0%, rgba(168,85,247,0.18) 100%)",
+                "linear-gradient(135deg, rgba(22,62,110,0.15) 0%, rgba(63,110,156,0.15) 100%)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -105,7 +105,7 @@ function FAQCard({ faq, index, isOpen, onToggle }) {
               flex: 1,
               fontSize: "clamp(14px, 3.5vw, 16px)",
               fontWeight: 700,
-              color: "#ffffff",
+              color: "#1F2937",
               lineHeight: 1.4,
             }}
           >
@@ -122,7 +122,7 @@ function FAQCard({ faq, index, isOpen, onToggle }) {
               flexShrink: 0,
               transition: "transform 0.25s ease",
               transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
-              color: "rgba(255,255,255,0.4)",
+              color: "#6B7280",
             }}
           >
             <path
@@ -147,7 +147,7 @@ function FAQCard({ faq, index, isOpen, onToggle }) {
         <div
           style={{
             padding: "0 24px 24px 24px",
-            borderTop: "1px solid rgba(255,255,255,0.1)",
+            borderTop: "1px solid #D9DEE5",
             paddingTop: "18px",
           }}
         >
@@ -155,7 +155,7 @@ function FAQCard({ faq, index, isOpen, onToggle }) {
             style={{
               margin: faq.highlight ? "0 0 14px" : "0",
               fontSize: "clamp(13.5px, 3vw, 15px)",
-              color: "rgba(255,255,255,0.7)",
+              color: "#6B7280",
               lineHeight: 1.8,
             }}
           >
@@ -165,12 +165,12 @@ function FAQCard({ faq, index, isOpen, onToggle }) {
           {faq.highlight && (
             <div
               style={{
-                background: "rgba(59,130,246,0.12)",
-                borderLeft: "3px solid #3b82f6",
+                background: "rgba(22,62,110,0.10)",
+                borderLeft: "3px solid #163E6E",
                 borderRadius: "6px",
                 padding: "12px 16px",
                 fontSize: "clamp(12.5px, 2.8vw, 13.5px)",
-                color: "rgba(255,255,255,0.85)",
+                color: "#1F2937",
                 lineHeight: 1.65,
               }}
             >
@@ -218,22 +218,22 @@ export default function FAQPage() {
         }
         @media (min-width: 640px) { .cta-card { padding: 44px 32px; } }
 
-        a:focus-visible { outline: 2px solid #3b82f6; outline-offset: 3px; border-radius: 4px; }
-        button:focus-visible { outline: 2px solid #3b82f6; outline-offset: 3px; border-radius: 10px; }
+        a:focus-visible { outline: 2px solid #163E6E; outline-offset: 3px; border-radius: 4px; }
+        button:focus-visible { outline: 2px solid #163E6E; outline-offset: 3px; border-radius: 10px; }
 
         @media (prefers-reduced-motion: reduce) {
           * { transition: none !important; }
         }
       `}} />
 
-      <div style={{ background: "#0d0f16", minHeight: "100vh" }}>
+      <div style={{ background: "#F7F8FA", minHeight: "100vh" }}>
 
         {/* ════ HERO — matches Privacy Policy exactly ════ */}
         <div
           className="faq-hero"
           style={{
             background:
-              "linear-gradient(135deg, #1e2a6e 0%, #2d3a8c 55%, #1a237e 100%)",
+              "linear-gradient(135deg, #0F2747 0%, #163E6E 55%, #0F2747 100%)",
             position: "relative",
             overflow: "hidden",
           }}
@@ -312,13 +312,13 @@ export default function FAQPage() {
           {/* ── "On this page" nav card ── */}
           <div
             style={{
-              background: "rgba(255,255,255,0.06)",
+              background: "#FFFFFF",
               backdropFilter: "blur(20px)",
-              border: "1px solid rgba(255,255,255,0.1)",
+              border: "1px solid #D9DEE5",
               borderRadius: "14px",
               padding: "22px 24px",
               marginBottom: "24px",
-              boxShadow: "0 1px 4px rgba(0,0,0,0.45)",
+              boxShadow: "0 1px 4px rgba(15,39,71,0.08)",
             }}
           >
             <p
@@ -327,7 +327,7 @@ export default function FAQPage() {
                 fontWeight: 700,
                 letterSpacing: "0.1em",
                 textTransform: "uppercase",
-                color: "rgba(255,255,255,0.4)",
+                color: "#6B7280",
                 marginBottom: "14px",
               }}
             >
@@ -347,7 +347,7 @@ export default function FAQPage() {
                   }}
                   style={{
                     fontSize: "clamp(12px, 3vw, 13px)",
-                    color: "#3b82f6",
+                    color: "#163E6E",
                     textDecoration: "none",
                     display: "flex",
                     alignItems: "flex-start",
@@ -357,7 +357,7 @@ export default function FAQPage() {
                 >
                   <span
                     style={{
-                      color: "rgba(255,255,255,0.4)",
+                      color: "#6B7280",
                       fontSize: "11px",
                       marginTop: "2px",
                       flexShrink: 0,
@@ -387,7 +387,7 @@ export default function FAQPage() {
             className="cta-card"
             style={{
               background:
-                "linear-gradient(135deg, #1e2a6e 0%, #2d3a8c 100%)",
+                "linear-gradient(135deg, #0F2747 0%, #163E6E 100%)",
               marginTop: "10px",
             }}
           >
@@ -417,7 +417,7 @@ export default function FAQPage() {
               style={{
                 display: "inline-block",
                 background: "#ffffff",
-                color: "#1e2a6e",
+                color: "#0F2747",
                 fontWeight: 700,
                 fontSize: "clamp(13px, 3vw, 14.5px)",
                 padding: "12px 30px",

@@ -93,19 +93,19 @@ const tools = [
 
 export default function ToolsPage() {
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-graphite to-obsidian">
-      <div className="liquid-blob left-1/4 top-[-15%] h-96 w-96 bg-electric/10" />
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-brand-silver to-brand-bg">
+      <div className="liquid-blob left-1/4 top-[-15%] h-96 w-96 bg-brand-blue/10" />
 
       {/* Hero */}
-      <div className="relative bg-gradient-to-r from-obsidian via-midnight to-obsidian text-white">
+      <div className="relative bg-gradient-to-r from-brand-navy via-brand-blue to-brand-navy text-white">
         <div className="container-page py-10">
           <nav className="mb-4 flex items-center gap-1 text-sm text-white/50">
-            <Link href="/" className="hover:text-electric-light">Home</Link>
+            <Link href="/" className="hover:text-brand-steel">Home</Link>
             <ChevronRight size={14} />
             <span className="text-white">Tools</span>
           </nav>
 
-          <div className="flex items-center gap-2 text-electric-light">
+          <div className="flex items-center gap-2 text-brand-steel">
             <Wrench size={18} />
             <span className="text-xs font-semibold uppercase tracking-wider">Tool Guide</span>
           </div>
@@ -125,13 +125,13 @@ export default function ToolsPage() {
           {tools.map(({ name, Icon, summary }) => (
             <div
               key={name}
-              className="rounded-xl glass-card p-6 transition-all hover:brightness-110"
+              className="rounded-xl glass-brand-card p-6 transition-all hover:brightness-110"
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-electric/10 text-electric-light">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-blue/10 text-brand-blue">
                 <Icon size={24} />
               </div>
-              <h3 className="mt-4 font-bold text-white">{name}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-white/60">
+              <h3 className="mt-4 font-bold text-brand-text">{name}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-brand-muted">
                 {summary}
               </p>
             </div>
@@ -139,7 +139,7 @@ export default function ToolsPage() {
         </div>
 
         {/* CTA to shop tools */}
-        <div className="mt-12 rounded-2xl bg-gradient-to-r from-obsidian via-midnight to-obsidian p-8 text-center text-white sm:p-10">
+        <div className="mt-12 rounded-2xl bg-gradient-to-r from-brand-navy via-brand-blue to-brand-navy p-8 text-center text-white sm:p-10">
           <h2 className="text-xl font-bold sm:text-2xl">
             Ready to build your toolkit?
           </h2>
@@ -148,7 +148,7 @@ export default function ToolsPage() {
           </p>
           <Link
             href="/products"
-            className="mt-5 inline-block rounded-lg bg-gradient-to-r from-electric to-liquid px-6 py-3 text-sm font-semibold text-white shadow-glow-electric hover:brightness-110 transition-all"
+            className="mt-5 inline-block rounded-lg bg-gradient-to-r from-brand-blue to-brand-navy px-6 py-3 text-sm font-semibold text-white shadow-brand-glow hover:brightness-110 transition-all"
           >
             Shop Tools &amp; Components
           </Link>

@@ -3,7 +3,7 @@ export const metadata = { title: "CSR — hardvanta" };
 const s = {
   /* ── Hero ── */
   hero: {
-    background: "linear-gradient(135deg, #05060a 0%, #0a1128 55%, #05060a 100%)",
+    background: "linear-gradient(135deg, #0F2747 0%, #163E6E 55%, #0F2747 100%)",
     position: "relative",
     overflow: "hidden",
     padding: "3.5rem 1.5rem 3rem",
@@ -52,17 +52,17 @@ const s = {
 
   /* ── Page body ── */
   page: {
-    background: "#0d0f16",
+    background: "#F7F8FA",
     padding: "2.5rem 1.5rem 4rem",
     minHeight: "60vh",
   },
 
   /* ── TOC card ── */
   toc: {
-    background: "rgba(255,255,255,0.06)",
-    border: "1px solid rgba(255,255,255,0.1)",
+    background: "#FFFFFF",
+    border: "1px solid #D9DEE5",
     backdropFilter: "blur(20px)",
-    boxShadow: "0 4px 24px rgba(0,0,0,0.45)",
+    boxShadow: "0 4px 24px rgba(15,39,71,0.08)",
     borderRadius: "14px",
     padding: "1.5rem 1.75rem",
     marginBottom: "1.75rem",
@@ -74,7 +74,7 @@ const s = {
     fontSize: "0.7rem",
     fontWeight: 700,
     letterSpacing: "0.1em",
-    color: "rgba(255,255,255,0.4)",
+    color: "#6B7280",
     margin: "0 0 1rem",
   },
   tocList: {
@@ -94,23 +94,23 @@ const s = {
     width: "6px",
     height: "6px",
     borderRadius: "50%",
-    background: "#3b82f6",
+    background: "#163E6E",
     flexShrink: 0,
     display: "inline-block",
   },
   tocLink: {
     fontSize: "0.88rem",
-    color: "#3b82f6",
+    color: "#163E6E",
     textDecoration: "none",
     fontWeight: 500,
   },
 
   /* ── Section cards ── */
   section: {
-    background: "rgba(255,255,255,0.06)",
-    border: "1px solid rgba(255,255,255,0.1)",
+    background: "#FFFFFF",
+    border: "1px solid #D9DEE5",
     backdropFilter: "blur(20px)",
-    boxShadow: "0 4px 24px rgba(0,0,0,0.45)",
+    boxShadow: "0 4px 24px rgba(15,39,71,0.08)",
     borderRadius: "14px",
     padding: "2rem 2rem 1.75rem",
     marginBottom: "1.5rem",
@@ -122,20 +122,20 @@ const s = {
     fontSize: "0.7rem",
     fontWeight: 700,
     letterSpacing: "0.1em",
-    color: "rgba(255,255,255,0.4)",
+    color: "#6B7280",
     margin: "0 0 0.6rem",
   },
   sectionHeading: {
     fontSize: "clamp(1.25rem, 3vw, 1.55rem)",
     fontWeight: 800,
-    color: "#ffffff",
+    color: "#1F2937",
     margin: "0 0 1rem",
     letterSpacing: "-0.01em",
     lineHeight: 1.2,
   },
   sectionBody: {
     fontSize: "0.96rem",
-    color: "rgba(255,255,255,0.7)",
+    color: "#6B7280",
     lineHeight: 1.72,
     margin: "0 0 1.1rem",
   },
@@ -151,7 +151,7 @@ const s = {
   },
   listItem: {
     fontSize: "0.93rem",
-    color: "rgba(255,255,255,0.7)",
+    color: "#6B7280",
     lineHeight: 1.6,
     paddingLeft: "1.4rem",
     position: "relative",
@@ -163,12 +163,12 @@ const s = {
     width: "6px",
     height: "6px",
     borderRadius: "50%",
-    background: "#3b82f6",
+    background: "#163E6E",
   },
 
   /* ── Inline link ── */
   inlineLink: {
-    color: "#3b82f6",
+    color: "#163E6E",
     fontWeight: 600,
     textDecoration: "underline",
     textUnderlineOffset: "2px",
@@ -176,8 +176,8 @@ const s = {
 
   /* ── Callout ── */
   callout: {
-    background: "rgba(59,130,246,0.1)",
-    borderLeft: "4px solid #3b82f6",
+    background: "rgba(22,62,110,0.08)",
+    borderLeft: "4px solid #163E6E",
     borderRadius: "0 10px 10px 0",
     padding: "1rem 1.25rem",
     marginTop: "0.5rem",
@@ -185,7 +185,7 @@ const s = {
   calloutText: {
     margin: 0,
     fontSize: "0.97rem",
-    color: "rgba(255,255,255,0.85)",
+    color: "#1F2937",
     lineHeight: 1.55,
   },
 };

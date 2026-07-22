@@ -34,25 +34,25 @@ export default function BlogNewsletterForm() {
 
   return (
     <div>
-      <form onSubmit={handleSubmit} className="mt-3 flex items-center overflow-hidden rounded-lg glass-card">
+      <form onSubmit={handleSubmit} className="mt-3 flex items-center overflow-hidden rounded-lg glass-brand-card">
         <input
           type="email"
           value={email}
           onChange={(e) => { setEmail(e.target.value); setStatus("idle"); }}
           placeholder="Email address"
           aria-label="Email address"
-          className="w-full bg-transparent px-3 py-2 text-sm text-white outline-none placeholder:text-white/30"
+          className="w-full bg-transparent px-3 py-2 text-sm text-brand-text outline-none placeholder:text-brand-muted"
         />
         <button
           type="submit"
           disabled={status === "loading" || !email.trim()}
-          className="flex items-center gap-1.5 bg-gradient-to-r from-electric to-liquid px-3 py-2 text-xs font-semibold text-white hover:brightness-110 transition-all disabled:opacity-50 disabled:hover:brightness-100"
+          className="flex items-center gap-1.5 bg-gradient-to-r from-brand-blue to-brand-navy px-3 py-2 text-xs font-semibold text-white hover:brightness-110 transition-all disabled:opacity-50 disabled:hover:brightness-100"
         >
           {status === "success" ? <Check size={14} /> : <Mail size={14} />}
           {status === "loading" ? "Subscribing…" : status === "success" ? "Subscribed!" : "Subscribe"}
         </button>
       </form>
-      {status === "error" && <p className="mt-1.5 text-xs text-red-400">{error}</p>}
+      {status === "error" && <p className="mt-1.5 text-xs text-red-600">{error}</p>}
     </div>
   );
 }

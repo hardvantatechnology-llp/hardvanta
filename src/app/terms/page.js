@@ -91,14 +91,14 @@ export default function TermsPage() {
       <style dangerouslySetInnerHTML={{ __html: `
         .tos-root {
           font-family: system-ui, -apple-system, sans-serif;
-          color: rgba(255,255,255,0.7);
-          background: #0d0f16;
+          color: #6B7280;
+          background: #F7F8FA;
           -webkit-font-smoothing: antialiased;
         }
 
         /* ── Hero header ── */
         .tos-hero {
-          background: linear-gradient(135deg, #0F1B2D 0%, #1a3254 60%, #0F1B2D 100%);
+          background: linear-gradient(135deg, #0F2747 0%, #163E6E 60%, #0F2747 100%);
           padding: 64px 24px 56px;
           position: relative;
           overflow: hidden;
@@ -109,7 +109,7 @@ export default function TermsPage() {
           top: -80px; right: -80px;
           width: 340px; height: 340px;
           border-radius: 50%;
-          background: radial-gradient(circle, rgba(0,87,255,0.18) 0%, transparent 70%);
+          background: radial-gradient(circle, rgba(63,110,156,0.18) 0%, transparent 70%);
           pointer-events: none;
         }
         .tos-hero::after {
@@ -118,7 +118,7 @@ export default function TermsPage() {
           bottom: -60px; left: 10%;
           width: 220px; height: 220px;
           border-radius: 50%;
-          background: radial-gradient(circle, rgba(0,87,255,0.10) 0%, transparent 70%);
+          background: radial-gradient(circle, rgba(63,110,156,0.10) 0%, transparent 70%);
           pointer-events: none;
         }
         .tos-hero-inner {
@@ -148,9 +148,9 @@ export default function TermsPage() {
           display: inline-flex;
           align-items: center;
           gap: 6px;
-          background: rgba(0,87,255,0.18);
-          border: 1px solid rgba(0,87,255,0.35);
-          color: #6da8ff;
+          background: rgba(63,110,156,0.22);
+          border: 1px solid rgba(63,110,156,0.4);
+          color: #9FC1E0;
           font-size: 11px;
           font-weight: 600;
           letter-spacing: 0.08em;
@@ -162,7 +162,7 @@ export default function TermsPage() {
         .tos-tag-dot {
           width: 6px; height: 6px;
           border-radius: 50%;
-          background: #3b82f6;
+          background: #9FC1E0;
         }
 
         .tos-hero h1 {
@@ -174,7 +174,7 @@ export default function TermsPage() {
           margin-bottom: 20px;
         }
         .tos-hero h1 span {
-          color: #4d9eff;
+          color: #9FC1E0;
         }
         .tos-hero-intro {
           font-size: clamp(15px, 2vw, 17px);
@@ -224,9 +224,9 @@ export default function TermsPage() {
           font-weight: 700;
           letter-spacing: 0.1em;
           text-transform: uppercase;
-          color: rgba(255,255,255,0.4);
+          color: #6B7280;
           padding: 0 0 14px;
-          border-bottom: 1px solid rgba(255,255,255,0.1);
+          border-bottom: 1px solid #D9DEE5;
           margin-bottom: 14px;
         }
         .tos-toc ul { list-style: none; }
@@ -235,7 +235,7 @@ export default function TermsPage() {
           display: block;
           font-size: 13px;
           font-weight: 450;
-          color: rgba(255,255,255,0.4);
+          color: #6B7280;
           text-decoration: none;
           padding: 6px 10px;
           border-radius: 6px;
@@ -244,15 +244,15 @@ export default function TermsPage() {
           line-height: 1.4;
         }
         .toc-link:hover {
-          color: #ffffff;
-          background: rgba(255,255,255,0.06);
-          border-left-color: rgba(255,255,255,0.15);
+          color: #1F2937;
+          background: #F7F8FA;
+          border-left-color: #D9DEE5;
         }
         .toc-link--active {
-          color: #3b82f6;
+          color: #163E6E;
           font-weight: 600;
-          background: rgba(59,130,246,0.12);
-          border-left-color: #3b82f6;
+          background: rgba(22,62,110,0.10);
+          border-left-color: #163E6E;
         }
 
         /* ── Main content ── */
@@ -263,14 +263,14 @@ export default function TermsPage() {
 
         .tos-section {
           padding: 40px 0;
-          border-bottom: 1px solid rgba(255,255,255,0.1);
+          border-bottom: 1px solid #D9DEE5;
         }
         .tos-section:last-child { border-bottom: none; }
 
         .tos-section-heading {
           font-size: 20px;
           font-weight: 700;
-          color: #ffffff;
+          color: #1F2937;
           letter-spacing: -0.015em;
           margin-bottom: 18px;
           display: flex;
@@ -283,26 +283,26 @@ export default function TermsPage() {
           width: 3px;
           height: 20px;
           border-radius: 2px;
-          background: #3b82f6;
+          background: #163E6E;
           flex-shrink: 0;
         }
 
         .tos-section-body p {
           font-size: 15px;
           line-height: 1.75;
-          color: rgba(255,255,255,0.7);
+          color: #6B7280;
           margin-bottom: 14px;
         }
         .tos-section-body p:last-child { margin-bottom: 0; }
 
         .tos-section-body a {
-          color: #3b82f6;
+          color: #163E6E;
           text-decoration: none;
           font-weight: 500;
-          border-bottom: 1px solid rgba(59,130,246,0.3);
+          border-bottom: 1px solid rgba(22,62,110,0.3);
           transition: border-color 0.15s;
         }
-        .tos-section-body a:hover { border-bottom-color: #3b82f6; }
+        .tos-section-body a:hover { border-bottom-color: #163E6E; }
 
         .tos-section-body ul {
           margin: 12px 0 14px 0;
@@ -315,18 +315,18 @@ export default function TermsPage() {
         .tos-section-body ul li {
           font-size: 15px;
           line-height: 1.65;
-          color: rgba(255,255,255,0.7);
+          color: #6B7280;
           padding: 10px 16px 10px 44px;
-          background: rgba(255,255,255,0.04);
+          background: #F7F8FA;
           border-radius: 8px;
-          border: 1px solid rgba(255,255,255,0.1);
+          border: 1px solid #D9DEE5;
           position: relative;
         }
         .tos-section-body ul li::before {
           content: '→';
           position: absolute;
           left: 16px;
-          color: #3b82f6;
+          color: #163E6E;
           font-weight: 700;
           font-size: 13px;
           top: 50%;
@@ -334,14 +334,14 @@ export default function TermsPage() {
         }
 
         .tos-contact-box {
-          background: linear-gradient(135deg, rgba(59,130,246,0.12) 0%, rgba(168,85,247,0.08) 100%);
+          background: linear-gradient(135deg, rgba(22,62,110,0.08) 0%, rgba(63,110,156,0.08) 100%);
           backdrop-filter: blur(20px);
-          border: 1px solid rgba(255,255,255,0.1);
+          border: 1px solid #D9DEE5;
           border-radius: 12px;
           padding: 24px 28px;
           margin-top: 16px;
         }
-        .tos-contact-box strong { color: #ffffff; display: block; margin-bottom: 4px; font-size: 15px; }
+        .tos-contact-box strong { color: #1F2937; display: block; margin-bottom: 4px; font-size: 15px; }
         .tos-contact-box p { margin-bottom: 4px !important; }
 
         /* ── Mobile TOC toggle ── */
@@ -350,13 +350,13 @@ export default function TermsPage() {
           width: 100%;
           align-items: center;
           justify-content: space-between;
-          background: rgba(255,255,255,0.06);
-          border: 1px solid rgba(255,255,255,0.1);
+          background: #FFFFFF;
+          border: 1px solid #D9DEE5;
           border-radius: 10px;
           padding: 14px 18px;
           font-size: 14px;
           font-weight: 600;
-          color: #ffffff;
+          color: #1F2937;
           cursor: pointer;
           margin: 24px 0 0;
         }
@@ -364,8 +364,8 @@ export default function TermsPage() {
         .tos-mobile-toc-toggle.open svg { transform: rotate(180deg); }
         .tos-mobile-toc-panel {
           display: none;
-          background: rgba(255,255,255,0.06);
-          border: 1px solid rgba(255,255,255,0.1);
+          background: #FFFFFF;
+          border: 1px solid #D9DEE5;
           border-top: none;
           border-radius: 0 0 10px 10px;
           padding: 12px 8px 16px;
@@ -912,7 +912,7 @@ export default function TermsPage() {
                     support@hardvanta.com
                   </a>
                 </p>
-                <p style={{ marginTop: "10px", fontSize: "13px", color: "rgba(255,255,255,0.4)" }}>
+                <p style={{ marginTop: "10px", fontSize: "13px", color: "#6B7280" }}>
                   Effective date: June 2026
                 </p>
               </div>
