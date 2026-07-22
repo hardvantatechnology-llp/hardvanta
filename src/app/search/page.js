@@ -63,19 +63,19 @@ export default async function SearchPage({ searchParams }) {
   const products = sortProducts(raw, sort);
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-graphite to-obsidian">
+    <main className="min-h-screen bg-gradient-to-b from-brand-bg to-brand-silver">
 
       {/* ── Header bar ── */}
-      <div className="sticky top-0 z-10 border-b border-white/10 bg-obsidian/80 backdrop-blur-xl">
+      <div className="sticky top-0 z-10 border-b border-brand-border bg-white/80 backdrop-blur-xl">
         <div className="container-page flex flex-wrap items-center justify-between gap-3 py-3">
           {query ? (
-            <p className="text-sm text-white/70">
-              <span className="font-bold text-white">{products.length}</span>
-              <span className="text-white/40"> results for </span>
-              <span className="font-semibold text-electric-light">&quot;{query}&quot;</span>
+            <p className="text-sm text-brand-muted">
+              <span className="font-bold text-brand-text">{products.length}</span>
+              <span className="text-brand-muted"> results for </span>
+              <span className="font-semibold text-brand-blue">&quot;{query}&quot;</span>
             </p>
           ) : (
-            <p className="text-sm text-white/40">Enter a search term above</p>
+            <p className="text-sm text-brand-muted">Enter a search term above</p>
           )}
 
           <div className="flex items-center gap-3">
@@ -84,7 +84,7 @@ export default async function SearchPage({ searchParams }) {
             )}
             <Link
               href="/products"
-              className="text-xs font-medium text-electric-light underline-offset-2 hover:underline"
+              className="text-xs font-medium text-brand-blue underline-offset-2 hover:underline"
             >
               Browse all products →
             </Link>
@@ -114,8 +114,8 @@ export default async function SearchPage({ searchParams }) {
                 <Link
                   key={s}
                   href={`/search?q=${encodeURIComponent(s)}`}
-                  className="glass rounded-full px-3 py-1.5 text-xs
-                             font-medium text-white/70 hover:text-white hover:shadow-glow-electric transition-all"
+                  className="glass-brand rounded-full px-3 py-1.5 text-xs
+                             font-medium text-brand-muted hover:text-brand-text hover:shadow-brand-glow transition-all"
                 >
                   {s}
                 </Link>
@@ -141,11 +141,11 @@ export default async function SearchPage({ searchParams }) {
 function EmptyState({ title, body, children }) {
   return (
     <div className="mx-auto flex max-w-md flex-col items-center py-20 text-center">
-      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-electric/20 to-liquid/20 shadow-glow-electric">
-        <Search size={28} className="text-electric-light" />
+      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-brand-blue/20 to-brand-navy/20 shadow-brand-glow">
+        <Search size={28} className="text-brand-blue" />
       </div>
-      <h2 className="mb-2 text-lg font-bold text-white">{title}</h2>
-      <p className="text-sm text-white/50">{body}</p>
+      <h2 className="mb-2 text-lg font-bold text-brand-text">{title}</h2>
+      <p className="text-sm text-brand-muted">{body}</p>
       {children}
     </div>
   );

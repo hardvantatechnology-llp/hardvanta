@@ -42,13 +42,13 @@ export default function EWastePage() {
   return (
     <div style={{
       fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-      background: "#0d0f16",
+      background: "#F7F8FA",
       minHeight: "100vh",
     }}>
 
       {/* ── Hero ── */}
       <div style={{
-        background: "linear-gradient(160deg, #05060a 0%, #0a1128 55%, #05060a 100%)",
+        background: "linear-gradient(160deg, #0F2747 0%, #163E6E 55%, #0F2747 100%)",
         padding: "56px 48px 52px",
         position: "relative",
         overflow: "hidden",
@@ -58,7 +58,7 @@ export default function EWastePage() {
           position: "absolute",
           inset: 0,
           background:
-            "radial-gradient(circle at 80% 30%, rgba(99,130,255,0.18) 0%, transparent 55%), radial-gradient(circle at 15% 75%, rgba(30,58,138,0.30) 0%, transparent 50%)",
+            "radial-gradient(circle at 80% 30%, rgba(63,110,156,0.18) 0%, transparent 55%), radial-gradient(circle at 15% 75%, rgba(15,39,71,0.30) 0%, transparent 50%)",
           pointerEvents: "none",
         }} />
         <div style={{ position: "relative", zIndex: 1, maxWidth: 680 }}>
@@ -98,10 +98,10 @@ export default function EWastePage() {
 
         {/* ── TOC ── */}
         <div style={{
-          background: "rgba(255,255,255,0.06)",
-          border: "1px solid rgba(255,255,255,0.1)",
+          background: "#FFFFFF",
+          border: "1px solid #D9DEE5",
           backdropFilter: "blur(20px)",
-          boxShadow: "0 4px 24px rgba(0,0,0,0.45)",
+          boxShadow: "0 4px 24px rgba(15,39,71,0.08)",
           borderRadius: 12,
           padding: "24px 28px",
         }}>
@@ -110,7 +110,7 @@ export default function EWastePage() {
             fontWeight: 700,
             letterSpacing: "0.12em",
             textTransform: "uppercase",
-            color: "rgba(255,255,255,0.4)",
+            color: "#6B7280",
             marginBottom: 16,
           }}>
             On this page
@@ -126,11 +126,11 @@ export default function EWastePage() {
                 alignItems: "center",
                 gap: 6,
                 fontSize: 13.5,
-                color: "#3b82f6",
+                color: "#163E6E",
                 textDecoration: "none",
                 fontWeight: 500,
               }}>
-                <span style={{ fontSize: 7, color: "#93c5fd" }}>◆</span>
+                <span style={{ fontSize: 7, color: "#3F6E9C" }}>◆</span>
                 {s.label}
               </a>
             ))}
@@ -162,13 +162,13 @@ export default function EWastePage() {
                       display: "flex",
                       alignItems: "center",
                       gap: 9,
-                      background: "rgba(255,255,255,0.04)",
-                      border: "1px solid rgba(255,255,255,0.08)",
+                      background: "#F7F8FA",
+                      border: "1px solid #D9DEE5",
                       borderRadius: 8,
                       padding: "10px 14px",
                       fontSize: 13,
                       fontWeight: 600,
-                      color: "#ffffff",
+                      color: "#1F2937",
                       lineHeight: 1.4,
                     }}>
                       <span style={{ fontSize: 16, flexShrink: 0 }}>{icon}</span>
@@ -192,12 +192,12 @@ export default function EWastePage() {
                 </p>
                 <ul style={{ listStyle: "none", margin: "14px 0 0", padding: 0, display: "flex", flexDirection: "column", gap: 10 }}>
                   {whyPoints.map((pt) => (
-                    <li key={pt} style={{ display: "flex", alignItems: "flex-start", gap: 10, fontSize: 14.5, color: "rgba(255,255,255,0.7)", lineHeight: 1.65 }}>
+                    <li key={pt} style={{ display: "flex", alignItems: "flex-start", gap: 10, fontSize: 14.5, color: "#6B7280", lineHeight: 1.65 }}>
                       <span style={{
                         fontSize: 12,
                         fontWeight: 800,
-                        color: "#3b82f6",
-                        background: "rgba(59,130,246,0.15)",
+                        color: "#163E6E",
+                        background: "rgba(22,62,110,0.12)",
                         borderRadius: "50%",
                         width: 22,
                         height: 22,
@@ -235,14 +235,14 @@ export default function EWastePage() {
                           top: 38,
                           bottom: 0,
                           width: 2,
-                          background: "rgba(255,255,255,0.15)",
+                          background: "#D9DEE5",
                         }} />
                       )}
                       <div style={{
                         width: 36,
                         height: 36,
                         borderRadius: "50%",
-                        background: "#3b82f6",
+                        background: "#163E6E",
                         color: "#fff",
                         fontSize: 13,
                         fontWeight: 800,
@@ -255,7 +255,7 @@ export default function EWastePage() {
                       }}>
                         {num}
                       </div>
-                      <div style={{ fontSize: 14.5, color: "rgba(255,255,255,0.7)", lineHeight: 1.7, padding: "6px 0 24px" }}>
+                      <div style={{ fontSize: 14.5, color: "#6B7280", lineHeight: 1.7, padding: "6px 0 24px" }}>
                         {text}
                       </div>
                     </div>
@@ -277,16 +277,16 @@ export default function EWastePage() {
                   directly contribute to resource conservation and a greener future.
                 </p>
                 <div style={{
-                  background: "rgba(59,130,246,0.1)",
-                  borderLeft: "4px solid #3b82f6",
+                  background: "rgba(22,62,110,0.08)",
+                  borderLeft: "4px solid #163E6E",
                   borderRadius: "0 8px 8px 0",
                   padding: "16px 20px",
                   marginTop: 16,
                   fontSize: 14,
-                  color: "rgba(255,255,255,0.85)",
+                  color: "#1F2937",
                   lineHeight: 1.7,
                 }}>
-                  <strong style={{ fontWeight: 700, color: "#ffffff" }}>
+                  <strong style={{ fontWeight: 700, color: "#1F2937" }}>
                     Together, let&apos;s reduce electronic waste.
                   </strong>{" "}
                   Every device responsibly recycled through our programme helps
@@ -298,10 +298,10 @@ export default function EWastePage() {
           },
         ].map(({ id, section, heading, content }) => (
           <div key={id} id={id} style={{
-            background: "rgba(255,255,255,0.06)",
-            border: "1px solid rgba(255,255,255,0.1)",
+            background: "#FFFFFF",
+            border: "1px solid #D9DEE5",
             backdropFilter: "blur(20px)",
-            boxShadow: "0 4px 24px rgba(0,0,0,0.45)",
+            boxShadow: "0 4px 24px rgba(15,39,71,0.08)",
             borderRadius: 12,
             padding: "32px 36px",
           }}>
@@ -311,19 +311,19 @@ export default function EWastePage() {
               fontWeight: 700,
               letterSpacing: "0.13em",
               textTransform: "uppercase",
-              color: "rgba(255,255,255,0.4)",
+              color: "#6B7280",
               marginBottom: 10,
               display: "flex",
               alignItems: "center",
               gap: 10,
             }}>
               {section}
-              <span style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.1)", display: "block" }} />
+              <span style={{ flex: 1, height: 1, background: "#D9DEE5", display: "block" }} />
             </div>
             <h2 style={{
               fontSize: 20,
               fontWeight: 800,
-              color: "#ffffff",
+              color: "#1F2937",
               margin: "0 0 16px",
               letterSpacing: "-0.01em",
             }}>
@@ -340,7 +340,7 @@ export default function EWastePage() {
 
 const pStyle = {
   fontSize: 14.5,
-  color: "rgba(255,255,255,0.7)",
+  color: "#6B7280",
   lineHeight: 1.78,
   margin: "0 0 12px",
 };

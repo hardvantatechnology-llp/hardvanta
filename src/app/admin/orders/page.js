@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { formatPrice } from "@/utils/formatPrice";
 import OrderStatusSelect from "@/components/admin/OrderStatusSelect";
+import AdminCancelOrderButton from "@/components/admin/AdminCancelOrderButton";
 import Pagination, { parsePage } from "@/components/admin/Pagination";
 import AdminSearchInput from "@/components/admin/AdminSearchInput";
 import { PackageSearch } from "lucide-react";
@@ -120,6 +121,7 @@ export default async function AdminOrdersPage({ searchParams }) {
                     );
                   })()}
                   <OrderStatusSelect id={o.id} status={o.status} />
+                  <AdminCancelOrderButton id={o.id} status={o.status} />
                 </div>
               </div>
 

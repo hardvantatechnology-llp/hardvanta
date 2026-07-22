@@ -51,7 +51,9 @@ export async function PATCH(request, { params }) {
       return NextResponse.json({ order: existing });
     }
 
-    if (!ALLOWED_TRANSITIONS[existing.status]?.includes(status)) {
+    // Admins can force-cancel from any status (not just the customer-facing
+    // CANCELLABLE_STATUSES), so CANCELLED skips the normal transition map.
+    if (status !== "CANCELLED" && !ALLOWED_TRANSITIONS[existing.status]?.includes(status)) {
       return NextResponse.json(
         { error: `Cannot change order from ${existing.status} to ${status}.` },
         { status: 400 }
@@ -61,7 +63,7 @@ export async function PATCH(request, { params }) {
     // Cancelling through the admin route must restore stock (and refund online
     // payments) exactly like the customer-facing cancel endpoint does.
     if (status === "CANCELLED") {
-      const result = await cancelOrder(existing).catch((err) => {
+      const result = await cancelOrder(existing, { force: true }).catch((err) => {
         console.error("[orders/[id] PATCH] cancel failed:", err?.message || err);
         return { ok: false, reason: "error" };
       });

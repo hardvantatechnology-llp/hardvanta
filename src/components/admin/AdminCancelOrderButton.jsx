@@ -6,26 +6,32 @@ import { XCircle } from "lucide-react";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 import { useToast } from "@/components/ui/Toast";
 
-export default function CancelOrderButton({ orderId }) {
+export default function AdminCancelOrderButton({ id, status }) {
   const router = useRouter();
   const toast = useToast();
+  const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError] = useState("");
 
-  async function handleCancel() {
+  if (status === "CANCELLED") return null;
+
+  async function handleConfirm() {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch(`/api/orders/${orderId}/cancel`, { method: "POST" });
+      const res = await fetch(`/api/orders/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "CANCELLED" }),
+      });
       if (res.ok) {
-        toast.success("Order cancelled successfully.");
-        router.push(`/orders/${orderId}?cancelled=1`);
+        setOpen(false);
+        toast.success("Order cancelled.");
         router.refresh();
         return;
       }
       const data = await res.json().catch(() => ({}));
-      const message = data.error || "Could not cancel order. Call support: +91 91705 46395.";
+      const message = data.error || "Could not cancel order.";
       setError(message);
       toast.error(message);
     } catch {
@@ -38,19 +44,22 @@ export default function CancelOrderButton({ orderId }) {
 
   return (
     <>
-      <button onClick={() => setShowConfirm(true)}
-        className="flex items-center gap-2 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-500/20 transition-colors">
-        <XCircle size={15} /> Cancel Order
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="flex items-center gap-1.5 rounded-lg glass-card px-3 py-1.5 text-xs font-semibold text-red-400 hover:bg-red-500/10 transition-colors"
+      >
+        <XCircle size={14} /> Cancel Order
       </button>
 
       <ConfirmModal
-        open={showConfirm}
-        onClose={() => { setShowConfirm(false); setError(""); }}
-        onConfirm={handleCancel}
+        open={open}
+        onClose={() => { setOpen(false); setError(""); }}
+        onConfirm={handleConfirm}
         loading={loading}
         error={error}
         title="Cancel this order?"
-        description="This can't be undone. Your stock reservation will be released."
+        description="This can't be undone. Stock will be restored and any online payment refunded."
         confirmLabel="Yes, Cancel Order"
         cancelLabel="Keep Order"
       />

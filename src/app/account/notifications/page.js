@@ -23,58 +23,58 @@ export default async function NotificationsPage() {
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-graphite to-obsidian">
-      <div className="liquid-blob left-1/4 top-[-20%] h-96 w-96 bg-liquid/10" />
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-brand-silver to-brand-bg">
+      <div className="liquid-blob left-1/4 top-[-20%] h-96 w-96 bg-brand-steel/10" />
 
       {/* Header */}
-      <div className="relative border-b border-white/10">
+      <div className="relative border-b border-brand-border">
         <div className="container-page py-6">
           <div className="flex items-center gap-3">
-            <Link href="/account" className="text-white/50 hover:text-electric-light text-sm">
+            <Link href="/account" className="text-brand-muted hover:text-brand-blue text-sm">
               ← My Account
             </Link>
           </div>
           <div className="mt-2 flex items-center gap-3">
-            <h1 className="text-2xl font-bold text-white">Notifications</h1>
+            <h1 className="text-2xl font-bold text-brand-text">Notifications</h1>
             {unreadCount > 0 && (
-              <span className="rounded-full bg-gradient-to-r from-electric to-liquid px-2.5 py-0.5 text-xs font-bold text-white">
+              <span className="rounded-full bg-gradient-to-r from-brand-blue to-brand-navy px-2.5 py-0.5 text-xs font-bold text-white">
                 {unreadCount} new
               </span>
             )}
           </div>
-          <p className="text-sm text-white/50">Your order updates and alerts</p>
+          <p className="text-sm text-brand-muted">Your order updates and alerts</p>
         </div>
       </div>
 
       <div className="container-page relative py-6 max-w-2xl">
         {notifications.length === 0 ? (
           /* Empty state */
-          <div className="glass-card flex flex-col items-center justify-center rounded-3xl py-16 text-center">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-electric/20 to-liquid/20 shadow-glow-electric">
-              <Bell size={30} className="text-electric-light" />
+          <div className="glass-brand-card flex flex-col items-center justify-center rounded-3xl py-16 text-center">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-brand-blue/20 to-brand-navy/20 shadow-brand-glow">
+              <Bell size={30} className="text-brand-blue" />
             </div>
-            <h2 className="mt-4 text-lg font-bold text-white">No notifications yet</h2>
-            <p className="mt-1 text-sm text-white/50">
+            <h2 className="mt-4 text-lg font-bold text-brand-text">No notifications yet</h2>
+            <p className="mt-1 text-sm text-brand-muted">
               Order updates and alerts will appear here
             </p>
           </div>
         ) : (
-          <div className="glass-card overflow-hidden rounded-2xl">
-            <ul className="divide-y divide-white/10">
+          <div className="glass-brand-card overflow-hidden rounded-2xl">
+            <ul className="divide-y divide-brand-border">
               {notifications.map((notif) => (
                 <li
                   key={notif.id}
                   className={`flex items-start gap-4 px-5 py-4 transition-colors ${
-                    !notif.isRead ? "bg-electric/5" : ""
+                    !notif.isRead ? "bg-brand-blue/5" : ""
                   }`}
                 >
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/5">
-                    <Bell size={18} className="text-electric-light" />
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-silver">
+                    <Bell size={18} className="text-brand-blue" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-white/90">{notif.title}</p>
-                    <p className="mt-0.5 text-sm text-white/50">{notif.message}</p>
-                    <p className="mt-1 text-xs text-white/30">
+                    <p className="text-sm font-semibold text-brand-text">{notif.title}</p>
+                    <p className="mt-0.5 text-sm text-brand-muted">{notif.message}</p>
+                    <p className="mt-1 text-xs text-brand-muted">
                       {new Date(notif.createdAt).toLocaleDateString("en-IN", {
                         day: "numeric",
                         month: "short",
@@ -85,7 +85,7 @@ export default async function NotificationsPage() {
                     </p>
                   </div>
                   {!notif.isRead && (
-                    <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-gradient-to-r from-electric to-liquid" />
+                    <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-gradient-to-r from-brand-blue to-brand-navy" />
                   )}
                 </li>
               ))}

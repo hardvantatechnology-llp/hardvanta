@@ -42,14 +42,14 @@ export default function Logo({ onBadge = true, showWordmark = true, size = 52, d
         <span className="flex flex-col leading-none">
           <span
             className={`text-xl font-extrabold tracking-tight ${
-              dark ? "text-white" : ""
+              dark ? "text-white" : "text-brand-text"
             }`}
           >
-            Hard<span className="text-royal">vanta</span>
+            Hard<span className={dark ? "text-brand-silver" : "text-brand-blue"}>vanta</span>
           </span>
           <span
             className={`text-[9px] font-semibold tracking-[0.18em] uppercase mt-0.6 ${
-              dark ? "text-silver-light" : "text-navy"
+              dark ? "text-white/70" : "text-brand-muted"
             }`}
           >
             Technologies

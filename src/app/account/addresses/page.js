@@ -13,19 +13,19 @@ export default async function AddressesPage() {
   if (!session?.user?.id) redirect("/login?callbackUrl=/account/addresses");
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-graphite to-obsidian">
-      <div className="liquid-blob left-1/4 top-[-20%] h-96 w-96 bg-electric/10" />
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-brand-silver to-brand-bg">
+      <div className="liquid-blob left-1/4 top-[-20%] h-96 w-96 bg-brand-blue/10" />
 
       {/* Header */}
-      <div className="relative border-b border-white/10">
+      <div className="relative border-b border-brand-border">
         <div className="container-page py-6">
           <div className="flex items-center gap-3">
-            <Link href="/account" className="text-white/50 hover:text-electric-light text-sm">
+            <Link href="/account" className="text-brand-muted hover:text-brand-blue text-sm">
               ← My Account
             </Link>
           </div>
-          <h1 className="mt-2 text-2xl font-bold text-white">Saved Addresses</h1>
-          <p className="text-sm text-white/50">Manage your delivery addresses</p>
+          <h1 className="mt-2 text-2xl font-bold text-brand-text">Saved Addresses</h1>
+          <p className="text-sm text-brand-muted">Manage your delivery addresses</p>
         </div>
       </div>
 

@@ -6,17 +6,17 @@ import { Package, ArrowLeft, Phone, MapPin, CreditCard, CheckCircle2, Truck, Shi
 import OrderTracker from "@/components/orders/OrderTracker";
 import CancelOrderButton from "@/components/orders/CancelOrderButton";
 import Button from "@/components/ui/Button";
-import { PAYMENT_STATUS_META } from "@/lib/orderStatus";
+import { PAYMENT_STATUS_META_BRAND as PAYMENT_STATUS_META } from "@/lib/orderStatus";
 import { formatDate } from "@/utils/formatDateTime";
 
 export const dynamic = "force-dynamic";
 
 const STATUS_CONFIG = {
-  PENDING:    { bg: "bg-amber-500/10",  text: "text-amber-300",  border: "border-amber-500/20",  label: "Pending"    },
-  PROCESSING: { bg: "bg-electric/10",   text: "text-electric-light", border: "border-electric/20",   label: "Processing" },
-  SHIPPED:    { bg: "bg-liquid/10",     text: "text-liquid-light", border: "border-liquid/20", label: "Shipped"    },
-  DELIVERED:  { bg: "bg-cyan/10",       text: "text-cyan",  border: "border-cyan/20",  label: "Delivered"  },
-  CANCELLED:  { bg: "bg-red-500/10",    text: "text-red-400",    border: "border-red-500/20",    label: "Cancelled"  },
+  PENDING:    { bg: "bg-amber-500/10",  text: "text-amber-700",  border: "border-amber-500/20",  label: "Pending"    },
+  PROCESSING: { bg: "bg-brand-blue/10",   text: "text-brand-blue", border: "border-brand-blue/20",   label: "Processing" },
+  SHIPPED:    { bg: "bg-brand-steel/10",     text: "text-brand-steel", border: "border-brand-steel/20", label: "Shipped"    },
+  DELIVERED:  { bg: "bg-brand-navy/10",       text: "text-brand-navy",  border: "border-brand-navy/20",  label: "Delivered"  },
+  CANCELLED:  { bg: "bg-red-500/10",    text: "text-red-600",    border: "border-red-500/20",    label: "Cancelled"  },
 };
 
 function formatAddress(address) {
@@ -59,19 +59,19 @@ export default async function OrderDetailPage({ params, searchParams }) {
   const shipping = order.total - subtotal;
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-graphite to-obsidian">
-      <div className="liquid-blob left-1/4 top-[-15%] h-96 w-96 bg-electric/10" />
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-brand-silver to-brand-bg">
+      <div className="liquid-blob left-1/4 top-[-15%] h-96 w-96 bg-brand-blue/10" />
 
       {/* Top bar */}
-      <div className="relative border-b border-white/10">
+      <div className="relative border-b border-brand-border">
         <div className="max-w-3xl mx-auto px-4 py-5">
-          <Link href="/orders" className="inline-flex items-center gap-1.5 text-sm text-white/50 hover:text-electric-light transition-colors">
+          <Link href="/orders" className="inline-flex items-center gap-1.5 text-sm text-brand-muted hover:text-brand-blue transition-colors">
             <ArrowLeft size={15} /> Back to Orders
           </Link>
           <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h1 className="text-xl font-bold text-white">Order #{order.id.slice(-8).toUpperCase()}</h1>
-              <p className="text-sm text-white/40 mt-0.5">
+              <h1 className="text-xl font-bold text-brand-text">Order #{order.id.slice(-8).toUpperCase()}</h1>
+              <p className="text-sm text-brand-muted mt-0.5">
                 Placed on {formatDate(order.createdAt)}
               </p>
             </div>
@@ -86,15 +86,15 @@ export default async function OrderDetailPage({ params, searchParams }) {
 
         {/* Success / cancelled banners */}
         {justCancelled && (
-          <div className="flex items-center gap-2 rounded-2xl bg-cyan/10 border border-cyan/20 px-5 py-3.5 text-sm font-medium text-cyan">
+          <div className="flex items-center gap-2 rounded-2xl bg-brand-blue/10 border border-brand-blue/20 px-5 py-3.5 text-sm font-medium text-brand-blue">
             <CheckCircle2 size={18} /> Order cancelled successfully. Stock has been restored.
           </div>
         )}
 
         {/* Order tracker */}
-        <div className="glass-card rounded-3xl overflow-hidden">
-          <div className="px-5 py-4 border-b border-white/10">
-            <p className="text-xs font-bold uppercase tracking-widest text-electric-light">
+        <div className="glass-brand-card rounded-3xl overflow-hidden">
+          <div className="px-5 py-4 border-b border-brand-border">
+            <p className="text-xs font-bold uppercase tracking-widest text-brand-blue">
               {order.status === "CANCELLED" ? "Order Status" : "Order Progress"}
             </p>
           </div>
@@ -104,24 +104,24 @@ export default async function OrderDetailPage({ params, searchParams }) {
         </div>
 
         {/* Order items */}
-        <div className="glass-card rounded-3xl overflow-hidden">
-          <div className="px-5 py-4 border-b border-white/10">
-            <p className="text-xs font-bold uppercase tracking-widest text-electric-light">Order Items</p>
+        <div className="glass-brand-card rounded-3xl overflow-hidden">
+          <div className="px-5 py-4 border-b border-brand-border">
+            <p className="text-xs font-bold uppercase tracking-widest text-brand-blue">Order Items</p>
           </div>
 
-          <div className="divide-y divide-white/10">
+          <div className="divide-y divide-brand-border">
             {order.items.map((item) => (
               <div key={item.id} className="flex items-center gap-4 px-5 py-4">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/5">
-                  <Package size={20} className="text-white/40" />
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand-silver">
+                  <Package size={20} className="text-brand-muted" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-white/90 line-clamp-1">{item.productName}</p>
-                  <p className="text-xs text-white/40 mt-0.5">
+                  <p className="text-sm font-semibold text-brand-text line-clamp-1">{item.productName}</p>
+                  <p className="text-xs text-brand-muted mt-0.5">
                     Qty: {item.quantity} × {formatPrice(item.price)}
                   </p>
                 </div>
-                <p className="text-sm font-bold text-white shrink-0">
+                <p className="text-sm font-bold text-brand-text shrink-0">
                   {formatPrice(item.price * item.quantity)}
                 </p>
               </div>
@@ -129,20 +129,20 @@ export default async function OrderDetailPage({ params, searchParams }) {
           </div>
 
           {/* Price breakdown */}
-          <div className="border-t border-white/10 bg-white/[0.02] px-5 py-4 space-y-2">
+          <div className="border-t border-brand-border bg-brand-silver/40 px-5 py-4 space-y-2">
             <div className="flex justify-between text-sm">
-              <span className="text-white/40">Subtotal</span>
-              <span className="font-semibold text-white">{formatPrice(subtotal)}</span>
+              <span className="text-brand-muted">Subtotal</span>
+              <span className="font-semibold text-brand-text">{formatPrice(subtotal)}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-white/40 flex items-center gap-1.5">
+              <span className="text-brand-muted flex items-center gap-1.5">
                 <Truck size={13} /> Shipping
               </span>
-              <span className={`font-semibold ${shipping === 0 ? "text-cyan" : "text-white"}`}>
+              <span className={`font-semibold ${shipping === 0 ? "text-brand-blue" : "text-brand-text"}`}>
                 {shipping === 0 ? "FREE" : formatPrice(shipping)}
               </span>
             </div>
-            <div className="flex justify-between text-base font-bold text-white pt-2 border-t border-white/10">
+            <div className="flex justify-between text-base font-bold text-brand-text pt-2 border-t border-brand-border">
               <span>Order Total</span>
               <span>{formatPrice(order.total)}</span>
             </div>
@@ -151,18 +151,18 @@ export default async function OrderDetailPage({ params, searchParams }) {
 
         {/* Address + Payment */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="glass-card rounded-2xl p-5">
-            <p className="text-xs font-bold uppercase tracking-widest text-electric-light mb-3 flex items-center gap-1.5">
+          <div className="glass-brand-card rounded-2xl p-5">
+            <p className="text-xs font-bold uppercase tracking-widest text-brand-blue mb-3 flex items-center gap-1.5">
               <MapPin size={13} /> Delivery Address
             </p>
-            <p className="text-sm text-white/50 leading-relaxed">{addr}</p>
+            <p className="text-sm text-brand-muted leading-relaxed">{addr}</p>
           </div>
 
-          <div className="glass-card rounded-2xl p-5">
-            <p className="text-xs font-bold uppercase tracking-widest text-electric-light mb-3 flex items-center gap-1.5">
+          <div className="glass-brand-card rounded-2xl p-5">
+            <p className="text-xs font-bold uppercase tracking-widest text-brand-blue mb-3 flex items-center gap-1.5">
               <CreditCard size={13} /> Payment
             </p>
-            <p className="text-sm font-semibold text-white/90">{order.paymentMethod === "COD" ? "Cash on Delivery" : "Online Payment"}</p>
+            <p className="text-sm font-semibold text-brand-text">{order.paymentMethod === "COD" ? "Cash on Delivery" : "Online Payment"}</p>
             {(() => {
               const meta = PAYMENT_STATUS_META[order.payment?.status] || PAYMENT_STATUS_META.PENDING;
               return (
@@ -175,14 +175,14 @@ export default async function OrderDetailPage({ params, searchParams }) {
         </div>
 
         {/* Trust badges */}
-        <div className="glass-card rounded-2xl p-4">
+        <div className="glass-brand-card rounded-2xl p-4">
           <div className="flex flex-wrap gap-4">
             {[
-              { icon: <ShieldCheck size={15} className="text-cyan" />, text: "100% Secure Order" },
-              { icon: <Truck size={15} className="text-electric-light" />, text: "Free shipping above ₹999" },
+              { icon: <ShieldCheck size={15} className="text-brand-blue" />, text: "100% Secure Order" },
+              { icon: <Truck size={15} className="text-brand-blue" />, text: "Free shipping above ₹999" },
               { icon: <Phone size={15} className="text-amber-400" />, text: "Support: +91 91705 46395 (Mon–Sat)" },
             ].map((b) => (
-              <div key={b.text} className="flex items-center gap-2 text-xs text-white/50">
+              <div key={b.text} className="flex items-center gap-2 text-xs text-brand-muted">
                 {b.icon} {b.text}
               </div>
             ))}
@@ -196,11 +196,11 @@ export default async function OrderDetailPage({ params, searchParams }) {
           )}
           <a
             href="tel:+919170546395"
-            className="flex items-center gap-2 rounded-xl glass-card px-4 py-2.5 text-sm font-semibold text-white/80 hover:shadow-glow-electric transition-all"
+            className="flex items-center gap-2 rounded-xl glass-brand-card px-4 py-2.5 text-sm font-semibold text-brand-text hover:shadow-brand-glow transition-all"
           >
             <Phone size={15} /> Call Support: +91 91705 46395
           </a>
-          <Button href="/products" variant="gradient">
+          <Button href="/products" variant="brand-gradient">
             Continue Shopping
           </Button>
         </div>

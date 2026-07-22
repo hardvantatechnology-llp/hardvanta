@@ -75,18 +75,18 @@ export default async function ProductDetailPage({ params }) {
   ];
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-graphite to-obsidian">
-      <div className="liquid-blob left-1/4 top-[-15%] h-96 w-96 bg-electric/10" />
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-brand-bg to-brand-silver">
+      <div className="liquid-blob left-1/4 top-[-15%] h-96 w-96 bg-brand-blue/10" />
       <div className="container-page relative py-8">
         {/* Breadcrumb */}
-        <nav className="mb-6 flex flex-wrap items-center gap-1 text-sm text-white/40">
-          <Link href="/" className="hover:text-electric-light">Home</Link>
+        <nav className="mb-6 flex flex-wrap items-center gap-1 text-sm text-brand-muted">
+          <Link href="/" className="hover:text-brand-blue">Home</Link>
           <ChevronRight size={14} />
-          <Link href="/products" className="hover:text-electric-light">Products</Link>
+          <Link href="/products" className="hover:text-brand-blue">Products</Link>
           <ChevronRight size={14} />
           <Link
             href={`/products?category=${product.category?.slug}`}
-            className="capitalize hover:text-electric-light"
+            className="capitalize hover:text-brand-blue"
           >
             {product.category?.name}
           </Link>
@@ -100,10 +100,10 @@ export default async function ProductDetailPage({ params }) {
           <div>
             <div className="flex items-start justify-between gap-3">
               <div>
-                <span className="text-xs font-semibold uppercase tracking-wide text-electric-light">
+                <span className="text-xs font-semibold uppercase tracking-wide text-brand-blue">
                   {product.brand?.name}
                 </span>
-                <h1 className="mt-1 text-2xl font-bold text-white sm:text-3xl">
+                <h1 className="mt-1 text-2xl font-bold text-brand-text sm:text-3xl">
                   {product.name}
                 </h1>
               </div>
@@ -114,38 +114,38 @@ export default async function ProductDetailPage({ params }) {
             </div>
 
             <div className="mt-3 flex items-center gap-2 text-sm">
-              <span className="inline-flex items-center gap-1 rounded bg-gradient-to-r from-electric to-liquid px-2 py-0.5 font-semibold text-white">
+              <span className="inline-flex items-center gap-1 rounded bg-gradient-to-r from-brand-blue to-brand-navy px-2 py-0.5 font-semibold text-white">
                 <Star size={14} className="fill-white text-white" />
                 {product.rating}
               </span>
-              <span className="text-white/40">{product.reviewCount} ratings</span>
+              <span className="text-brand-muted">{product.reviewCount} ratings</span>
             </div>
 
             {/* Price */}
-            <div className="glass-card mt-5 rounded-3xl p-5">
+            <div className="glass-brand-card mt-5 rounded-3xl p-5">
               <div className="flex flex-wrap items-end gap-3">
-                <span className="text-3xl font-extrabold text-white">
+                <span className="text-3xl font-extrabold text-brand-text">
                   {formatPrice(price)}
                 </span>
                 {hasDiscount && (
                   <>
-                    <span className="mb-1 text-lg text-white/40 line-through">
+                    <span className="mb-1 text-lg text-brand-muted line-through">
                       {formatPrice(product.price)}
                     </span>
-                    <span className="mb-1 text-sm font-bold text-cyan">
+                    <span className="mb-1 text-sm font-bold text-brand-blue">
                       Save {formatPrice(savings)}
                     </span>
                   </>
                 )}
               </div>
-              <p className="mt-1 text-xs text-white/40">Inclusive of all taxes</p>
+              <p className="mt-1 text-xs text-brand-muted">Inclusive of all taxes</p>
 
               {/* ✅ FIXED: inStock field se check */}
               <p className="mt-3 text-sm font-medium">
                 {product.inStock !== false ? (
-                  <span className="text-cyan">● In stock — ready to ship</span>
+                  <span className="text-brand-blue">● In stock — ready to ship</span>
                 ) : (
-                  <span className="text-red-400">● Out of stock</span>
+                  <span className="text-red-600">● Out of stock</span>
                 )}
               </p>
 
@@ -162,9 +162,9 @@ export default async function ProductDetailPage({ params }) {
               {trustBadges.map(([Icon, label], i) => (
                 <div
                   key={i}
-                  className="glass-card flex flex-col items-center gap-1.5 rounded-xl p-3 text-center text-xs font-medium text-white/80"
+                  className="glass-brand-card flex flex-col items-center gap-1.5 rounded-xl p-3 text-center text-xs font-medium text-brand-text"
                 >
-                  <Icon size={20} className="text-electric-light" />
+                  <Icon size={20} className="text-brand-blue" />
                   {label}
                 </div>
               ))}
@@ -172,21 +172,21 @@ export default async function ProductDetailPage({ params }) {
 
             {/* Description */}
             <div className="mt-8">
-              <h2 className="mb-2 text-lg font-bold text-white">About this product</h2>
-              <p className="leading-relaxed text-white/60">{product.description}</p>
+              <h2 className="mb-2 text-lg font-bold text-brand-text">About this product</h2>
+              <p className="leading-relaxed text-brand-muted">{product.description}</p>
             </div>
 
             {/* Specifications */}
             <div className="mt-8">
-              <h2 className="mb-3 text-lg font-bold text-white">Specifications</h2>
-              <dl className="glass-card overflow-hidden rounded-xl">
+              <h2 className="mb-3 text-lg font-bold text-brand-text">Specifications</h2>
+              <dl className="glass-brand-card overflow-hidden rounded-xl">
                 {specs.map(([k, v], i) => (
                   <div
                     key={k}
-                    className={`grid grid-cols-3 text-sm ${i % 2 ? "bg-white/[0.03]" : ""}`}
+                    className={`grid grid-cols-3 text-sm ${i % 2 ? "bg-brand-silver/60" : ""}`}
                   >
-                    <dt className="px-4 py-3 font-medium text-white/40">{k}</dt>
-                    <dd className="col-span-2 px-4 py-3 capitalize text-white/85">{v}</dd>
+                    <dt className="px-4 py-3 font-medium text-brand-muted">{k}</dt>
+                    <dd className="col-span-2 px-4 py-3 capitalize text-brand-text">{v}</dd>
                   </div>
                 ))}
               </dl>
@@ -197,7 +197,7 @@ export default async function ProductDetailPage({ params }) {
         {/* Related */}
         {related.length > 0 && (
           <section className="mt-16">
-            <h2 className="relative mb-8 inline-block text-2xl font-bold text-white after:absolute after:-bottom-2 after:left-0 after:h-1 after:w-12 after:rounded-full after:bg-gradient-to-r after:from-electric after:to-liquid">
+            <h2 className="relative mb-8 inline-block text-2xl font-bold text-brand-text after:absolute after:-bottom-2 after:left-0 after:h-1 after:w-12 after:rounded-full after:bg-gradient-to-r after:from-brand-blue after:to-brand-navy">
               You may also like
             </h2>
             <ProductGrid products={related} />

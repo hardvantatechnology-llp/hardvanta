@@ -2,8 +2,8 @@ import Skeleton from "@/components/ui/Skeleton";
 
 export default function OrderDetailLoading() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-graphite to-obsidian">
-      <div className="border-b border-white/10">
+    <div className="min-h-screen bg-gradient-to-b from-brand-silver to-brand-bg">
+      <div className="border-b border-brand-border">
         <div className="max-w-3xl mx-auto px-4 py-5 space-y-3">
           <Skeleton className="h-4 w-32" />
           <div className="flex items-center justify-between">

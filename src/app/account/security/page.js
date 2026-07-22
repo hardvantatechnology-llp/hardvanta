@@ -53,31 +53,31 @@ export default function SecurityPage() {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-graphite to-obsidian">
-      <div className="liquid-blob left-1/4 top-[-20%] h-96 w-96 bg-cyan/10" />
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-brand-silver to-brand-bg">
+      <div className="liquid-blob left-1/4 top-[-20%] h-96 w-96 bg-brand-steel/10" />
 
       {/* Header */}
-      <div className="relative border-b border-white/10">
+      <div className="relative border-b border-brand-border">
         <div className="container-page py-6">
           <div className="flex items-center gap-3">
-            <Link href="/account" className="text-white/50 hover:text-electric-light text-sm">
+            <Link href="/account" className="text-brand-muted hover:text-brand-blue text-sm">
               ← My Account
             </Link>
           </div>
-          <h1 className="mt-2 text-2xl font-bold text-white">Security</h1>
-          <p className="text-sm text-white/50">Manage your password and login settings</p>
+          <h1 className="mt-2 text-2xl font-bold text-brand-text">Security</h1>
+          <p className="text-sm text-brand-muted">Manage your password and login settings</p>
         </div>
       </div>
 
       <div className="container-page relative py-6 max-w-lg">
-        <div className="glass-strong rounded-3xl p-6">
+        <div className="glass-brand-strong rounded-3xl p-6">
           <div className="mb-6 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan/10">
-              <Shield size={20} className="text-cyan" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-blue/10">
+              <Shield size={20} className="text-brand-blue" />
             </div>
             <div>
-              <h2 className="font-bold text-white">Change Password</h2>
-              <p className="text-xs text-white/40">Use a strong password to keep your account safe</p>
+              <h2 className="font-bold text-brand-text">Change Password</h2>
+              <p className="text-xs text-brand-muted">Use a strong password to keep your account safe</p>
             </div>
           </div>
 
@@ -85,8 +85,8 @@ export default function SecurityPage() {
             <div
               className={`mb-4 flex items-center gap-2 rounded-lg px-4 py-3 text-sm ${
                 message.type === "success"
-                  ? "bg-cyan/10 text-cyan"
-                  : "bg-red-500/10 text-red-400"
+                  ? "bg-brand-blue/10 text-brand-blue"
+                  : "bg-red-500/10 text-red-600"
               }`}
             >
               {message.type === "success" && <CheckCircle2 size={16} />}
@@ -97,7 +97,7 @@ export default function SecurityPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Current Password */}
             <div>
-              <label htmlFor="security-current" className="mb-1 block text-sm font-medium text-white/80">
+              <label htmlFor="security-current" className="mb-1 block text-sm font-medium text-brand-text">
                 Current Password
               </label>
               <div className="relative">
@@ -110,13 +110,13 @@ export default function SecurityPage() {
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
                   placeholder="Enter current password"
-                  className="w-full rounded-lg glass-card px-3 py-2.5 pr-10 text-sm text-white outline-none focus:shadow-glow-electric placeholder:text-white/30"
+                  className="w-full rounded-lg glass-brand-card px-3 py-2.5 pr-10 text-sm text-brand-text outline-none focus:shadow-brand-glow placeholder:text-brand-muted"
                 />
                 <button
                   type="button"
                   onClick={() => setShowCurrent((v) => !v)}
                   aria-label={showCurrent ? "Hide password" : "Show password"}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-electric-light"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-brand-muted hover:text-brand-blue"
                 >
                   {showCurrent ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
@@ -125,7 +125,7 @@ export default function SecurityPage() {
 
             {/* New Password */}
             <div>
-              <label htmlFor="security-new" className="mb-1 block text-sm font-medium text-white/80">
+              <label htmlFor="security-new" className="mb-1 block text-sm font-medium text-brand-text">
                 New Password
               </label>
               <div className="relative">
@@ -138,13 +138,13 @@ export default function SecurityPage() {
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   placeholder="Min. 8 characters"
-                  className="w-full rounded-lg glass-card px-3 py-2.5 pr-10 text-sm text-white outline-none focus:shadow-glow-electric placeholder:text-white/30"
+                  className="w-full rounded-lg glass-brand-card px-3 py-2.5 pr-10 text-sm text-brand-text outline-none focus:shadow-brand-glow placeholder:text-brand-muted"
                 />
                 <button
                   type="button"
                   onClick={() => setShowNew((v) => !v)}
                   aria-label={showNew ? "Hide password" : "Show password"}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-electric-light"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-brand-muted hover:text-brand-blue"
                 >
                   {showNew ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
@@ -153,7 +153,7 @@ export default function SecurityPage() {
 
             {/* Confirm Password */}
             <div>
-              <label htmlFor="security-confirm" className="mb-1 block text-sm font-medium text-white/80">
+              <label htmlFor="security-confirm" className="mb-1 block text-sm font-medium text-brand-text">
                 Confirm New Password
               </label>
               <div className="relative">
@@ -166,27 +166,27 @@ export default function SecurityPage() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Re-enter new password"
-                  className="w-full rounded-lg glass-card px-3 py-2.5 pr-10 text-sm text-white outline-none focus:shadow-glow-electric placeholder:text-white/30"
+                  className="w-full rounded-lg glass-brand-card px-3 py-2.5 pr-10 text-sm text-brand-text outline-none focus:shadow-brand-glow placeholder:text-brand-muted"
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirm((v) => !v)}
                   aria-label={showConfirm ? "Hide password" : "Show password"}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-electric-light"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-brand-muted hover:text-brand-blue"
                 >
                   {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
             </div>
 
-            <Button type="submit" variant="gradient" size="lg" className="w-full" disabled={loading}>
+            <Button type="submit" variant="brand-gradient" size="lg" className="w-full" disabled={loading}>
               {loading ? "Updating…" : "Update Password"}
             </Button>
           </form>
         </div>
 
         {/* Info */}
-        <div className="mt-4 rounded-xl bg-electric/10 border border-electric/20 p-4 text-sm text-electric-light">
+        <div className="mt-4 rounded-xl bg-brand-blue/10 border border-brand-blue/20 p-4 text-sm text-brand-blue">
           💡 If you signed in with Google, you may not have a password set. Use Google to log in instead.
         </div>
       </div>

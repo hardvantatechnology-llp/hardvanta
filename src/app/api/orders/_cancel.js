@@ -13,10 +13,17 @@ export const CANCELLABLE_STATUSES = ["PENDING", "PROCESSING"];
 
 /**
  * @param {object} order - must include { items: true, payment: true, user: { select: { email, name } } }
+ * @param {object} [options]
+ * @param {boolean} [options.force] - admin override: cancel from any non-CANCELLED
+ *   status instead of only CANCELLABLE_STATUSES (customer-facing cancellation
+ *   never sets this).
  * @returns {Promise<{ ok: boolean, reason?: string }>}
  */
-export async function cancelOrder(order) {
-  if (!CANCELLABLE_STATUSES.includes(order.status)) {
+export async function cancelOrder(order, { force = false } = {}) {
+  if (order.status === "CANCELLED") {
+    return { ok: false, reason: "already-processed" };
+  }
+  if (!force && !CANCELLABLE_STATUSES.includes(order.status)) {
     return { ok: false, reason: "not-cancellable" };
   }
 
@@ -24,7 +31,9 @@ export async function cancelOrder(order) {
   // requests (double-click, client retry) can't both pass the check and
   // double-credit stock — only one updateMany can match the still-cancellable row.
   const claim = await prisma.order.updateMany({
-    where: { id: order.id, status: { in: CANCELLABLE_STATUSES } },
+    where: force
+      ? { id: order.id, status: { not: "CANCELLED" } }
+      : { id: order.id, status: { in: CANCELLABLE_STATUSES } },
     data: { status: "CANCELLED", cancelledAt: new Date() },
   });
   if (claim.count === 0) {

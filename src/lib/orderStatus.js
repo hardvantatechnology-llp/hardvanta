@@ -53,3 +53,13 @@ export const PAYMENT_STATUS_META = {
   REFUNDED: { label: "Refunded", className: "bg-liquid/10 text-liquid-light", border: "border-liquid/20" },
   CANCELLED: { label: "Cancelled", className: "bg-white/10 text-white/50", border: "border-white/10" },
 };
+
+// Same statuses, styled for the storefront's light brand palette — /admin
+// (dark theme) keeps using PAYMENT_STATUS_META above unchanged.
+export const PAYMENT_STATUS_META_BRAND = {
+  PENDING: { label: "Pending", className: "bg-amber-100 text-amber-700", border: "border-amber-300" },
+  SUCCESS: { label: "Paid", className: "bg-brand-blue/10 text-brand-blue", border: "border-brand-blue/20" },
+  FAILED: { label: "Failed", className: "bg-red-100 text-red-600", border: "border-red-300" },
+  REFUNDED: { label: "Refunded", className: "bg-brand-steel/10 text-brand-steel", border: "border-brand-steel/20" },
+  CANCELLED: { label: "Cancelled", className: "bg-brand-silver text-brand-muted", border: "border-brand-border" },
+};

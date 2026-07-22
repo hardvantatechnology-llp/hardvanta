@@ -201,14 +201,14 @@ export default function CheckoutPage() {
   }
 
   if (status === "loading") {
-    return <div className="container-page min-h-screen py-24 text-center text-white/50 bg-gradient-to-b from-graphite to-obsidian">Loading…</div>;
+    return <div className="container-page min-h-screen py-24 text-center text-brand-muted bg-gradient-to-b from-brand-bg to-brand-silver">Loading…</div>;
   }
 
   if (count === 0) {
     return (
-      <div className="min-h-[70vh] bg-gradient-to-b from-graphite to-obsidian container-page flex flex-col items-center justify-center py-24 text-center">
-        <h1 className="text-2xl font-bold text-white">Your cart is empty</h1>
-        <Button href="/products" variant="gradient" className="mt-6">
+      <div className="min-h-[70vh] bg-gradient-to-b from-brand-bg to-brand-silver container-page flex flex-col items-center justify-center py-24 text-center">
+        <h1 className="text-2xl font-bold text-brand-text">Your cart is empty</h1>
+        <Button href="/products" variant="brand-gradient" className="mt-6">
           Browse Products
         </Button>
       </div>
@@ -216,10 +216,10 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-graphite to-obsidian">
-      <div className="liquid-blob left-1/3 top-[-15%] h-96 w-96 bg-liquid/10" />
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-brand-bg to-brand-silver">
+      <div className="liquid-blob left-1/3 top-[-15%] h-96 w-96 bg-brand-navy/10" />
       <div className="container-page relative py-8">
-        <h1 className="mb-2 text-center text-2xl font-bold text-white">Checkout</h1>
+        <h1 className="mb-2 text-center text-2xl font-bold text-brand-text">Checkout</h1>
         <CheckoutStepper step={2} />
         <div className="grid gap-8 lg:grid-cols-3">
 
@@ -229,10 +229,10 @@ export default function CheckoutPage() {
               HTML forms is invalid — the browser would route its submit to
               whichever form wins the malformed nesting instead of the one
               that was actually clicked. */}
-          <div className="space-y-4 glass-strong rounded-3xl p-6 lg:col-span-2">
-            <h2 className="text-lg font-bold text-white">Shipping Address</h2>
+          <div className="space-y-4 glass-brand-strong rounded-3xl p-6 lg:col-span-2">
+            <h2 className="text-lg font-bold text-brand-text">Shipping Address</h2>
             {error && (
-              <p className="rounded-lg bg-red-500/10 border border-red-500/20 px-3 py-2 text-sm text-red-400">{error}</p>
+              <p className="rounded-lg bg-red-500/10 border border-red-500/20 px-3 py-2 text-sm text-red-600">{error}</p>
             )}
 
             <AddressBook enabled={status === "authenticated"} onChange={setSelectedAddress} />
@@ -241,7 +241,7 @@ export default function CheckoutPage() {
 
             {/* Payment method */}
             <div className="pt-2">
-              <h3 className="mb-2 text-sm font-semibold text-white/80">Payment Method</h3>
+              <h3 className="mb-2 text-sm font-semibold text-brand-text">Payment Method</h3>
               <div className="grid gap-3 sm:grid-cols-2">
                 <PayOption
                   active={payMethod === "ONLINE"} onClick={() => setPayMethod("ONLINE")}
@@ -254,7 +254,7 @@ export default function CheckoutPage() {
                 />
               </div>
               {codBlocked && (
-                <p className="mt-2 text-xs text-red-400">
+                <p className="mt-2 text-xs text-red-600">
                   {!codAvailableHere
                     ? "Cash on Delivery isn't available for this location. Please pay online for this order."
                     : `Cash on Delivery is available only for orders up to ${formatPrice(COD_LIMIT)}. Please pay online for this order.`}
@@ -262,88 +262,88 @@ export default function CheckoutPage() {
               )}
             </div>
 
-            <Button type="button" onClick={handleSubmit} variant="gradient" size="lg" className="w-full" disabled={loading || locationUnsupported}>
+            <Button type="button" onClick={handleSubmit} variant="brand-gradient" size="lg" className="w-full" disabled={loading || locationUnsupported}>
               {loading ? "Processing…" : payMethod === "ONLINE" ? `Pay ${formatPrice(grandTotal)}` : `Place Order · ${formatPrice(grandTotal)}`}
             </Button>
-            <p className="text-center text-xs text-white/40">
+            <p className="text-center text-xs text-brand-muted">
               {payMethod === "ONLINE" ? "Secured by Razorpay. Test mode — use a test card/UPI." : "No payment now — pay in cash on delivery."}
             </p>
           </div>
 
           {/* Order Summary */}
           <div className="sticky top-24 h-fit space-y-4">
-            <div className="glass-strong rounded-3xl p-6">
-              <h2 className="mb-4 text-lg font-bold text-white">Order Summary</h2>
+            <div className="glass-brand-strong rounded-3xl p-6">
+              <h2 className="mb-4 text-lg font-bold text-brand-text">Order Summary</h2>
 
               {/* Items list */}
               <div className="space-y-3">
                 {items.map((item) => (
                   <div key={item.id} className="flex justify-between text-sm">
-                    <span className="mr-2 line-clamp-1 text-white/50">
+                    <span className="mr-2 line-clamp-1 text-brand-muted">
                       {item.name} × {item.quantity}
                     </span>
-                    <span className="shrink-0 font-semibold text-white">
+                    <span className="shrink-0 font-semibold text-brand-text">
                       {formatPrice((item.salePrice ?? item.price) * item.quantity)}
                     </span>
                   </div>
                 ))}
               </div>
 
-              <div className="my-4 border-t border-white/10" />
+              <div className="my-4 border-t border-brand-border" />
 
               {/* Price breakdown */}
               <div className="space-y-2 text-sm">
 
                 <div className="flex justify-between">
-                  <span className="text-white/50">Total MRP</span>
-                  <span className="font-semibold text-white">{formatPrice(mrpTotal)}</span>
+                  <span className="text-brand-muted">Total MRP</span>
+                  <span className="font-semibold text-brand-text">{formatPrice(mrpTotal)}</span>
                 </div>
 
                 {productDiscount > 0 && (
-                  <div className="flex justify-between text-cyan">
+                  <div className="flex justify-between text-brand-steel">
                     <span className="flex items-center gap-1.5"><Tag size={13} /> Discount on MRP</span>
                     <span className="font-semibold">-{formatPrice(productDiscount)}</span>
                   </div>
                 )}
 
                 {coupon && (
-                  <div className="flex justify-between text-cyan">
+                  <div className="flex justify-between text-brand-steel">
                     <span className="flex items-center gap-1.5"><Ticket size={13} /> Coupon ({coupon.code})</span>
                     <span className="font-semibold">-{formatPrice(couponDiscount)}</span>
                   </div>
                 )}
 
                 <div className="flex justify-between">
-                  <span className="text-white/50 flex items-center gap-1.5"><Truck size={13} /> Shipping</span>
-                  <span className={`font-semibold ${shipping === 0 ? "text-cyan" : "text-white"}`}>
+                  <span className="text-brand-muted flex items-center gap-1.5"><Truck size={13} /> Shipping</span>
+                  <span className={`font-semibold ${shipping === 0 ? "text-brand-steel" : "text-brand-text"}`}>
                     {shipping === 0 ? "FREE" : formatPrice(shipping)}
                   </span>
                 </div>
               </div>
 
-              <div className="my-4 border-t border-dashed border-white/10" />
+              <div className="my-4 border-t border-dashed border-brand-border" />
 
               {/* Grand total */}
-              <div className="flex justify-between text-base font-bold text-white">
+              <div className="flex justify-between text-base font-bold text-brand-text">
                 <span>Amount Payable</span>
                 <div className="text-right">
                   <span className="text-xl">{formatPrice(grandTotal)}</span>
                   {totalSaved > 0 && (
-                    <p className="text-xs text-cyan font-medium mt-0.5">🎉 You save {formatPrice(totalSaved)}</p>
+                    <p className="text-xs text-brand-steel font-medium mt-0.5">🎉 You save {formatPrice(totalSaved)}</p>
                   )}
                 </div>
               </div>
 
               {/* Coupon input */}
               <div className="mt-4">
-                <p className="mb-2 text-sm font-semibold text-white/80">Have a coupon?</p>
+                <p className="mb-2 text-sm font-semibold text-brand-text">Have a coupon?</p>
                 {coupon ? (
-                  <div className="flex items-center justify-between rounded-xl border border-cyan/30 bg-cyan/10 px-3 py-2.5">
-                    <div className="flex items-center gap-2 text-sm text-cyan font-semibold">
+                  <div className="flex items-center justify-between rounded-xl border border-brand-steel/30 bg-brand-steel/10 px-3 py-2.5">
+                    <div className="flex items-center gap-2 text-sm text-brand-steel font-semibold">
                       <Ticket size={15} />
                       {coupon.code} applied!
                     </div>
-                    <button type="button" onClick={removeCoupon} className="text-cyan hover:text-red-400 transition-colors">
+                    <button type="button" onClick={removeCoupon} className="text-brand-steel hover:text-red-600 transition-colors">
                       <X size={16} />
                     </button>
                   </div>
@@ -355,20 +355,20 @@ export default function CheckoutPage() {
                       onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                       onKeyDown={(e) => e.key === "Enter" && applyCoupon()}
                       placeholder="Enter coupon code"
-                      className="flex-1 rounded-xl glass-card px-3 py-2 text-sm text-white outline-none focus:shadow-glow-electric uppercase placeholder:normal-case placeholder:text-white/30"
+                      className="flex-1 rounded-xl glass-brand-card px-3 py-2 text-sm text-brand-text outline-none focus:shadow-brand-glow uppercase placeholder:normal-case placeholder:text-brand-muted"
                     />
                     <button
                       type="button"
                       onClick={applyCoupon}
                       disabled={couponLoading || !couponCode.trim()}
-                      className="rounded-xl bg-gradient-to-r from-electric to-liquid px-4 py-2 text-sm font-semibold text-white shadow-glow-electric hover:brightness-110 disabled:opacity-50 disabled:shadow-none transition-all"
+                      className="rounded-xl bg-gradient-to-r from-brand-blue to-brand-navy px-4 py-2 text-sm font-semibold text-white shadow-brand-glow hover:brightness-110 disabled:opacity-50 disabled:shadow-none transition-all"
                     >
                       {couponLoading ? "..." : "Apply"}
                     </button>
                   </div>
                 )}
                 {couponError && (
-                  <p className="mt-1.5 text-xs text-red-400">{couponError}</p>
+                  <p className="mt-1.5 text-xs text-red-600">{couponError}</p>
                 )}
               </div>
             </div>
@@ -385,17 +385,17 @@ function PayOption({ active, onClick, title, desc, disabled, Icon }) {
     <button
       type="button" onClick={disabled ? undefined : onClick} disabled={disabled}
       className={`flex items-start gap-3 rounded-2xl p-3 text-left transition-all ${
-        disabled ? "cursor-not-allowed glass-card opacity-40"
-        : active ? "glass-card shadow-glow-electric ring-1 ring-electric/50" : "glass-card hover:shadow-glow-electric"
+        disabled ? "cursor-not-allowed glass-brand-card opacity-40"
+        : active ? "glass-brand-card shadow-brand-glow ring-1 ring-brand-blue/50" : "glass-brand-card hover:shadow-brand-glow"
       }`}
     >
-      {Icon && <Icon size={18} className={active ? "text-electric-light" : "text-white/40"} />}
+      {Icon && <Icon size={18} className={active ? "text-brand-blue" : "text-brand-muted"} />}
       <span className="flex-1">
-        <span className="block text-sm font-semibold text-white">{title}</span>
-        <span className="block text-xs text-white/40">{desc}</span>
+        <span className="block text-sm font-semibold text-brand-text">{title}</span>
+        <span className="block text-xs text-brand-muted">{desc}</span>
       </span>
-      <span className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border ${active ? "border-electric-light" : "border-white/20"}`}>
-        {active && <span className="h-2 w-2 rounded-full bg-gradient-to-r from-electric to-liquid" />}
+      <span className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border ${active ? "border-brand-blue" : "border-brand-border"}`}>
+        {active && <span className="h-2 w-2 rounded-full bg-gradient-to-r from-brand-blue to-brand-navy" />}
       </span>
     </button>
   );

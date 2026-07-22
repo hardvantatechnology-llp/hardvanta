@@ -76,11 +76,11 @@ export default function ContactPage() {
   }
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-gradient-to-b from-graphite to-obsidian">
-      <div className="liquid-blob left-1/4 top-[-15%] h-96 w-96 bg-electric/10" />
+    <main className="relative min-h-screen overflow-hidden bg-gradient-to-b from-brand-silver to-brand-bg">
+      <div className="liquid-blob left-1/4 top-[-15%] h-96 w-96 bg-brand-blue/10" />
 
       {/* Hero */}
-      <section className="relative bg-gradient-to-r from-obsidian via-midnight to-obsidian px-6 py-16 text-center text-white">
+      <section className="relative bg-gradient-to-r from-brand-navy via-brand-blue to-brand-navy px-6 py-16 text-center text-white">
         <p className="text-xs font-bold uppercase tracking-widest text-white/50">
           We&apos;re Here to Help
         </p>
@@ -122,15 +122,15 @@ export default function ContactPage() {
           ].map((c) => (
             <div
               key={c.title}
-              className="rounded-2xl glass-card p-6 text-center"
+              className="rounded-2xl glass-brand-card p-6 text-center"
             >
               <span className="text-4xl">{c.icon}</span>
-              <h3 className="mt-3 font-bold text-white">{c.title}</h3>
-              <p className="mt-1 text-sm font-semibold text-electric-light">{c.info}</p>
-              <p className="mt-1 text-xs text-white/40">{c.sub}</p>
+              <h3 className="mt-3 font-bold text-brand-text">{c.title}</h3>
+              <p className="mt-1 text-sm font-semibold text-brand-blue">{c.info}</p>
+              <p className="mt-1 text-xs text-brand-muted">{c.sub}</p>
               <a
                 href={c.href}
-                className="mt-4 inline-block rounded-lg bg-gradient-to-r from-electric to-liquid px-6 py-2 text-xs font-semibold text-white shadow-glow-electric hover:brightness-110 transition-all"
+                className="mt-4 inline-block rounded-lg bg-gradient-to-r from-brand-blue to-brand-navy px-6 py-2 text-xs font-semibold text-white shadow-brand-glow hover:brightness-110 transition-all"
               >
                 {c.label}
               </a>
@@ -140,40 +140,40 @@ export default function ContactPage() {
       </section>
 
       {/* Contact Form */}
-      <section className="relative bg-graphite py-14">
+      <section className="relative bg-white py-14">
         <div className="container-page max-w-2xl">
-          <h2 className="text-2xl font-extrabold text-white">
+          <h2 className="text-2xl font-extrabold text-brand-text">
             Send Us a Message
           </h2>
-          <p className="mt-1 text-sm text-white/50">
+          <p className="mt-1 text-sm text-brand-muted">
             Fill in the form below and we&apos;ll get back to you shortly.
           </p>
 
           {status === "success" ? (
-            <div className="mt-8 rounded-2xl glass-strong p-8 text-center">
+            <div className="mt-8 rounded-2xl glass-brand-strong p-8 text-center">
               <span className="text-4xl">✅</span>
-              <h3 className="mt-3 text-lg font-bold text-white">Message sent!</h3>
-              <p className="mt-2 text-sm text-white/60">
+              <h3 className="mt-3 text-lg font-bold text-brand-text">Message sent!</h3>
+              <p className="mt-2 text-sm text-brand-muted">
                 Thanks for reaching out — our team will get back to you within 24 hours.
               </p>
               <button
                 onClick={() => setStatus("idle")}
-                className="mt-5 rounded-lg bg-gradient-to-r from-electric to-liquid px-6 py-2.5 text-sm font-semibold text-white shadow-glow-electric hover:brightness-110 transition-all"
+                className="mt-5 rounded-lg bg-gradient-to-r from-brand-blue to-brand-navy px-6 py-2.5 text-sm font-semibold text-white shadow-brand-glow hover:brightness-110 transition-all"
               >
                 Send another message
               </button>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="mt-8 space-y-4 rounded-2xl glass-strong p-8">
+            <form onSubmit={handleSubmit} className="mt-8 space-y-4 rounded-2xl glass-brand-strong p-8">
               {status === "error" && (
-                <p className="rounded-lg bg-red-500/10 border border-red-500/20 px-3 py-2 text-sm text-red-400">
+                <p className="rounded-lg bg-red-500/10 border border-red-500/20 px-3 py-2 text-sm text-red-600">
                   {errorMsg}
                 </p>
               )}
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label htmlFor="contact-first-name" className="mb-1 block text-sm font-medium text-white/80">
+                  <label htmlFor="contact-first-name" className="mb-1 block text-sm font-medium text-brand-text">
                     First Name
                   </label>
                   <input
@@ -185,11 +185,11 @@ export default function ContactPage() {
                     value={form.firstName}
                     onChange={(e) => update("firstName", e.target.value)}
                     placeholder="Rahul"
-                    className="w-full rounded-lg glass-card px-3 py-2.5 text-sm text-white outline-none focus:shadow-glow-electric placeholder:text-white/30"
+                    className="w-full rounded-lg glass-brand-card px-3 py-2.5 text-sm text-brand-text outline-none focus:shadow-brand-glow placeholder:text-brand-muted"
                   />
                 </div>
                 <div>
-                  <label htmlFor="contact-last-name" className="mb-1 block text-sm font-medium text-white/80">
+                  <label htmlFor="contact-last-name" className="mb-1 block text-sm font-medium text-brand-text">
                     Last Name
                   </label>
                   <input
@@ -200,13 +200,13 @@ export default function ContactPage() {
                     value={form.lastName}
                     onChange={(e) => update("lastName", e.target.value)}
                     placeholder="Sharma"
-                    className="w-full rounded-lg glass-card px-3 py-2.5 text-sm text-white outline-none focus:shadow-glow-electric placeholder:text-white/30"
+                    className="w-full rounded-lg glass-brand-card px-3 py-2.5 text-sm text-brand-text outline-none focus:shadow-brand-glow placeholder:text-brand-muted"
                   />
                 </div>
               </div>
 
               <div>
-                <label htmlFor="contact-email" className="mb-1 block text-sm font-medium text-white/80">
+                <label htmlFor="contact-email" className="mb-1 block text-sm font-medium text-brand-text">
                   Email
                 </label>
                 <input
@@ -218,12 +218,12 @@ export default function ContactPage() {
                   value={form.email}
                   onChange={(e) => update("email", e.target.value)}
                   placeholder="rahul@example.com"
-                  className="w-full rounded-lg glass-card px-3 py-2.5 text-sm text-white outline-none focus:shadow-glow-electric placeholder:text-white/30"
+                  className="w-full rounded-lg glass-brand-card px-3 py-2.5 text-sm text-brand-text outline-none focus:shadow-brand-glow placeholder:text-brand-muted"
                 />
               </div>
 
               <div>
-                <label htmlFor="contact-phone" className="mb-1 block text-sm font-medium text-white/80">
+                <label htmlFor="contact-phone" className="mb-1 block text-sm font-medium text-brand-text">
                   Phone Number
                 </label>
                 <input
@@ -238,17 +238,17 @@ export default function ContactPage() {
                   placeholder="10-digit mobile number"
                   aria-invalid={phoneError ? "true" : "false"}
                   className={
-                    "w-full rounded-lg glass-card px-3 py-2.5 text-sm text-white outline-none placeholder:text-white/30 " +
-                    (phoneError ? "shadow-[0_0_0_1px_rgba(248,113,113,0.6)]" : "focus:shadow-glow-electric")
+                    "w-full rounded-lg glass-brand-card px-3 py-2.5 text-sm text-brand-text outline-none placeholder:text-brand-muted " +
+                    (phoneError ? "shadow-[0_0_0_1px_rgba(248,113,113,0.6)]" : "focus:shadow-brand-glow")
                   }
                 />
                 {phoneError && (
-                  <p className="mt-1 text-xs font-medium text-red-400">{phoneError}</p>
+                  <p className="mt-1 text-xs font-medium text-red-600">{phoneError}</p>
                 )}
               </div>
 
               <div>
-                <label htmlFor="contact-subject" className="mb-1 block text-sm font-medium text-white/80">
+                <label htmlFor="contact-subject" className="mb-1 block text-sm font-medium text-brand-text">
                   Subject
                 </label>
                 <select
@@ -256,16 +256,16 @@ export default function ContactPage() {
                   name="subject"
                   value={form.subject}
                   onChange={(e) => update("subject", e.target.value)}
-                  className="w-full rounded-lg glass-card px-3 py-2.5 text-sm text-white outline-none focus:shadow-glow-electric"
+                  className="w-full rounded-lg glass-brand-card px-3 py-2.5 text-sm text-brand-text outline-none focus:shadow-brand-glow"
                 >
                   {SUBJECTS.map((s) => (
-                    <option key={s} value={s} className="bg-graphite">{s}</option>
+                    <option key={s} value={s} className="bg-white">{s}</option>
                   ))}
                 </select>
               </div>
 
               <div>
-                <label htmlFor="contact-message" className="mb-1 block text-sm font-medium text-white/80">
+                <label htmlFor="contact-message" className="mb-1 block text-sm font-medium text-brand-text">
                   Message
                 </label>
                 <textarea
@@ -276,14 +276,14 @@ export default function ContactPage() {
                   value={form.message}
                   onChange={(e) => update("message", e.target.value)}
                   placeholder="Tell us how we can help you..."
-                  className="w-full rounded-lg glass-card px-3 py-2.5 text-sm text-white outline-none focus:shadow-glow-electric placeholder:text-white/30"
+                  className="w-full rounded-lg glass-brand-card px-3 py-2.5 text-sm text-brand-text outline-none focus:shadow-brand-glow placeholder:text-brand-muted"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={status === "loading"}
-                className="w-full rounded-lg bg-gradient-to-r from-electric to-liquid py-3 text-sm font-bold text-white shadow-glow-electric hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full rounded-lg bg-gradient-to-r from-brand-blue to-brand-navy py-3 text-sm font-bold text-white shadow-brand-glow hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {status === "loading" ? "Sending..." : "Send Message"}
               </button>

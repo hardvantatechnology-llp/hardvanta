@@ -12,7 +12,7 @@ export default function WishlistToggleButton({ productId, className = "" }) {
       type="button"
       onClick={() => toggleWishlist(productId)}
       aria-label={wished ? "Remove from wishlist" : "Add to wishlist"}
-      className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-lg glass-card text-white/80 transition-all hover:shadow-glow-purple ${className}`}
+      className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-lg glass-brand-card text-brand-muted transition-all hover:shadow-brand-glow ${className}`}
     >
       <Heart size={18} className={wished ? "fill-red-500 text-red-500" : ""} />
     </button>

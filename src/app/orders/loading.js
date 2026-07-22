@@ -2,7 +2,7 @@ import Skeleton from "@/components/ui/Skeleton";
 
 export default function OrdersLoading() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-graphite to-obsidian">
+    <div className="min-h-screen bg-gradient-to-b from-brand-silver to-brand-bg">
       <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="mb-6 flex items-center justify-between">
           <div className="space-y-2">

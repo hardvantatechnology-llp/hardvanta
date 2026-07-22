@@ -30,9 +30,9 @@ export default function ShareButton({ title, className = "" }) {
       type="button"
       onClick={handleShare}
       aria-label="Share this product"
-      className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-lg glass-card text-white/80 transition-all hover:shadow-glow-electric ${className}`}
+      className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-lg glass-brand-card text-brand-muted transition-all hover:shadow-brand-glow ${className}`}
     >
-      {copied ? <Check size={18} className="text-cyan" /> : <Share2 size={18} />}
+      {copied ? <Check size={18} className="text-brand-blue" /> : <Share2 size={18} />}
     </button>
   );
 }

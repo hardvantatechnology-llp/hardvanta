@@ -11,7 +11,7 @@ function Stars({ rating }) {
           className={
             i <= Math.round(rating)
               ? "fill-amber-400 text-amber-400"
-              : "text-white/20"
+              : "text-brand-border"
           }
         />
       ))}
@@ -23,16 +23,16 @@ export default async function GoogleReviews() {
   const { rating, total, reviews } = await getGoogleReviews();
 
   return (
-    <section className="bg-graphite py-12">
+    <section className="bg-brand-silver py-12">
       <div className="container-page">
         <div className="mb-6 flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="heading-accent">What our customers say</h2>
           <div className="flex items-center gap-2">
-            <span className="text-2xl font-bold text-white">
+            <span className="text-2xl font-bold text-brand-text">
               {rating.toFixed(1)}
             </span>
             <Stars rating={rating} />
-            <span className="text-sm text-white/40">
+            <span className="text-sm text-brand-muted">
               ({total} Google reviews)
             </span>
           </div>
@@ -42,19 +42,19 @@ export default async function GoogleReviews() {
           {reviews.map((r, idx) => (
             <article
               key={idx}
-              className="flex flex-col gap-3 rounded-xl glass-card p-5"
+              className="flex flex-col gap-3 rounded-xl glass-brand-card p-5"
             >
               <div className="flex items-center gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-electric to-liquid text-sm font-bold text-white">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-brand-blue to-brand-navy text-sm font-bold text-white">
                   {r.author.charAt(0).toUpperCase()}
                 </span>
                 <div>
-                  <p className="text-sm font-semibold text-white/90">{r.author}</p>
-                  <p className="text-xs text-white/40">{r.relativeTime}</p>
+                  <p className="text-sm font-semibold text-brand-text">{r.author}</p>
+                  <p className="text-xs text-brand-muted">{r.relativeTime}</p>
                 </div>
               </div>
               <Stars rating={r.rating} />
-              <p className="text-sm leading-relaxed text-white/60">{r.text}</p>
+              <p className="text-sm leading-relaxed text-brand-muted">{r.text}</p>
             </article>
           ))}
         </div>

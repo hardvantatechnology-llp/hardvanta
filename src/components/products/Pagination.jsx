@@ -20,12 +20,12 @@ export default function Pagination({ page = 1, totalPages = 1, basePath, searchP
   const linkClass = (active) =>
     `flex h-9 min-w-9 items-center justify-center rounded-full px-2 text-sm font-medium transition-all ${
       active
-        ? "bg-gradient-to-r from-electric to-liquid text-white shadow-glow-electric"
-        : "glass text-white/70 hover:text-white hover:shadow-glow-electric"
+        ? "bg-gradient-to-r from-brand-blue to-brand-navy text-white shadow-brand-glow"
+        : "glass-brand text-brand-muted hover:text-brand-text hover:shadow-brand-glow"
     }`;
 
   const disabledClass =
-    "flex h-9 w-9 items-center justify-center rounded-full glass text-white/20 cursor-not-allowed";
+    "flex h-9 w-9 items-center justify-center rounded-full glass-brand text-brand-muted/50 cursor-not-allowed";
 
   return (
     <nav aria-label="Pagination" className="mt-10 flex items-center justify-center gap-2">
@@ -40,7 +40,7 @@ export default function Pagination({ page = 1, totalPages = 1, basePath, searchP
       {start > 1 && (
         <>
           <Link href={pageHref(basePath, searchParams, 1)} className={linkClass(false)}>1</Link>
-          {start > 2 && <span className="px-1 text-white/30">…</span>}
+          {start > 2 && <span className="px-1 text-brand-muted">…</span>}
         </>
       )}
 
@@ -52,7 +52,7 @@ export default function Pagination({ page = 1, totalPages = 1, basePath, searchP
 
       {end < totalPages && (
         <>
-          {end < totalPages - 1 && <span className="px-1 text-white/30">…</span>}
+          {end < totalPages - 1 && <span className="px-1 text-brand-muted">…</span>}
           <Link href={pageHref(basePath, searchParams, totalPages)} className={linkClass(false)}>
             {totalPages}
           </Link>

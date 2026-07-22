@@ -46,7 +46,7 @@ export default function Hero() {
   const handleMouseLeave = useCallback(() => setTilt({ x: 0, y: 0 }), []);
 
   return (
-    <section className="relative overflow-hidden bg-obsidian">
+    <section className="relative overflow-hidden bg-brand-bg">
       <LiquidBackground />
 
       <motion.div
@@ -56,12 +56,12 @@ export default function Hero() {
         className="container-page relative grid items-center gap-10 py-16 md:grid-cols-[1.1fr_0.9fr] md:py-24"
       >
         {/* Left: copy + search + quick links */}
-        <div className="text-white">
+        <div className="text-brand-text">
           <motion.span
             variants={reduce ? undefined : item}
-            className="inline-flex items-center gap-2 rounded-full glass px-3 py-1 text-xs font-semibold text-white"
+            className="inline-flex items-center gap-2 rounded-full glass-brand px-3 py-1 text-xs font-semibold text-brand-text"
           >
-            <Star size={13} className="fill-cyan text-cyan" />
+            <Star size={13} className="fill-brand-steel text-brand-steel" />
             Trusted by 50,000+ makers across India
           </motion.span>
 
@@ -71,14 +71,14 @@ export default function Hero() {
           >
             Build anything.
             <br />
-            <span className="bg-gradient-to-r from-electric-light via-cyan to-liquid-light bg-clip-text text-transparent bg-[length:200%_100%] animate-gradient-x">
+            <span className="bg-gradient-to-r from-brand-blue via-brand-steel to-brand-navy bg-clip-text text-transparent bg-[length:200%_100%] animate-gradient-x">
               We&apos;ve got the parts.
             </span>
           </motion.h1>
 
           <motion.p
             variants={reduce ? undefined : item}
-            className="mt-5 max-w-lg text-base leading-relaxed text-silver-light/80"
+            className="mt-5 max-w-lg text-base leading-relaxed text-brand-muted"
           >
             India&apos;s store for robotics, electronics &amp; DIY engineering —
             boards, sensors, motors, drones, 3D printing and more, shipped fast
@@ -86,24 +86,24 @@ export default function Hero() {
           </motion.p>
 
           <motion.div variants={reduce ? undefined : item} className="mt-7 flex flex-wrap gap-3">
-            <Button href="/products" variant="gradient" size="lg">
+            <Button href="/products" variant="brand-gradient" size="lg">
               Shop All Products <ArrowRight size={18} />
             </Button>
-            <Button href="/b2b" variant="glass" size="lg">
+            <Button href="/b2b" variant="brand-glass" size="lg">
               Bulk &amp; B2B
             </Button>
           </motion.div>
 
           {/* Quick category links */}
           <motion.div variants={reduce ? undefined : item} className="mt-8 flex flex-wrap items-center gap-2">
-            <span className="text-xs font-semibold uppercase tracking-wide text-white/40">
+            <span className="text-xs font-semibold uppercase tracking-wide text-brand-muted">
               Popular:
             </span>
             {quickLinks.map((q) => (
               <Link
                 key={q.slug}
                 href={`/products?category=${q.slug}`}
-                className="rounded-full glass px-3 py-1.5 text-xs font-medium text-white/85 transition-all hover:shadow-glow-electric hover:text-white"
+                className="rounded-full glass-brand px-3 py-1.5 text-xs font-medium text-brand-text/90 transition-all hover:shadow-brand-glow hover:text-brand-blue"
               >
                 {q.label}
               </Link>
@@ -129,18 +129,18 @@ export default function Hero() {
             }}
           >
             <GlassCard strong tilt={false} className="col-span-2 p-6" glow="electric">
-              <p className="text-sm font-semibold text-white/60">
+              <p className="text-sm font-semibold text-brand-muted">
                 This week&apos;s deals
               </p>
-              <p className="mt-1 text-2xl font-extrabold text-white">
+              <p className="mt-1 text-2xl font-extrabold text-brand-text">
                 Up to 40% off
               </p>
-              <p className="mt-1 text-sm text-white/50">
+              <p className="mt-1 text-sm text-brand-muted">
                 on starter kits, sensors &amp; modules
               </p>
               <Link
                 href="/products"
-                className="mt-4 inline-flex items-center gap-1 text-sm font-bold text-electric-light hover:gap-2 hover:text-cyan transition-all"
+                className="mt-4 inline-flex items-center gap-1 text-sm font-bold text-brand-blue hover:gap-2 hover:text-brand-steel transition-all"
               >
                 Grab the deals <ArrowRight size={15} />
               </Link>
@@ -150,8 +150,8 @@ export default function Hero() {
               ["4.7★", "Average rating"],
             ].map(([v, l]) => (
               <GlassCard key={l} tilt={false} glow="purple" className="p-5">
-                <p className="text-2xl font-extrabold text-white">{v}</p>
-                <p className="mt-1 text-xs text-white/50">{l}</p>
+                <p className="text-2xl font-extrabold text-brand-text">{v}</p>
+                <p className="mt-1 text-xs text-brand-muted">{l}</p>
               </GlassCard>
             ))}
           </div>

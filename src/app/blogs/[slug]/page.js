@@ -41,15 +41,15 @@ export default async function BlogDetailPage({ params }) {
   });
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-graphite to-obsidian">
-      <div className="liquid-blob left-1/4 top-[-15%] h-96 w-96 bg-electric/10" />
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-brand-silver to-brand-bg">
+      <div className="liquid-blob left-1/4 top-[-15%] h-96 w-96 bg-brand-blue/10" />
 
-      <div className="relative bg-gradient-to-r from-obsidian via-midnight to-obsidian text-white">
+      <div className="relative bg-gradient-to-r from-brand-navy via-brand-blue to-brand-navy text-white">
         <div className="container-page py-8">
           <nav className="flex items-center gap-1 text-sm text-white/50">
-            <Link href="/" className="hover:text-electric-light">Home</Link>
+            <Link href="/" className="hover:text-brand-steel">Home</Link>
             <ChevronRight size={14} />
-            <Link href="/blogs" className="hover:text-electric-light">Blogs</Link>
+            <Link href="/blogs" className="hover:text-brand-steel">Blogs</Link>
             <ChevronRight size={14} />
             <span className="line-clamp-1 text-white">{blog.title}</span>
           </nav>
@@ -59,12 +59,12 @@ export default async function BlogDetailPage({ params }) {
       <div className="container-page relative py-10">
         <div className="mx-auto max-w-3xl">
 
-          <span className="inline-block rounded-full bg-electric/10 px-3 py-1 text-xs font-semibold text-electric-light">
+          <span className="inline-block rounded-full bg-brand-blue/10 px-3 py-1 text-xs font-semibold text-brand-blue">
             {blog.category}
           </span>
-          <h1 className="mt-3 text-2xl font-bold text-white sm:text-3xl">{blog.title}</h1>
+          <h1 className="mt-3 text-2xl font-bold text-brand-text sm:text-3xl">{blog.title}</h1>
 
-          <div className="mt-3 flex items-center gap-4 text-sm text-white/40">
+          <div className="mt-3 flex items-center gap-4 text-sm text-brand-muted">
             <span className="flex items-center gap-1.5">
               <User size={14} /> {blog.author}
             </span>
@@ -78,7 +78,7 @@ export default async function BlogDetailPage({ params }) {
             </span>
           </div>
 
-          <div className="relative mt-6 aspect-[16/9] w-full overflow-hidden rounded-xl bg-obsidian">
+          <div className="relative mt-6 aspect-[16/9] w-full overflow-hidden rounded-xl bg-brand-silver">
             <Image
               src={imageSrc(blog.coverImage)}
               alt={blog.title}
@@ -90,7 +90,7 @@ export default async function BlogDetailPage({ params }) {
           </div>
 
           {/* Content — stored as plain text/markdown-ish paragraphs */}
-          <div className="prose-info mt-8 space-y-4 text-sm leading-relaxed text-white/70">
+          <div className="prose-info mt-8 space-y-4 text-sm leading-relaxed text-brand-muted">
             {blog.content.split("\n").filter(Boolean).map((para, i) => (
               <p key={i}>{para}</p>
             ))}
@@ -100,15 +100,15 @@ export default async function BlogDetailPage({ params }) {
         {/* Related */}
         {related.length > 0 && (
           <div className="mx-auto mt-14 max-w-5xl">
-            <h2 className="mb-5 text-xl font-bold text-white">More in {blog.category}</h2>
+            <h2 className="mb-5 text-xl font-bold text-brand-text">More in {blog.category}</h2>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
               {related.map((b) => (
                 <Link
                   key={b.id}
                   href={`/blogs/${b.slug}`}
-                  className="group overflow-hidden rounded-xl glass-card transition-shadow hover:shadow-glow-electric"
+                  className="group overflow-hidden rounded-xl glass-brand-card transition-shadow hover:shadow-brand-glow"
                 >
-                  <div className="relative aspect-[16/10] w-full overflow-hidden bg-obsidian">
+                  <div className="relative aspect-[16/10] w-full overflow-hidden bg-brand-silver">
                     <Image
                       src={imageSrc(b.coverImage)}
                       alt={b.title}
@@ -118,7 +118,7 @@ export default async function BlogDetailPage({ params }) {
                     />
                   </div>
                   <div className="p-4">
-                    <h3 className="line-clamp-2 text-sm font-bold text-white group-hover:text-electric-light transition-colors">
+                    <h3 className="line-clamp-2 text-sm font-bold text-brand-text group-hover:text-brand-blue transition-colors">
                       {b.title}
                     </h3>
                   </div>

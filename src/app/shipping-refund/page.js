@@ -8,13 +8,13 @@ function Row({ label, value, color }) {
       justifyContent: "space-between",
       alignItems: "center",
       padding: "11px 0",
-      borderBottom: "1px solid rgba(255,255,255,0.1)",
+      borderBottom: "1px solid #D9DEE5",
     }}>
-      <span style={{ fontSize: 14, color: "rgba(255,255,255,0.5)" }}>{label}</span>
+      <span style={{ fontSize: 14, color: "#6B7280" }}>{label}</span>
       <span style={{
         fontSize: 14,
         fontWeight: 600,
-        color: color === "green" ? "#4ade80" : color === "red" ? "#f87171" : "#ffffff",
+        color: color === "green" ? "#16a34a" : color === "red" ? "#dc2626" : "#1F2937",
       }}>
         {value}
       </span>
@@ -26,8 +26,8 @@ function Checklist({ items }) {
   return (
     <ul style={{ listStyle: "none", padding: 0, margin: "12px 0 0 0", display: "flex", flexDirection: "column", gap: 8 }}>
       {items.map((item, i) => (
-        <li key={i} style={{ display: "flex", alignItems: "flex-start", gap: 10, fontSize: 15, color: "rgba(255,255,255,0.7)" }}>
-          <span style={{ color: "#4ade80", fontWeight: 700, flexShrink: 0, marginTop: 1 }}>✓</span>
+        <li key={i} style={{ display: "flex", alignItems: "flex-start", gap: 10, fontSize: 15, color: "#6B7280" }}>
+          <span style={{ color: "#16a34a", fontWeight: 700, flexShrink: 0, marginTop: 1 }}>✓</span>
           <span>{item}</span>
         </li>
       ))}
@@ -37,7 +37,7 @@ function Checklist({ items }) {
 
 function Note({ children }) {
   return (
-    <p style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", margin: "10px 0 0 0", lineHeight: 1.6 }}>
+    <p style={{ fontSize: 13, color: "#6B7280", margin: "10px 0 0 0", lineHeight: 1.6 }}>
       {children}
     </p>
   );
@@ -49,9 +49,9 @@ function InfoBadge({ emoji, text, color }) {
       display: "inline-flex",
       alignItems: "center",
       gap: 6,
-      background: color === "green" ? "rgba(34,197,94,0.12)" : color === "red" ? "rgba(239,68,68,0.12)" : color === "amber" ? "rgba(245,158,11,0.12)" : "rgba(59,130,246,0.12)",
-      border: `1px solid ${color === "green" ? "rgba(34,197,94,0.35)" : color === "red" ? "rgba(239,68,68,0.35)" : color === "amber" ? "rgba(245,158,11,0.35)" : "rgba(59,130,246,0.35)"}`,
-      color: color === "green" ? "#4ade80" : color === "red" ? "#f87171" : color === "amber" ? "#fbbf24" : "#60a5fa",
+      background: color === "green" ? "rgba(34,197,94,0.12)" : color === "red" ? "rgba(239,68,68,0.12)" : color === "amber" ? "rgba(245,158,11,0.12)" : "rgba(22,62,110,0.10)",
+      border: `1px solid ${color === "green" ? "rgba(34,197,94,0.35)" : color === "red" ? "rgba(239,68,68,0.35)" : color === "amber" ? "rgba(245,158,11,0.35)" : "rgba(22,62,110,0.35)"}`,
+      color: color === "green" ? "#16a34a" : color === "red" ? "#dc2626" : color === "amber" ? "#b45309" : "#163E6E",
       fontSize: 12,
       fontWeight: 600,
       padding: "4px 12px",
@@ -75,7 +75,7 @@ export default function ShippingRefundPage() {
     let html = "";
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
-        html += `<span style="position:absolute;left:${c * 40 - 2}px;top:${r * 40 - 2}px;font-size:13px;color:rgba(120,160,255,0.13);user-select:none;line-height:1">+</span>`;
+        html += `<span style="position:absolute;left:${c * 40 - 2}px;top:${r * 40 - 2}px;font-size:13px;color:rgba(63,110,156,0.15);user-select:none;line-height:1">+</span>`;
       }
     }
     el.innerHTML = html;
@@ -88,7 +88,7 @@ export default function ShippingRefundPage() {
       <style dangerouslySetInnerHTML={{ __html: `
         .sr-section {
           padding: 1.5rem 0;
-          border-bottom: 1px solid rgba(255,255,255,0.1);
+          border-bottom: 1px solid #D9DEE5;
         }
         .sr-section:last-child {
           border-bottom: none;
@@ -96,13 +96,13 @@ export default function ShippingRefundPage() {
         .sr-heading {
           font-size: 15px;
           font-weight: 700;
-          color: #ffffff;
+          color: #1F2937;
           margin: 0 0 0.75rem 0;
           letter-spacing: -0.01em;
         }
         .sr-body {
           font-size: 15px;
-          color: rgba(255,255,255,0.7);
+          color: #6B7280;
           line-height: 1.75;
         }
         @media (min-width: 640px) {
@@ -126,16 +126,16 @@ export default function ShippingRefundPage() {
         <div style={{
           position: "relative",
           overflow: "hidden",
-          background: "linear-gradient(135deg, #0b1629 0%, #0e2050 55%, #1840a0 100%)",
+          background: "linear-gradient(135deg, #0F2747 0%, #163E6E 55%, #3F6E9C 100%)",
           padding: `clamp(2rem,5vw,4.5rem) ${px} clamp(2.5rem,5vw,4.5rem)`,
         }}>
           <div ref={plusRef} style={{ position: "absolute", inset: 0, pointerEvents: "none", overflow: "hidden", zIndex: 0 }} />
 
           <div style={{ position: "relative", zIndex: 1 }}>
-            <nav style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: "rgba(160,190,255,0.6)", marginBottom: "1.25rem" }}>
-              <a href="/" style={{ color: "rgba(160,190,255,0.6)", textDecoration: "none" }}>Home</a>
+            <nav style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: "rgba(200,215,235,0.65)", marginBottom: "1.25rem" }}>
+              <a href="/" style={{ color: "rgba(200,215,235,0.65)", textDecoration: "none" }}>Home</a>
               <span style={{ opacity: 0.4 }}>›</span>
-              <span style={{ color: "rgba(200,220,255,0.9)" }}>Shipping &amp; Refund Policy</span>
+              <span style={{ color: "rgba(225,232,242,0.92)" }}>Shipping &amp; Refund Policy</span>
             </nav>
 
             <div style={{
@@ -165,7 +165,7 @@ export default function ShippingRefundPage() {
         </div>
 
         {/* ── BODY ── */}
-        <div style={{ background: "#0d0f16", padding: `0 ${px} 3rem` }}>
+        <div style={{ background: "#F7F8FA", padding: `0 ${px} 3rem` }}>
 
           {/* Shipping charges */}
           <div className="sr-section">
@@ -195,7 +195,7 @@ export default function ShippingRefundPage() {
               <InfoBadge emoji="🔌" text="Electronic items — No returns once delivered" color="red" />
               <p style={{ margin: 0 }}>
                 Due to the nature of electronic products, we do{" "}
-                <strong style={{ color: "#ffffff" }}>not accept returns</strong>{" "}
+                <strong style={{ color: "#1F2937" }}>not accept returns</strong>{" "}
                 once an order has been delivered. Please review product specifications carefully before placing your order.
               </p>
             </div>
@@ -208,7 +208,7 @@ export default function ShippingRefundPage() {
               <InfoBadge emoji="⚠️" text="Refunds only in exceptional cases" color="amber" />
               <p style={{ margin: 0 }}>
                 Refunds are{" "}
-                <strong style={{ color: "#ffffff" }}>not applicable</strong>{" "}
+                <strong style={{ color: "#1F2937" }}>not applicable</strong>{" "}
                 for delivered electronic items. Exceptions are considered only where:
               </p>
               <Checklist items={[

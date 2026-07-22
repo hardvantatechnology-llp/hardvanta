@@ -140,15 +140,15 @@ export default function LocationPickerModal({ open, onClose }) {
   if (!mounted || !open) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[260] flex items-start justify-center overflow-y-auto bg-obsidian/70 backdrop-blur-md px-4 py-8 sm:items-center">
-      <div className="glass-strong w-full max-w-md rounded-3xl p-5">
+    <div className="fixed inset-0 z-[260] flex items-start justify-center overflow-y-auto bg-brand-navy/70 backdrop-blur-md px-4 py-8 sm:items-center">
+      <div className="glass-brand-strong w-full max-w-md rounded-3xl p-5">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-base font-bold text-white">Choose delivery location</h2>
+          <h2 className="text-base font-bold text-brand-text">Choose delivery location</h2>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="flex h-8 w-8 items-center justify-center rounded-full glass text-white/60 hover:text-white transition-colors"
+            className="flex h-8 w-8 items-center justify-center rounded-full glass-brand text-brand-muted hover:text-brand-text transition-colors"
           >
             <X size={16} />
           </button>
@@ -156,15 +156,15 @@ export default function LocationPickerModal({ open, onClose }) {
 
         {/* Search */}
         <div className="relative">
-          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
+          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-muted" />
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search area, city or pincode"
-            className="w-full rounded-xl glass-card pl-9 pr-3 py-2.5 text-sm text-white outline-none focus:shadow-glow-electric placeholder:text-white/30"
+            className="w-full rounded-xl glass-brand-card pl-9 pr-3 py-2.5 text-sm text-brand-text outline-none focus:shadow-brand-glow placeholder:text-brand-muted"
           />
-          {searching && <Loader2 size={14} className="absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-white/40" />}
+          {searching && <Loader2 size={14} className="absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-brand-muted" />}
         </div>
 
         {/* Search results */}
@@ -175,19 +175,19 @@ export default function LocationPickerModal({ open, onClose }) {
                 key={r.pincode}
                 type="button"
                 onClick={() => handleSelect(r)}
-                className="flex w-full items-center justify-between gap-2 rounded-xl px-3 py-2 text-left text-sm text-white/80 hover:bg-white/5 transition-colors"
+                className="flex w-full items-center justify-between gap-2 rounded-xl px-3 py-2 text-left text-sm text-brand-text hover:bg-brand-silver transition-colors"
               >
                 <span className="flex items-center gap-2">
-                  <MapPin size={14} className="text-electric-light shrink-0" />
+                  <MapPin size={14} className="text-brand-blue shrink-0" />
                   {locationLine(r)}
                 </span>
-                <span className="shrink-0 text-xs font-semibold text-cyan">✅ Available</span>
+                <span className="shrink-0 text-xs font-semibold text-brand-steel">✅ Available</span>
               </button>
             ))}
           </div>
         )}
         {notServiceable && (
-          <p className="mt-2 flex items-center gap-1.5 rounded-xl bg-red-500/10 px-3 py-2 text-xs font-semibold text-red-400">
+          <p className="mt-2 flex items-center gap-1.5 rounded-xl bg-red-500/10 px-3 py-2 text-xs font-semibold text-red-600">
             <XCircle size={14} /> ❌ Currently unavailable for {notServiceable}.
           </p>
         )}
@@ -197,17 +197,17 @@ export default function LocationPickerModal({ open, onClose }) {
           type="button"
           onClick={handleUseCurrentLocation}
           disabled={geoLoading}
-          className="mt-3 flex w-full items-center gap-2 rounded-xl border border-dashed border-white/15 px-3 py-2.5 text-sm font-semibold text-electric-light hover:border-electric/40 transition-colors disabled:opacity-50"
+          className="mt-3 flex w-full items-center gap-2 rounded-xl border border-dashed border-brand-border px-3 py-2.5 text-sm font-semibold text-brand-blue hover:border-brand-blue/40 transition-colors disabled:opacity-50"
         >
           {geoLoading ? <Loader2 size={15} className="animate-spin" /> : <LocateFixed size={15} />}
           Use Current Location
         </button>
-        {geoError && <p className="mt-1.5 text-xs text-red-400">{geoError}</p>}
+        {geoError && <p className="mt-1.5 text-xs text-red-600">{geoError}</p>}
 
         {/* Saved addresses */}
         {isAuthed && addresses.length > 0 && (
           <div className="mt-4">
-            <p className="mb-1.5 text-xs font-bold uppercase tracking-wider text-white/40">Saved Addresses</p>
+            <p className="mb-1.5 text-xs font-bold uppercase tracking-wider text-brand-muted">Saved Addresses</p>
             <div className="max-h-40 space-y-1 overflow-y-auto">
               {addresses.map((a) => {
                 const svc = addressServiceability[a.postalCode];
@@ -225,12 +225,12 @@ export default function LocationPickerModal({ open, onClose }) {
                         deliveryAreaId: svc?.deliveryArea?.id ?? null,
                       })
                     }
-                    className="flex w-full items-center justify-between gap-2 rounded-xl px-3 py-2 text-left text-sm text-white/80 hover:bg-white/5 transition-colors disabled:opacity-40 disabled:hover:bg-transparent"
+                    className="flex w-full items-center justify-between gap-2 rounded-xl px-3 py-2 text-left text-sm text-brand-text hover:bg-brand-silver transition-colors disabled:opacity-40 disabled:hover:bg-transparent"
                   >
                     <span className="min-w-0 truncate">
-                      <span className="font-semibold text-white">{a.label}</span> — {a.addressLine1}, {a.city} - {a.postalCode}
+                      <span className="font-semibold text-brand-text">{a.label}</span> — {a.addressLine1}, {a.city} - {a.postalCode}
                     </span>
-                    <span className={`shrink-0 text-xs font-semibold ${serviceable ? "text-cyan" : "text-red-400"}`}>
+                    <span className={`shrink-0 text-xs font-semibold ${serviceable ? "text-brand-steel" : "text-red-600"}`}>
                       {serviceable ? "✅" : "❌"}
                     </span>
                   </button>
@@ -243,7 +243,7 @@ export default function LocationPickerModal({ open, onClose }) {
         {/* Recent locations */}
         {recentLocations.length > 0 && (
           <div className="mt-4">
-            <p className="mb-1.5 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-white/40">
+            <p className="mb-1.5 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-brand-muted">
               <Clock size={12} /> Recent Locations
             </p>
             <div className="space-y-1">
@@ -252,9 +252,9 @@ export default function LocationPickerModal({ open, onClose }) {
                   key={r.pincode}
                   type="button"
                   onClick={() => handleSelect(r)}
-                  className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm text-white/70 hover:bg-white/5 transition-colors"
+                  className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm text-brand-muted hover:bg-brand-silver transition-colors"
                 >
-                  <MapPin size={14} className="text-white/30 shrink-0" />
+                  <MapPin size={14} className="text-brand-muted shrink-0" />
                   {locationLine(r)}
                 </button>
               ))}
@@ -262,7 +262,7 @@ export default function LocationPickerModal({ open, onClose }) {
           </div>
         )}
 
-        <p className="mt-4 text-center text-[11px] text-white/30">Delivery currently available only across Delhi NCR.</p>
+        <p className="mt-4 text-center text-[11px] text-brand-muted">Delivery currently available only across Delhi NCR.</p>
       </div>
     </div>,
     document.body

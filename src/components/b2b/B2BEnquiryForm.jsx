@@ -44,9 +44,9 @@ export default function B2BEnquiryForm() {
   };
 
   const input =
-    "w-full rounded-lg glass-card px-3 py-2.5 text-sm text-white outline-none focus:shadow-glow-electric placeholder:text-white/30";
+    "w-full rounded-lg glass-brand-card px-3 py-2.5 text-sm text-brand-text outline-none focus:shadow-brand-glow placeholder:text-brand-muted";
   const inputError =
-    "w-full rounded-lg glass-card px-3 py-2.5 text-sm text-white outline-none shadow-[0_0_0_1px_rgba(248,113,113,0.6)] placeholder:text-white/30";
+    "w-full rounded-lg glass-brand-card px-3 py-2.5 text-sm text-brand-text outline-none shadow-[0_0_0_1px_rgba(248,113,113,0.6)] placeholder:text-brand-muted";
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -84,15 +84,15 @@ export default function B2BEnquiryForm() {
 
   if (status === "success") {
     return (
-      <div className="mt-12 rounded-2xl glass-strong p-8 text-center">
-        <CheckCircle2 size={44} className="mx-auto text-cyan" />
-        <h3 className="mt-4 text-xl font-bold text-white">Enquiry submitted!</h3>
-        <p className="mt-2 text-sm text-white/50">
+      <div className="mt-12 rounded-2xl glass-brand-strong p-8 text-center">
+        <CheckCircle2 size={44} className="mx-auto text-brand-blue" />
+        <h3 className="mt-4 text-xl font-bold text-brand-text">Enquiry submitted!</h3>
+        <p className="mt-2 text-sm text-brand-muted">
           Thanks — our B2B team will contact you within 24 hours.
         </p>
         <button
           onClick={() => setStatus("idle")}
-          className="mt-5 rounded-lg bg-gradient-to-r from-electric to-liquid px-6 py-2.5 text-sm font-semibold text-white shadow-glow-electric hover:brightness-110 transition-all"
+          className="mt-5 rounded-lg bg-gradient-to-r from-brand-blue to-brand-navy px-6 py-2.5 text-sm font-semibold text-white shadow-brand-glow hover:brightness-110 transition-all"
         >
           Submit another enquiry
         </button>
@@ -101,26 +101,26 @@ export default function B2BEnquiryForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-12 rounded-2xl glass-strong p-8">
-      <h3 className="text-xl font-bold text-white">Submit Bulk Enquiry</h3>
-      <p className="mt-1 text-sm text-white/50">
+    <form onSubmit={handleSubmit} className="mt-12 rounded-2xl glass-brand-strong p-8">
+      <h3 className="text-xl font-bold text-brand-text">Submit Bulk Enquiry</h3>
+      <p className="mt-1 text-sm text-brand-muted">
         Fill in your requirements and our B2B team will contact you within 24 hours.
       </p>
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
         <div>
-          <label htmlFor="b2b-org" className="mb-1 block text-sm font-medium text-white/80">Company / Institute Name</label>
+          <label htmlFor="b2b-org" className="mb-1 block text-sm font-medium text-brand-text">Company / Institute Name</label>
           <input id="b2b-org" type="text" value={form.organization} onChange={(e) => set("organization", e.target.value)} placeholder="ABC Technologies Pvt Ltd" className={input} />
         </div>
         <div>
-          <label htmlFor="b2b-name" className="mb-1 block text-sm font-medium text-white/80">Contact Person *</label>
+          <label htmlFor="b2b-name" className="mb-1 block text-sm font-medium text-brand-text">Contact Person *</label>
           <input id="b2b-name" type="text" required value={form.name} onChange={(e) => set("name", e.target.value)} placeholder="Rahul Sharma" className={input} />
         </div>
         <div>
-          <label htmlFor="b2b-email" className="mb-1 block text-sm font-medium text-white/80">Email *</label>
+          <label htmlFor="b2b-email" className="mb-1 block text-sm font-medium text-brand-text">Email *</label>
           <input id="b2b-email" type="email" required value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="rahul@company.com" className={input} />
         </div>
         <div>
-          <label htmlFor="b2b-phone" className="mb-1 block text-sm font-medium text-white/80">Phone Number *</label>
+          <label htmlFor="b2b-phone" className="mb-1 block text-sm font-medium text-brand-text">Phone Number *</label>
           <input
             id="b2b-phone"
             type="tel"
@@ -133,32 +133,32 @@ export default function B2BEnquiryForm() {
             aria-invalid={phoneError ? "true" : "false"}
             className={phoneError ? inputError : input}
           />
-          {phoneError && <p className="mt-1 text-xs font-medium text-red-400">{phoneError}</p>}
+          {phoneError && <p className="mt-1 text-xs font-medium text-red-600">{phoneError}</p>}
         </div>
         <div>
-          <label htmlFor="b2b-gst" className="mb-1 block text-sm font-medium text-white/80">GST Number (Optional)</label>
+          <label htmlFor="b2b-gst" className="mb-1 block text-sm font-medium text-brand-text">GST Number (Optional)</label>
           <input id="b2b-gst" type="text" value={form.gst} onChange={(e) => set("gst", e.target.value)} placeholder="22AAAAA0000A1Z5" className={input} />
         </div>
         <div>
-          <label htmlFor="b2b-quantity" className="mb-1 block text-sm font-medium text-white/80">Estimated Quantity</label>
+          <label htmlFor="b2b-quantity" className="mb-1 block text-sm font-medium text-brand-text">Estimated Quantity</label>
           <select id="b2b-quantity" value={form.quantity} onChange={(e) => set("quantity", e.target.value)} className={input}>
             {QUANTITIES.map((q) => (
-              <option key={q} value={q} className="bg-graphite text-white">{q}</option>
+              <option key={q} value={q} className="bg-white text-brand-text">{q}</option>
             ))}
           </select>
         </div>
         <div className="sm:col-span-2">
-          <label htmlFor="b2b-products" className="mb-1 block text-sm font-medium text-white/80">Product Requirements *</label>
+          <label htmlFor="b2b-products" className="mb-1 block text-sm font-medium text-brand-text">Product Requirements *</label>
           <textarea id="b2b-products" rows={4} required value={form.products} onChange={(e) => set("products", e.target.value)} placeholder="List the products and quantities you need..." className={input} />
         </div>
       </div>
 
-      {status === "error" && <p className="mt-4 text-sm font-medium text-red-400">{error}</p>}
+      {status === "error" && <p className="mt-4 text-sm font-medium text-red-600">{error}</p>}
 
       <button
         type="submit"
         disabled={status === "loading"}
-        className="mt-4 inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-electric to-liquid px-10 py-3 text-sm font-bold text-white shadow-glow-electric hover:brightness-110 transition-all disabled:opacity-60"
+        className="mt-4 inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-brand-blue to-brand-navy px-10 py-3 text-sm font-bold text-white shadow-brand-glow hover:brightness-110 transition-all disabled:opacity-60"
       >
         {status === "loading" && <Loader2 size={16} className="animate-spin" />}
         {status === "loading" ? "Submitting..." : "Submit Bulk Enquiry"}

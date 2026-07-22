@@ -16,8 +16,8 @@ export default function CategoryPills({ categories, activeCat }) {
   const pillClass = (isActive) =>
     `shrink-0 whitespace-nowrap rounded-full px-4 py-1.5 text-sm font-medium transition-all ${
       isActive
-        ? "bg-gradient-to-r from-electric to-liquid text-white shadow-glow-electric"
-        : "glass text-white/70 hover:text-white hover:shadow-glow-electric"
+        ? "bg-gradient-to-r from-brand-blue to-brand-navy text-white shadow-brand-glow"
+        : "glass-brand text-brand-muted hover:text-brand-text hover:shadow-brand-glow"
     }`;
 
   return (
@@ -52,7 +52,7 @@ export default function CategoryPills({ categories, activeCat }) {
           <button
             type="button"
             onClick={() => setExpanded((v) => !v)}
-            className="mt-2 flex w-full items-center justify-center gap-1.5 text-sm font-medium text-electric-light hover:text-cyan"
+            className="mt-2 flex w-full items-center justify-center gap-1.5 text-sm font-medium text-brand-blue hover:text-brand-steel"
           >
             {expanded ? "Show less" : "Show all categories"}
             <ChevronDown
