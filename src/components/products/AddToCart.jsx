@@ -45,12 +45,12 @@ export default function AddToCart({ product }) {
 
   return (
     <div className="flex flex-wrap items-center gap-4">
-      <div className="flex items-center gap-1 rounded-xl glass-card overflow-hidden">
+      <div className="flex items-center gap-1 rounded-xl glass-brand-card overflow-hidden">
         {/* Minus button */}
         <button
           onClick={() => setQty((q) => Math.max(1, q - 1))}
           disabled={outOfStock}
-          className="flex h-11 w-11 items-center justify-center text-white/80 transition-colors hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed"
+          className="flex h-11 w-11 items-center justify-center text-brand-muted transition-colors hover:bg-brand-silver disabled:opacity-30 disabled:cursor-not-allowed"
           aria-label="Decrease quantity"
         >
           <Minus size={16} />
@@ -65,7 +65,7 @@ export default function AddToCart({ product }) {
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -12, opacity: 0 }}
               transition={{ duration: 0.15 }}
-              className="absolute inset-0 flex items-center justify-center font-semibold text-white"
+              className="absolute inset-0 flex items-center justify-center font-semibold text-brand-text"
             >
               {qty}
             </motion.span>
@@ -76,7 +76,7 @@ export default function AddToCart({ product }) {
         <button
           onClick={() => setQty((q) => q + 1)}
           disabled={outOfStock}
-          className="flex h-11 w-11 items-center justify-center text-white/80 transition-colors hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed"
+          className="flex h-11 w-11 items-center justify-center text-brand-muted transition-colors hover:bg-brand-silver disabled:opacity-30 disabled:cursor-not-allowed"
           aria-label="Increase quantity"
         >
           <Plus size={16} />
@@ -87,9 +87,9 @@ export default function AddToCart({ product }) {
       <Button
         onClick={handleAdd}
         disabled={outOfStock}
-        variant={addError ? "primary" : added ? "glass" : "outline"}
+        variant={addError ? "primary" : added ? "brand-glass" : "brand-outline"}
         size="lg"
-        className={outOfStock ? "!bg-white/5 !text-white/30 !border-white/10 !shadow-none" : ""}
+        className={outOfStock ? "!bg-brand-silver !text-brand-muted !border-brand-border !shadow-none" : ""}
       >
         {addError ? (
           "Couldn't add — retry"
@@ -105,7 +105,7 @@ export default function AddToCart({ product }) {
       <Button
         onClick={handleBuyNow}
         disabled={outOfStock || buying}
-        variant="gradient"
+        variant="brand-gradient"
         size="lg"
       >
         <Zap size={18} />

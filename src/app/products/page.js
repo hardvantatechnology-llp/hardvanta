@@ -69,15 +69,15 @@ export default async function ProductsPage({ searchParams }) {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-graphite to-obsidian">
-      <div className="liquid-blob left-1/3 top-[-200px] h-96 w-96 bg-electric/10" />
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-brand-bg to-brand-silver">
+      <div className="liquid-blob left-1/3 top-[-200px] h-96 w-96 bg-brand-blue/10" />
       <div className="container-page relative py-8">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold text-white">
+            <h1 className="text-2xl font-bold text-brand-text">
               {q ? `Results for "${q}"` : "All Products"}
             </h1>
-            <p className="mt-1 text-sm text-white/40">{total} products</p>
+            <p className="mt-1 text-sm text-brand-muted">{total} products</p>
           </div>
           <SortDropdown current={sort || "relevance"} searchParams={searchParams} basePath="/products" />
         </div>

@@ -1,15 +1,15 @@
 // Skeleton placeholder shown while products load. Mirrors ProductCard layout.
 function Shimmer({ className = "" }) {
   return (
-    <div className={`relative overflow-hidden rounded bg-white/10 ${className}`}>
-      <div className="absolute inset-0 animate-shimmer bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+    <div className={`relative overflow-hidden rounded bg-brand-silver ${className}`}>
+      <div className="absolute inset-0 animate-shimmer bg-gradient-to-r from-transparent via-white/80 to-transparent" />
     </div>
   );
 }
 
 export default function ProductCardSkeleton() {
   return (
-    <div className="glass-card flex h-full flex-col overflow-hidden rounded-3xl">
+    <div className="glass-brand-card flex h-full flex-col overflow-hidden rounded-3xl">
       <Shimmer className="aspect-square !rounded-none" />
       <div className="flex flex-1 flex-col gap-2 p-4">
         <Shimmer className="h-2.5 w-1/3" />

@@ -29,7 +29,7 @@ export default function ProductGallery({ images = [], alt = "", discountPct = 0 
         onMouseEnter={() => setZoom(true)}
         onMouseLeave={() => setZoom(false)}
         onMouseMove={handleMouseMove}
-        className="glass-card relative aspect-square overflow-hidden rounded-3xl cursor-zoom-in"
+        className="glass-brand-card relative aspect-square overflow-hidden rounded-3xl cursor-zoom-in"
       >
         <Image
           src={main}
@@ -45,7 +45,7 @@ export default function ProductGallery({ images = [], alt = "", discountPct = 0 
           priority
         />
         {discountPct > 0 && (
-          <span className="absolute left-4 top-4 rounded-lg bg-gradient-to-r from-electric to-liquid px-3 py-1 text-sm font-bold text-white shadow-glow-electric">
+          <span className="absolute left-4 top-4 rounded-lg bg-gradient-to-r from-brand-blue to-brand-navy px-3 py-1 text-sm font-bold text-white shadow-brand-glow">
             -{discountPct}% OFF
           </span>
         )}
@@ -59,8 +59,8 @@ export default function ProductGallery({ images = [], alt = "", discountPct = 0 
               key={`${url}-${i}`}
               type="button"
               onClick={() => setActive(i)}
-              className={`glass-card relative h-20 w-20 overflow-hidden rounded-xl border-2 transition-all ${
-                i === active ? "border-electric shadow-glow-electric" : "border-transparent hover:border-electric/40"
+              className={`glass-brand-card relative h-20 w-20 overflow-hidden rounded-xl border-2 transition-all ${
+                i === active ? "border-brand-blue shadow-brand-glow" : "border-transparent hover:border-brand-blue/40"
               }`}
               aria-label={`View image ${i + 1}`}
             >

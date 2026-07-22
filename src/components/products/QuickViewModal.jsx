@@ -58,7 +58,7 @@ export default function QuickViewModal({ product, onClose }) {
         animate={{ opacity: 1 }}
         exit={reduce ? undefined : { opacity: 0 }}
         onClick={onClose}
-        className="fixed inset-0 z-[200] flex items-center justify-center bg-obsidian/70 backdrop-blur-md p-4"
+        className="fixed inset-0 z-[200] flex items-center justify-center bg-brand-navy/70 backdrop-blur-md p-4"
       >
         <motion.div
           key="panel"
@@ -70,17 +70,17 @@ export default function QuickViewModal({ product, onClose }) {
           exit={reduce ? undefined : { opacity: 0, scale: 0.94, y: 16 }}
           transition={{ type: "spring", stiffness: 320, damping: 30 }}
           onClick={(e) => e.stopPropagation()}
-          className="glass-strong relative grid w-full max-w-2xl gap-6 rounded-3xl p-6 sm:grid-cols-2"
+          className="glass-brand-strong relative grid w-full max-w-2xl gap-6 rounded-3xl p-6 sm:grid-cols-2"
         >
           <button
             onClick={onClose}
             aria-label="Close quick view"
-            className="absolute right-4 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-full glass text-white/80 hover:text-white"
+            className="absolute right-4 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-full glass-brand text-brand-muted hover:text-brand-text"
           >
             <X size={18} />
           </button>
 
-          <div className="relative aspect-square overflow-hidden rounded-2xl bg-white/5">
+          <div className="relative aspect-square overflow-hidden rounded-2xl bg-brand-silver">
             <Image
               src={imageSrc(product.image)}
               alt={product.name}
@@ -91,29 +91,29 @@ export default function QuickViewModal({ product, onClose }) {
           </div>
 
           <div className="flex flex-col">
-            <span className="text-xs font-semibold uppercase tracking-wide text-electric-light">
+            <span className="text-xs font-semibold uppercase tracking-wide text-brand-blue">
               {product.brand?.name}
             </span>
-            <h2 className="mt-1 text-xl font-bold text-white">{product.name}</h2>
+            <h2 className="mt-1 text-xl font-bold text-brand-text">{product.name}</h2>
 
-            <div className="mt-2 flex items-center gap-1.5 text-sm text-white/60">
+            <div className="mt-2 flex items-center gap-1.5 text-sm text-brand-muted">
               <Star size={14} className="fill-amber-400 text-amber-400" />
-              <span className="font-medium text-white">{product.rating || 0}</span>
+              <span className="font-medium text-brand-text">{product.rating || 0}</span>
               <span>({product.reviewCount || 0} reviews)</span>
             </div>
 
             <div className="mt-4 flex items-baseline gap-2">
-              <span className="text-2xl font-extrabold text-white">{formatPrice(price)}</span>
+              <span className="text-2xl font-extrabold text-brand-text">{formatPrice(price)}</span>
               {hasDiscount && (
-                <span className="text-sm text-white/40 line-through">{formatPrice(product.price)}</span>
+                <span className="text-sm text-brand-muted line-through">{formatPrice(product.price)}</span>
               )}
             </div>
 
             <p className="mt-2 text-sm font-medium">
               {outOfStock ? (
-                <span className="text-red-400">Out of stock</span>
+                <span className="text-red-600">Out of stock</span>
               ) : (
-                <span className="text-cyan">In stock — ready to ship</span>
+                <span className="text-brand-blue">In stock — ready to ship</span>
               )}
             </p>
 
@@ -121,7 +121,7 @@ export default function QuickViewModal({ product, onClose }) {
               <Button
                 onClick={handleAdd}
                 disabled={outOfStock}
-                variant={added ? "glass" : "gradient"}
+                variant={added ? "brand-glass" : "brand-gradient"}
                 className="flex-1"
               >
                 {added ? (
@@ -133,7 +133,7 @@ export default function QuickViewModal({ product, onClose }) {
               <button
                 onClick={() => toggleWishlist(product.id)}
                 aria-label={wished ? "Remove from wishlist" : "Add to wishlist"}
-                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg glass text-white/80 hover:shadow-glow-purple"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg glass-brand text-brand-muted hover:shadow-brand-glow"
               >
                 <Heart size={18} className={wished ? "fill-red-500 text-red-500" : ""} />
               </button>
@@ -142,7 +142,7 @@ export default function QuickViewModal({ product, onClose }) {
             <Link
               href={`/products/${product.id}`}
               onClick={onClose}
-              className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-electric-light hover:gap-2 hover:text-cyan transition-all"
+              className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-brand-blue hover:gap-2 hover:text-brand-steel transition-all"
             >
               View full details <ArrowRight size={14} />
             </Link>

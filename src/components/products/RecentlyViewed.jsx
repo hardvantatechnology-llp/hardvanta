@@ -51,7 +51,7 @@ export default function RecentlyViewed({ excludeId }) {
 
   return (
     <section className="mt-16">
-      <h2 className="mb-6 text-2xl font-bold text-white">Recently Viewed</h2>
+      <h2 className="mb-6 text-2xl font-bold text-brand-text">Recently Viewed</h2>
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4 auto-rows-fr">
         {products.map((p) => (
           <ProductCard key={p.id} product={p} />
