@@ -2,8 +2,8 @@ import Skeleton from "@/components/ui/Skeleton";
 
 export default function AccountLoading() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-graphite to-obsidian">
-      <div className="border-b border-white/10">
+    <div className="min-h-screen bg-gradient-to-b from-brand-silver to-brand-bg">
+      <div className="border-b border-brand-border">
         <div className="container-page py-6">
           <div className="flex items-center gap-4">
             <Skeleton className="h-16 w-16 rounded-full" />

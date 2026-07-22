@@ -39,7 +39,7 @@ export default function CancelOrderButton({ orderId }) {
   return (
     <>
       <button onClick={() => setShowConfirm(true)}
-        className="flex items-center gap-2 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-2.5 text-sm font-semibold text-red-400 hover:bg-red-500/20 transition-colors">
+        className="flex items-center gap-2 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-500/20 transition-colors">
         <XCircle size={15} /> Cancel Order
       </button>
 

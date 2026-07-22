@@ -63,7 +63,7 @@ export default function AddressBookManager() {
     return (
       <div className="space-y-3">
         {[0, 1].map((i) => (
-          <div key={i} className="h-28 animate-pulse rounded-2xl bg-white/5" />
+          <div key={i} className="h-28 animate-pulse rounded-2xl bg-brand-silver" />
         ))}
       </div>
     );
@@ -71,7 +71,7 @@ export default function AddressBookManager() {
 
   if (error) {
     return (
-      <p className="rounded-lg bg-red-500/10 border border-red-500/20 px-3 py-2 text-sm text-red-400">
+      <p className="rounded-lg bg-red-500/10 border border-red-500/20 px-3 py-2 text-sm text-red-600">
         {error}
       </p>
     );
@@ -79,8 +79,8 @@ export default function AddressBookManager() {
 
   if (mode === "form") {
     return (
-      <div className="glass-card rounded-3xl p-5">
-        <h2 className="mb-4 text-lg font-bold text-white">
+      <div className="glass-brand-card rounded-3xl p-5">
+        <h2 className="mb-4 text-lg font-bold text-brand-text">
           {editingAddress ? "Edit Address" : "Add New Address"}
         </h2>
         <AddressForm
@@ -96,18 +96,18 @@ export default function AddressBookManager() {
   return (
     <div className="space-y-4">
       {actionError && (
-        <p className="rounded-lg bg-red-500/10 border border-red-500/20 px-3 py-2 text-sm text-red-400">
+        <p className="rounded-lg bg-red-500/10 border border-red-500/20 px-3 py-2 text-sm text-red-600">
           {actionError}
         </p>
       )}
 
       {addresses.length === 0 ? (
-        <div className="glass-card flex flex-col items-center justify-center rounded-3xl py-16 text-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-electric/20 to-liquid/20 shadow-glow-electric">
-            <MapPin size={30} className="text-electric-light" />
+        <div className="glass-brand-card flex flex-col items-center justify-center rounded-3xl py-16 text-center">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-brand-blue/20 to-brand-navy/20 shadow-brand-glow">
+            <MapPin size={30} className="text-brand-blue" />
           </div>
-          <h2 className="mt-4 text-lg font-bold text-white">No saved addresses</h2>
-          <p className="mt-1 text-sm text-white/50">
+          <h2 className="mt-4 text-lg font-bold text-brand-text">No saved addresses</h2>
+          <p className="mt-1 text-sm text-brand-muted">
             Add a delivery address to make checkout faster
           </p>
         </div>
@@ -129,7 +129,7 @@ export default function AddressBookManager() {
       <button
         type="button"
         onClick={() => { setEditingAddress(null); setMode("form"); }}
-        className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-white/15 py-3 text-sm font-semibold text-white/60 hover:border-electric/40 hover:text-electric-light transition-colors"
+        className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-brand-border py-3 text-sm font-semibold text-brand-muted hover:border-brand-blue/40 hover:text-brand-blue transition-colors"
       >
         <Plus size={16} /> Add New Address
       </button>

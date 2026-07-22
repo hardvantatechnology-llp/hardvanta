@@ -22,21 +22,21 @@ export default function AddressCard({
 
   return (
     <div
-      className={`glass-card relative flex flex-col gap-3 rounded-2xl p-4 transition-all ${
-        selected ? "ring-1 ring-electric/60 shadow-glow-electric" : ""
+      className={`glass-brand-card relative flex flex-col gap-3 rounded-2xl p-4 transition-all ${
+        selected ? "ring-1 ring-brand-blue/60 shadow-brand-glow" : ""
       }`}
     >
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-2">
           {selectable && (
             selected
-              ? <CheckCircle2 size={18} className="shrink-0 text-electric-light" />
-              : <Circle size={18} className="shrink-0 text-white/20" />
+              ? <CheckCircle2 size={18} className="shrink-0 text-brand-blue" />
+              : <Circle size={18} className="shrink-0 text-brand-muted" />
           )}
-          <LabelIcon size={15} className="shrink-0 text-electric-light" />
-          <span className="font-semibold text-white">{address.label}</span>
+          <LabelIcon size={15} className="shrink-0 text-brand-blue" />
+          <span className="font-semibold text-brand-text">{address.label}</span>
           {address.isDefault && (
-            <span className="rounded-full bg-gradient-to-r from-electric to-liquid px-2 py-0.5 text-[10px] font-bold text-white">
+            <span className="rounded-full bg-gradient-to-r from-brand-blue to-brand-navy px-2 py-0.5 text-[10px] font-bold text-white">
               Default
             </span>
           )}
@@ -50,7 +50,7 @@ export default function AddressCard({
               disabled={busy}
               aria-label="Set as default"
               title="Set as default"
-              className="flex h-7 w-7 items-center justify-center rounded-lg text-white/40 hover:bg-white/10 hover:text-electric-light transition-colors disabled:opacity-40"
+              className="flex h-7 w-7 items-center justify-center rounded-lg text-brand-muted hover:bg-brand-silver hover:text-brand-blue transition-colors disabled:opacity-40"
             >
               <Star size={14} />
             </button>
@@ -62,7 +62,7 @@ export default function AddressCard({
               disabled={busy}
               aria-label="Edit address"
               title="Edit"
-              className="flex h-7 w-7 items-center justify-center rounded-lg text-white/40 hover:bg-white/10 hover:text-electric-light transition-colors disabled:opacity-40"
+              className="flex h-7 w-7 items-center justify-center rounded-lg text-brand-muted hover:bg-brand-silver hover:text-brand-blue transition-colors disabled:opacity-40"
             >
               <Pencil size={14} />
             </button>
@@ -74,7 +74,7 @@ export default function AddressCard({
               disabled={busy}
               aria-label="Delete address"
               title="Delete"
-              className="flex h-7 w-7 items-center justify-center rounded-lg text-white/40 hover:bg-red-500/10 hover:text-red-400 transition-colors disabled:opacity-40"
+              className="flex h-7 w-7 items-center justify-center rounded-lg text-brand-muted hover:bg-red-500/10 hover:text-red-600 transition-colors disabled:opacity-40"
             >
               <Trash2 size={14} />
             </button>
@@ -83,13 +83,13 @@ export default function AddressCard({
       </div>
 
       <div className="text-sm">
-        <p className="font-medium text-white/90">{address.fullName}</p>
-        <p className="text-white/50">{address.phone}</p>
-        <p className="mt-1 text-white/50">
+        <p className="font-medium text-brand-text">{address.fullName}</p>
+        <p className="text-brand-muted">{address.phone}</p>
+        <p className="mt-1 text-brand-muted">
           {address.addressLine1}
           {address.addressLine2 && `, ${address.addressLine2}`}
         </p>
-        <p className="text-white/50">
+        <p className="text-brand-muted">
           {address.city}, {address.state} — {address.postalCode}
         </p>
       </div>
@@ -97,7 +97,7 @@ export default function AddressCard({
       {selectable && (
         <Button
           type="button"
-          variant={selected ? "glass" : "outline"}
+          variant={selected ? "brand-glass" : "brand-outline"}
           size="sm"
           onClick={() => onSelect(address)}
           disabled={busy}

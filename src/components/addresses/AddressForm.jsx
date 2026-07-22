@@ -88,14 +88,14 @@ export default function AddressForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {error && (
-        <p className="rounded-lg bg-red-500/10 border border-red-500/20 px-3 py-2 text-sm text-red-400">
+        <p className="rounded-lg bg-red-500/10 border border-red-500/20 px-3 py-2 text-sm text-red-600">
           {error}
         </p>
       )}
 
       {/* Address type pills */}
       <div>
-        <label className="mb-1.5 block text-sm font-medium text-white/80">Address Type</label>
+        <label className="mb-1.5 block text-sm font-medium text-brand-text">Address Type</label>
         <div className="flex gap-2">
           {LABELS.map(({ value, Icon }) => (
             <button
@@ -104,8 +104,8 @@ export default function AddressForm({
               onClick={() => update("label", value)}
               className={`flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-all ${
                 form.label === value
-                  ? "glass-card shadow-glow-electric ring-1 ring-electric/50 text-white"
-                  : "glass-card text-white/50 hover:text-white/80"
+                  ? "glass-brand-card shadow-brand-glow ring-1 ring-brand-blue/50 text-brand-text"
+                  : "glass-brand-card text-brand-muted hover:text-brand-text"
               }`}
             >
               <Icon size={14} /> {value}
@@ -136,21 +136,21 @@ export default function AddressForm({
 
       <div className="grid gap-4 sm:grid-cols-3">
         <div>
-          <label htmlFor="addr-pincode" className="mb-1 block text-sm font-medium text-white/80">
-            Pincode<span className="ml-0.5 text-electric-light">*</span>
+          <label htmlFor="addr-pincode" className="mb-1 block text-sm font-medium text-brand-text">
+            Pincode<span className="ml-0.5 text-brand-blue">*</span>
           </label>
           <input
             id="addr-pincode"
             type="text" inputMode="numeric" required value={form.postalCode}
             onChange={(e) => handlePincode(e.target.value)} placeholder="6-digit PIN"
-            className={`w-full rounded-lg glass-card px-3 py-2.5 text-sm text-white outline-none placeholder:text-white/30 ${
+            className={`w-full rounded-lg glass-brand-card px-3 py-2.5 text-sm text-brand-text outline-none placeholder:text-brand-muted ${
               pinStatus === "error" ? "ring-1 ring-red-400"
-              : pinStatus === "ok" ? "ring-1 ring-cyan"
-              : "focus:shadow-glow-electric"
+              : pinStatus === "ok" ? "ring-1 ring-brand-blue"
+              : "focus:shadow-brand-glow"
             }`}
           />
           {pinMessage && (
-            <p className={`mt-1 text-xs ${pinStatus === "error" ? "text-red-400" : pinStatus === "ok" ? "text-cyan" : "text-white/40"}`}>
+            <p className={`mt-1 text-xs ${pinStatus === "error" ? "text-red-600" : pinStatus === "ok" ? "text-brand-blue" : "text-brand-muted"}`}>
               {pinStatus === "ok" ? "✓ " : pinStatus === "error" ? "✕ " : ""}{pinMessage}
             </p>
           )}
@@ -159,22 +159,22 @@ export default function AddressForm({
         <Field label="State" value={form.state} onChange={(v) => update("state", v)} required />
       </div>
 
-      <label className="flex items-center gap-2 text-sm text-white/70">
+      <label className="flex items-center gap-2 text-sm text-brand-muted">
         <input
           type="checkbox"
           checked={form.isDefault}
           onChange={(e) => update("isDefault", e.target.checked)}
-          className="h-4 w-4 rounded border-white/20 bg-transparent accent-electric"
+          className="h-4 w-4 rounded border-brand-border bg-transparent accent-brand-blue"
         />
         Make this my default address
       </label>
 
       <div className="flex gap-3 pt-1">
-        <Button type="submit" variant="gradient" disabled={submitting}>
+        <Button type="submit" variant="brand-gradient" disabled={submitting}>
           {submitting ? "Saving…" : submitLabel}
         </Button>
         {onCancel && (
-          <Button type="button" variant="glass" onClick={onCancel} disabled={submitting}>
+          <Button type="button" variant="brand-glass" onClick={onCancel} disabled={submitting}>
             Cancel
           </Button>
         )}
@@ -187,15 +187,15 @@ function Field({ label, value, onChange, required, type = "text", inputMode, pla
   const id = `addr-${label.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")}`;
   return (
     <div>
-      <label htmlFor={id} className="mb-1 block text-sm font-medium text-white/80">
-        {label}{required && <span className="ml-0.5 text-electric-light">*</span>}
+      <label htmlFor={id} className="mb-1 block text-sm font-medium text-brand-text">
+        {label}{required && <span className="ml-0.5 text-brand-blue">*</span>}
       </label>
       <input
         id={id}
         type={type} inputMode={inputMode} required={required}
         maxLength={maxLength} value={value}
         onChange={(e) => onChange(e.target.value)} placeholder={placeholder}
-        className="w-full rounded-lg glass-card px-3 py-2.5 text-sm text-white outline-none placeholder:text-white/30 focus:shadow-glow-electric"
+        className="w-full rounded-lg glass-brand-card px-3 py-2.5 text-sm text-brand-text outline-none placeholder:text-brand-muted focus:shadow-brand-glow"
       />
     </div>
   );
