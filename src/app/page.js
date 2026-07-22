@@ -23,11 +23,11 @@ export default async function Home() {
       <CategoryTiles />
 
       {/* Deals strip */}
-      <section className="bg-graphite py-12">
+      <section className="bg-brand-silver py-12">
         <div className="container-page">
           <div className="mb-8 flex items-center justify-between">
             <h2 className="heading-accent">🔥 Hot Deals</h2>
-            <Link href="/products" className="text-sm font-semibold text-electric-light hover:text-cyan">
+            <Link href="/products" className="text-sm font-semibold text-brand-blue hover:text-brand-steel">
               View all
             </Link>
           </div>
@@ -39,7 +39,7 @@ export default async function Home() {
       <section className="container-page py-12">
         <div className="mb-8 flex items-center justify-between">
           <h2 className="heading-accent">Featured Products</h2>
-          <Link href="/products" className="text-sm font-semibold text-electric-light hover:text-cyan">
+          <Link href="/products" className="text-sm font-semibold text-brand-blue hover:text-brand-steel">
             Shop all
           </Link>
         </div>
@@ -51,16 +51,16 @@ export default async function Home() {
 
       {/* Promo banner */}
       <section className="container-page pb-12">
-        <div className="flex flex-col items-center justify-between gap-4 rounded-2xl glass-card p-8 sm:flex-row">
+        <div className="flex flex-col items-center justify-between gap-4 rounded-2xl glass-brand-card p-8 sm:flex-row">
           <div>
-            <h3 className="text-xl font-bold text-white">Bulk &amp; Educational Orders</h3>
-            <p className="text-sm text-white/60">
+            <h3 className="text-xl font-bold text-brand-text">Bulk &amp; Educational Orders</h3>
+            <p className="text-sm text-brand-muted">
               Special pricing for schools, colleges and makerspaces.
             </p>
           </div>
           <Link
             href="/products"
-            className="rounded-lg bg-gradient-to-r from-electric to-liquid px-6 py-3 font-semibold text-white shadow-glow-electric hover:brightness-110 transition-all"
+            className="rounded-lg bg-gradient-to-r from-brand-blue to-brand-navy px-6 py-3 font-semibold text-white shadow-brand-glow hover:brightness-110 transition-all"
           >
             Get a Quote
           </Link>

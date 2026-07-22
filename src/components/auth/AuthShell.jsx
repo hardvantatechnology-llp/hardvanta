@@ -10,13 +10,13 @@ const points = [
 // Two-column authentication layout: brand panel + form card.
 export default function AuthShell({ title, subtitle, children }) {
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-graphite to-obsidian">
-      <div className="liquid-blob left-1/4 top-[-15%] h-96 w-96 bg-electric/10" />
-      <div className="liquid-blob right-[-10%] bottom-[-15%] h-96 w-96 bg-liquid/10" style={{ animationDelay: "-7s" }} />
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-brand-silver to-brand-bg">
+      <div className="liquid-blob left-1/4 top-[-15%] h-96 w-96 bg-brand-blue/10" />
+      <div className="liquid-blob right-[-10%] bottom-[-15%] h-96 w-96 bg-brand-navy/10" style={{ animationDelay: "-7s" }} />
       <div className="container-page relative py-10">
-        <div className="grid overflow-hidden rounded-3xl glass-strong lg:grid-cols-2">
+        <div className="grid overflow-hidden rounded-3xl glass-brand-strong lg:grid-cols-2">
           {/* Brand panel (hidden on small screens) */}
-          <div className="relative hidden overflow-hidden bg-gradient-to-br from-obsidian via-graphite to-midnight p-10 text-white lg:flex lg:flex-col lg:justify-between">
+          <div className="relative hidden overflow-hidden bg-gradient-to-br from-brand-navy via-brand-blue to-brand-steel p-10 text-white lg:flex lg:flex-col lg:justify-between">
             <div
               className="pointer-events-none absolute inset-0 opacity-[0.15]"
               style={{
@@ -30,7 +30,7 @@ export default function AuthShell({ title, subtitle, children }) {
               <h2 className="mt-10 text-3xl font-extrabold leading-tight">
                 Build anything.
                 <br />
-                <span className="bg-gradient-to-r from-electric-light to-cyan bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-white to-brand-silver bg-clip-text text-transparent">
                   We&apos;ve got the parts.
                 </span>
               </h2>
@@ -43,7 +43,7 @@ export default function AuthShell({ title, subtitle, children }) {
               {points.map(({ Icon, text }) => (
                 <li key={text} className="flex items-center gap-3 text-sm text-white/80">
                   <span className="flex h-9 w-9 items-center justify-center rounded-lg glass">
-                    <Icon size={18} className="text-electric-light" />
+                    <Icon size={18} className="text-brand-silver" />
                   </span>
                   {text}
                 </li>
@@ -58,11 +58,11 @@ export default function AuthShell({ title, subtitle, children }) {
           <div className="p-8 sm:p-10">
             <div className="mx-auto w-full max-w-sm">
               <div className="lg:hidden">
-                <Logo size={40} dark />
+                <Logo size={40} />
               </div>
-              <h1 className="mt-4 text-2xl font-bold text-white lg:mt-0">{title}</h1>
+              <h1 className="mt-4 text-2xl font-bold text-brand-text lg:mt-0">{title}</h1>
               {subtitle && (
-                <p className="mt-1 text-sm text-white/50">{subtitle}</p>
+                <p className="mt-1 text-sm text-brand-muted">{subtitle}</p>
               )}
               {children}
             </div>

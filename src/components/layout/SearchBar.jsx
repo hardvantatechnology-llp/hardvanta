@@ -155,13 +155,13 @@ export default function SearchBar() {
         aria-label="Open search"
         onClick={openOverlay}
         onKeyDown={(e) => e.key === "Enter" && openOverlay()}
-        className="glass flex w-full min-w-0 items-center overflow-hidden rounded-full cursor-text select-none transition-all duration-200 hover:shadow-glow-electric"
+        className="glass-brand flex w-full min-w-0 items-center overflow-hidden rounded-full cursor-text select-none transition-all duration-200 hover:shadow-brand-glow"
       >
-        <span className="pl-3 md:pl-4 text-white/50"><Search size={17} /></span>
-        <span className="flex-1 truncate px-2 py-2 text-sm text-white/50 md:px-3">
+        <span className="pl-3 md:pl-4 text-brand-muted"><Search size={17} /></span>
+        <span className="flex-1 truncate px-2 py-2 text-sm text-brand-muted md:px-3">
   Search for Products...
 </span>
-        <span className="m-1 rounded-full bg-gradient-to-r from-electric to-liquid px-3 py-2 text-sm font-semibold text-white md:px-5">
+        <span className="m-1 rounded-full bg-gradient-to-r from-brand-blue to-brand-navy px-3 py-2 text-sm font-semibold text-white md:px-5">
           <Search size={16} className="md:hidden" />
           <span className="hidden md:inline">Search</span>
         </span>
@@ -180,7 +180,7 @@ export default function SearchBar() {
             className="fixed inset-0 z-[200] flex flex-col"
           >
             {/* Backdrop */}
-            <div className="absolute inset-0 bg-obsidian/70 backdrop-blur-md" />
+            <div className="absolute inset-0 bg-brand-navy/40 backdrop-blur-md" />
 
             {/* Panel */}
             <motion.div
@@ -189,10 +189,10 @@ export default function SearchBar() {
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: reduce ? 0 : -24, opacity: 0 }}
               transition={{ duration: reduce ? 0 : 0.25, ease: [0.22, 1, 0.36, 1] }}
-              className="glass-strong relative z-10 w-full"
+              className="glass-brand-strong relative z-10 w-full"
             >
               {/* ── Input row ── */}
-              <div className="flex items-center gap-2 bg-gradient-to-r from-electric to-liquid px-3 py-3 md:px-6">
+              <div className="flex items-center gap-2 bg-gradient-to-r from-brand-blue to-brand-navy px-3 py-3 md:px-6">
                 <Search size={18} className="shrink-0 text-white" />
 
                 <input
@@ -221,7 +221,7 @@ export default function SearchBar() {
                 {/* Search button */}
                 <button
                   onClick={() => doSearch()}
-                  className="rounded-md bg-white px-4 py-1.5 text-sm font-bold text-electric-dark
+                  className="rounded-md bg-white px-4 py-1.5 text-sm font-bold text-brand-navy
                              hover:bg-white/90 transition-colors whitespace-nowrap"
                 >
                   Search
@@ -238,11 +238,11 @@ export default function SearchBar() {
               </div>
 
               {/* ── Dropdown ── */}
-              <div className="max-h-[70vh] overflow-y-auto overscroll-contain bg-obsidian/95">
+              <div className="max-h-[70vh] overflow-y-auto overscroll-contain bg-white">
 
                 {/* Loading shimmer */}
                 {loading && (
-                  <div className="flex items-center gap-3 px-5 py-4 text-sm text-white/50 animate-pulse">
+                  <div className="flex items-center gap-3 px-5 py-4 text-sm text-brand-muted animate-pulse">
                     <Search size={14} /> Searching…
                   </div>
                 )}
@@ -255,22 +255,22 @@ export default function SearchBar() {
                         <button
                           onClick={() => doSearch(s.label)}
                           className="flex w-full items-center gap-3 px-5 py-3 text-left
-                                     hover:bg-white/5 transition-colors"
+                                     hover:bg-brand-silver transition-colors"
                         >
-                          <Search size={14} className="shrink-0 text-white/40" />
+                          <Search size={14} className="shrink-0 text-brand-muted" />
                           <div className="flex flex-col">
                             {/* Bold the matched part */}
                             <span
-                              className="text-sm text-white/85"
+                              className="text-sm text-brand-text"
                               dangerouslySetInnerHTML={{
                                 __html: escapeHtml(s.label).replace(
                                   new RegExp(`(${escapeHtml(query).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi"),
-                                  "<strong class='text-electric-light'>$1</strong>"
+                                  "<strong class='text-brand-blue'>$1</strong>"
                                 ),
                               }}
                             />
                             {s.sub && (
-                              <span className="text-xs text-white/40">
+                              <span className="text-xs text-brand-muted">
                                 in {s.sub}
                               </span>
                             )}
@@ -280,11 +280,11 @@ export default function SearchBar() {
                     ))}
 
                     {/* "See all results" footer */}
-                    <li className="border-t border-white/10">
+                    <li className="border-t border-brand-border">
                       <button
                         onClick={() => doSearch()}
                         className="flex w-full items-center gap-2 px-5 py-3 text-sm font-semibold
-                                   text-electric-light hover:bg-white/5 transition-colors"
+                                   text-brand-blue hover:bg-brand-silver transition-colors"
                       >
                         <Search size={14} />
                         See all results for &quot;{query}&quot;
@@ -295,12 +295,12 @@ export default function SearchBar() {
 
                 {/* No results */}
                 {showHits && !loading && suggestions.length === 0 && (
-                  <div className="px-5 py-6 text-center text-sm text-white/50">
-                    No products found for &quot;<span className="font-semibold text-white">{query}</span>&quot;
+                  <div className="px-5 py-6 text-center text-sm text-brand-muted">
+                    No products found for &quot;<span className="font-semibold text-brand-text">{query}</span>&quot;
                     <button
                       onClick={() => doSearch()}
-                      className="mt-3 block w-full rounded-xl border border-white/10 py-2.5
-                                 text-sm font-semibold text-electric-light hover:bg-white/5 transition-colors"
+                      className="mt-3 block w-full rounded-xl border border-brand-border py-2.5
+                                 text-sm font-semibold text-brand-blue hover:bg-brand-silver transition-colors"
                     >
                       Search anyway
                     </button>
@@ -314,7 +314,7 @@ export default function SearchBar() {
                     {recent.length > 0 && (
                       <div>
                         <p className="flex items-center gap-1.5 px-5 pt-4 pb-2 text-[11px] font-bold
-                                      uppercase tracking-wider text-white/40">
+                                      uppercase tracking-wider text-brand-muted">
                           <Clock size={12} /> Recent Searches
                         </p>
                         <ul>
@@ -323,10 +323,10 @@ export default function SearchBar() {
                               <button
                                 onClick={() => doSearch(r)}
                                 className="flex w-full items-center gap-3 px-5 py-2.5 text-left
-                                           hover:bg-white/5 transition-colors"
+                                           hover:bg-brand-silver transition-colors"
                               >
-                                <Clock size={14} className="shrink-0 text-white/40" />
-                                <span className="text-sm text-white/85">{r}</span>
+                                <Clock size={14} className="shrink-0 text-brand-muted" />
+                                <span className="text-sm text-brand-text">{r}</span>
                               </button>
                             </li>
                           ))}
@@ -337,7 +337,7 @@ export default function SearchBar() {
                     {/* Trending */}
                     <div>
                       <p className="flex items-center gap-1.5 px-5 pt-4 pb-2 text-[11px] font-bold
-                                    uppercase tracking-wider text-white/40">
+                                    uppercase tracking-wider text-brand-muted">
                         <TrendingUp size={12} /> Trending Searches
                       </p>
                       <ul className="pb-4">
@@ -346,10 +346,10 @@ export default function SearchBar() {
                             <button
                               onClick={() => doSearch(t)}
                               className="flex w-full items-center gap-3 px-5 py-2.5 text-left
-                                         hover:bg-white/5 transition-colors"
+                                         hover:bg-brand-silver transition-colors"
                             >
-                              <TrendingUp size={14} className="shrink-0 text-electric-light" />
-                              <span className="text-sm text-white/85">{t}</span>
+                              <TrendingUp size={14} className="shrink-0 text-brand-blue" />
+                              <span className="text-sm text-brand-text">{t}</span>
                             </button>
                           </li>
                         ))}

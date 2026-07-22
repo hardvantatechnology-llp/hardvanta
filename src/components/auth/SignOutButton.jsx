@@ -8,8 +8,8 @@ export default function SignOutButton() {
   return (
     <Button
       onClick={() => signOut({ callbackUrl: "/" })}
-      variant="glass"
-      className="w-full !justify-center hover:!shadow-[0_0_40px_-8px_rgba(248,113,113,0.45)] hover:!text-red-400"
+      variant="brand-glass"
+      className="w-full !justify-center hover:!shadow-[0_0_40px_-8px_rgba(248,113,113,0.45)] hover:!text-red-600"
     >
       <LogOut size={16} /> Sign out
     </Button>

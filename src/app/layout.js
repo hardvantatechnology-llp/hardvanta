@@ -52,7 +52,7 @@ export default function RootLayout({ children }) {
       >
         <Providers>
           <Navbar />
-          <main className="min-h-screen bg-gradient-to-b from-graphite to-obsidian">
+          <main className="min-h-screen bg-gradient-to-b from-brand-silver to-brand-bg">
             <PageTransition>{children}</PageTransition>
           </main>
           <Footer />
