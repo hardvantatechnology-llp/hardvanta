@@ -34,7 +34,7 @@ export async function PATCH(request, { params }) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
   try {
-    const { status } = await request.json();
+    const { status, trackingNumber, courierName, estimatedDeliveryAt } = await request.json();
     if (!VALID.includes(status)) {
       return NextResponse.json({ error: "Invalid status." }, { status: 400 });
     }
@@ -80,6 +80,25 @@ export async function PATCH(request, { params }) {
     const orderPatch = buildOrderStatusPatch(existing, status);
     const paymentPatch = buildPaymentSyncPatch(existing, status);
 
+    // Shipping details are optional and only ever relevant on the SHIPPED
+    // transition — accepted here (not just from the admin UI) so any other
+    // backend workflow that ships an order can pass them through the same
+    // endpoint without a frontend change.
+    if (status === "SHIPPED") {
+      if (typeof trackingNumber === "string" && trackingNumber.trim()) {
+        orderPatch.trackingNumber = trackingNumber.trim();
+      }
+      if (typeof courierName === "string" && courierName.trim()) {
+        orderPatch.courierName = courierName.trim();
+      }
+      if (estimatedDeliveryAt) {
+        const parsed = new Date(estimatedDeliveryAt);
+        if (!Number.isNaN(parsed.getTime())) {
+          orderPatch.estimatedDeliveryAt = parsed;
+        }
+      }
+    }
+
     const order = await prisma
       .$transaction(async (tx) => {
         await tx.order.update({ where: { id: params.id }, data: orderPatch });
@@ -97,13 +116,26 @@ export async function PATCH(request, { params }) {
     }
 
     // Best-effort — a failed status-update email must never fail the
-    // already-committed status change.
+    // already-committed status change. Only fires on an actual transition
+    // into this status (the existing.status === status check above already
+    // returned early for a no-op update), so a repeat PATCH with the same
+    // status — or any update that doesn't change status — never re-sends it.
     const sendStatusEmail = STATUS_EMAIL_SENDERS[status];
-    if (sendStatusEmail && order.user?.email) {
-      try {
-        await sendStatusEmail(order.user.email, order);
-      } catch (err) {
-        console.error(`[orders/[id] PATCH] ${status} email failed:`, err?.message || err);
+    if (sendStatusEmail) {
+      if (!order.user?.email) {
+        console.warn(`[orders/[id] PATCH] ${status} email skipped — order ${order.id} has no user email on file.`);
+      } else {
+        console.log(`[orders/[id] PATCH] Triggering ${status} email to ${order.user.email} for order ${order.id}`);
+        try {
+          const result = await sendStatusEmail(order.user.email, order);
+          if (result?.sent) {
+            console.log(`[orders/[id] PATCH] ${status} email sent — Resend message id: ${result.id}`);
+          } else {
+            console.error(`[orders/[id] PATCH] ${status} email not sent:`, result?.error || result);
+          }
+        } catch (err) {
+          console.error(`[orders/[id] PATCH] ${status} email failed:`, err);
+        }
       }
     }
 
