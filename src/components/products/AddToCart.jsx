@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Minus, Plus, ShoppingCart, Check, Zap } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import Button from "@/components/ui/Button";
+import QuantityModal from "@/components/ui/QuantityModal";
 
 export default function AddToCart({ product }) {
   const { addItem } = useCart();
@@ -14,6 +15,7 @@ export default function AddToCart({ product }) {
   const [added, setAdded] = useState(false);
   const [addError, setAddError] = useState(false);
   const [buying, setBuying] = useState(false);
+  const [showQtyModal, setShowQtyModal] = useState(false);
 
   // ✅ FIXED: sirf inStock field se check — stock number se nahi
   const outOfStock = product.inStock === false;
@@ -56,8 +58,14 @@ export default function AddToCart({ product }) {
           <Minus size={16} />
         </button>
 
-        {/* Quantity display */}
-        <div className="relative w-10 h-11 overflow-hidden">
+        {/* Quantity display — click opens the quantity modal too */}
+        <button
+          type="button"
+          onClick={() => setShowQtyModal(true)}
+          disabled={outOfStock}
+          className="relative w-10 h-11 overflow-hidden disabled:cursor-not-allowed"
+          title="Click to enter quantity manually"
+        >
           <AnimatePresence mode="wait">
             <motion.span
               key={qty}
@@ -70,7 +78,7 @@ export default function AddToCart({ product }) {
               {qty}
             </motion.span>
           </AnimatePresence>
-        </div>
+        </button>
 
         {/* Plus button */}
         <button
@@ -111,6 +119,13 @@ export default function AddToCart({ product }) {
         <Zap size={18} />
         {buying ? "Redirecting…" : "Buy Now"}
       </Button>
+
+      <QuantityModal
+        open={showQtyModal}
+        currentQty={qty}
+        onClose={() => setShowQtyModal(false)}
+        onApply={(num) => setQty(num)}
+      />
     </div>
   );
 }

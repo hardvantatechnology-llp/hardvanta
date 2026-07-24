@@ -15,96 +15,7 @@ import Button from "@/components/ui/Button";
 import AvailableCoupons from "@/components/cart/AvailableCoupons";
 import CartDeliveryBlock from "@/components/delivery/CartDeliveryBlock";
 import { useShippingSettings } from "@/hooks/useShippingSettings";
-
-// ─── Quantity Modal ───────────────────────────────────────────────────────────
-function QuantityModal({ currentQty, onClose, onApply }) {
-  const [inputVal, setInputVal] = useState(String(currentQty));
-  const [error, setError] = useState("");
-
-  function handleApply() {
-    const num = parseInt(inputVal, 10);
-    if (!inputVal || isNaN(num) || num < 1) {
-      setError("Please enter a valid quantity (min 1).");
-      return;
-    }
-    onApply(num);
-    onClose();
-  }
-
-  return (
-    // Backdrop
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-brand-navy/70 backdrop-blur-md px-4"
-      onClick={onClose}
-    >
-      {/* Modal box */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 12 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 12 }}
-        transition={{ type: "spring", stiffness: 340, damping: 28 }}
-        className="w-full max-w-sm glass-brand-strong rounded-3xl overflow-hidden"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between px-5 pt-5 pb-3">
-          <h3 className="text-base font-bold text-brand-text">Enter Quantity</h3>
-          <button
-            onClick={onClose}
-            className="flex h-7 w-7 items-center justify-center rounded-lg text-brand-muted hover:bg-brand-silver transition-colors"
-          >
-            <X size={16} />
-          </button>
-        </div>
-
-        {/* Current qty hint */}
-        <p className="px-5 text-xs text-brand-muted mb-3">
-          Current quantity: <span className="font-semibold text-brand-text">{currentQty}</span>
-        </p>
-
-        {/* Input */}
-        <div className="px-5 pb-2">
-          <input
-            type="number"
-            min={1}
-            value={inputVal}
-            onChange={(e) => { setInputVal(e.target.value); setError(""); }}
-            onKeyDown={(e) => e.key === "Enter" && handleApply()}
-            onFocus={(e) => e.target.select()}
-            placeholder="Enter quantity"
-            autoFocus
-            className="w-full rounded-xl glass-brand-card px-4 py-3 text-sm font-semibold text-brand-text outline-none focus:shadow-brand-glow placeholder:font-normal placeholder:text-brand-muted"
-          />
-          {error && (
-            <p className="mt-1.5 text-xs text-red-600">{error}</p>
-          )}
-        </div>
-
-        {/* Divider */}
-        <div className="mt-4 border-t border-brand-border" />
-
-        {/* Action buttons */}
-        <div className="grid grid-cols-2">
-          <button
-            onClick={onClose}
-            className="py-4 text-sm font-bold text-brand-muted hover:bg-brand-silver transition-colors border-r border-brand-border"
-          >
-            CANCEL
-          </button>
-          <button
-            onClick={handleApply}
-            className="py-4 text-sm font-bold text-brand-blue hover:bg-brand-silver transition-colors"
-          >
-            APPLY
-          </button>
-        </div>
-      </motion.div>
-    </motion.div>
-  );
-}
+import QuantityModal from "@/components/ui/QuantityModal";
 
 // ─── Main Cart Page ───────────────────────────────────────────────────────────
 export default function CartPage() {
@@ -227,15 +138,12 @@ export default function CartPage() {
       <div className="liquid-blob left-1/4 top-[-15%] h-96 w-96 bg-brand-blue/10" />
 
       {/* Quantity Modal */}
-      <AnimatePresence>
-        {modalItem && (
-          <QuantityModal
-            currentQty={modalItem.quantity}
-            onClose={() => setModalItemId(null)}
-            onApply={(qty) => handleModalApply(modalItem.id, qty)}
-          />
-        )}
-      </AnimatePresence>
+      <QuantityModal
+        open={!!modalItem}
+        currentQty={modalItem?.quantity ?? 1}
+        onClose={() => setModalItemId(null)}
+        onApply={(qty) => modalItem && handleModalApply(modalItem.id, qty)}
+      />
 
       {/* Page header */}
       <div className="relative border-b border-brand-border">

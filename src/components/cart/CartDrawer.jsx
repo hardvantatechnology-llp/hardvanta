@@ -10,10 +10,15 @@ import { useCart } from "@/context/CartContext";
 import { formatPrice } from "@/utils/formatPrice";
 import { imageSrc } from "@/utils/imageSrc";
 import Button from "@/components/ui/Button";
+import QuantityModal from "@/components/ui/QuantityModal";
 
 export default function CartDrawer({ open, onClose }) {
   const { items, updateQuantity, removeItem, total, count } = useCart();
   const [mounted, setMounted] = useState(false);
+  // Tracks which item's quantity modal is open — same click-to-edit
+  // interaction as the cart page.
+  const [modalItemId, setModalItemId] = useState(null);
+  const modalItem = modalItemId ? items.find((i) => i.id === modalItemId) : null;
 
   useEffect(() => setMounted(true), []);
 
@@ -115,7 +120,13 @@ export default function CartDrawer({ open, onClose }) {
                             >
                               <Minus size={12} />
                             </button>
-                            <span className="w-5 text-center text-xs font-semibold text-brand-text">{item.quantity}</span>
+                            <button
+                              onClick={() => setModalItemId(item.id)}
+                              className="w-5 text-center text-xs font-semibold text-brand-text"
+                              title="Click to enter quantity manually"
+                            >
+                              {item.quantity}
+                            </button>
                             <button
                               onClick={() => updateQuantity(item.id, item.quantity + 1)}
                               className="flex h-6 w-6 items-center justify-center text-brand-muted hover:text-brand-text"
@@ -156,6 +167,13 @@ export default function CartDrawer({ open, onClose }) {
           </>
         )}
       </aside>
+
+      <QuantityModal
+        open={!!modalItem}
+        currentQty={modalItem?.quantity ?? 1}
+        onClose={() => setModalItemId(null)}
+        onApply={(qty) => modalItem && updateQuantity(modalItem.id, qty)}
+      />
     </>,
     document.body
   );
