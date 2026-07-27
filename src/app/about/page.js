@@ -1,7 +1,7 @@
 export const metadata = {
-  title: "About Us | HV KART LLP",
+  title: "About Us | HV KART ",
   description:
-    "HV KART LLP is a research-driven engineering company specializing in Embedded Systems, IoT Development, PCB Design, Firmware Engineering, Artificial Intelligence, Industrial Automation, and Smart Technology Solutions.",
+    "HV KART is a research-driven engineering company specializing in Embedded Systems, IoT Development, PCB Design, Firmware Engineering, Artificial Intelligence, Industrial Automation, and Smart Technology Solutions.",
 };
 
 const services = [
