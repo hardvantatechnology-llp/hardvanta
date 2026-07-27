@@ -34,7 +34,7 @@ export default function EWastePage() {
   const howSteps = [
     { num: "1", text: "Collect your unwanted or non-functional electronic items." },
     { num: "2", text: "Ensure any personal data is removed from devices before disposal." },
-    { num: "3", text: "Contact Hardvanta's support team for e-waste collection guidance." },
+    { num: "3", text: "Contact HV KART's support team for e-waste collection guidance." },
     { num: "4", text: "Hand over the items through the designated collection or take-back process." },
     { num: "5", text: "The collected e-waste will be sent to authorised recyclers for environmentally responsible processing." },
   ];
@@ -79,7 +79,7 @@ export default function EWastePage() {
             margin: 0,
             fontWeight: 400,
           }}>
-            How Hardvanta Technologies LLP encourages responsible disposal and
+            How HV KART LLP encourages responsible disposal and
             recycling of electronic products to reduce environmental impact and
             recover valuable resources.
           </p>
@@ -271,7 +271,7 @@ export default function EWastePage() {
             content: (
               <>
                 <p style={pStyle}>
-                  Hardvanta is committed to promoting responsible e-waste management
+                  HV KART is committed to promoting responsible e-waste management
                   in accordance with applicable environmental regulations and industry
                   best practices. By recycling your old electronics with us, you
                   directly contribute to resource conservation and a greener future.

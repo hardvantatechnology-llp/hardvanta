@@ -5,7 +5,7 @@ import Link from "next/link";
 import AddressBookManager from "@/components/account/AddressBookManager";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Saved Addresses — Hardvanta" };
+export const metadata = { title: "Saved Addresses — HV KART" };
 
 export default async function AddressesPage() {
   const authOptions = await getAuthOptions();

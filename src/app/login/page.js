@@ -282,7 +282,7 @@ function LoginForm() {
   return (
     <AuthShell
       title={step === "password" ? "Welcome back" : "Check your email"}
-      subtitle={step === "password" ? "Sign in to your Hardvanta account" : `We sent a 6-digit code to ${email}`}
+      subtitle={step === "password" ? "Sign in to your HV KART account" : `We sent a 6-digit code to ${email}`}
     >
       <div className="mt-6">
         <AnimatePresence mode="wait">

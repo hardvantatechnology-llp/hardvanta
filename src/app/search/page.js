@@ -18,8 +18,8 @@ import Link            from "next/link";
 export function generateMetadata({ searchParams }) {
   const q = searchParams?.q?.trim() || "";
   return {
-    title:       q ? `"${q}" — Search Results | Hardvanta` : "Search | Hardvanta",
-    description: `Search results for ${q} on Hardvanta — India's electronics & robotics store.`,
+    title:       q ? `"${q}" — Search Results | HV KART` : "Search | HV KART",
+    description: `Search results for ${q} on HV KART — India's electronics & robotics store.`,
   };
 }
 

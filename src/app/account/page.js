@@ -12,7 +12,7 @@ import Button from "@/components/ui/Button";
 import { formatDate } from "@/utils/formatDateTime";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "My Account — Hardvanta" };
+export const metadata = { title: "My Account — HV KART" };
 
 export default async function AccountPage() {
   const authOptions = await getAuthOptions();
@@ -122,7 +122,7 @@ export default async function AccountPage() {
                 Welcome back
               </p>
               <h1 className="text-xl font-bold text-brand-text">
-                {session.user.name || "Hardvanta Customer"}
+                {session.user.name || "HV KART Customer"}
               </h1>
               <p className="text-sm text-brand-muted">{session.user.email}</p>
             </div>

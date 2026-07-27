@@ -45,7 +45,7 @@ export default function RegisterPage() {
   return (
     <AuthShell
       title="Create your account"
-      subtitle="Join hardvanta to track orders and save your cart."
+      subtitle="Join HV KART to track orders and save your cart."
     >
         <button
           onClick={() => signIn("google", { callbackUrl: "/" })}

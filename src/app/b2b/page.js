@@ -1,9 +1,9 @@
 import B2BEnquiryForm from "@/components/b2b/B2BEnquiryForm";
 
 export const metadata = {
-  title: "Hardvanta B2B | Bulk Orders & Prototyping Services",
+  title: "HV KART B2B | Bulk Orders & Prototyping Services",
   description:
-    "Hardvanta B2B — Bulk orders, prototyping services, and enterprise solutions for businesses, schools, and institutions across India.",
+    "HV KART B2B — Bulk orders, prototyping services, and enterprise solutions for businesses, schools, and institutions across India.",
 };
 
 const benefits = [
@@ -42,7 +42,7 @@ export default function B2BPage() {
           Business Solutions
         </p>
         <h1 className="mt-2 text-4xl font-extrabold sm:text-5xl">
-          Hardvanta B2B
+          HV KART B2B
         </h1>
         <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-white/75">
           Bulk pricing, priority fulfillment, and dedicated support for

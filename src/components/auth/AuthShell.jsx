@@ -36,7 +36,7 @@ export default function AuthShell({ title, subtitle, children }) {
               </h2>
               <p className="mt-4 max-w-sm text-white/60">
                 Join 50,000+ makers shopping robotics, electronics and DIY
-                engineering products on hardvanta.
+                engineering products on HV KART.
               </p>
             </div>
             <ul className="relative mt-10 space-y-3">
@@ -50,7 +50,7 @@ export default function AuthShell({ title, subtitle, children }) {
               ))}
             </ul>
             <p className="relative mt-10 flex items-center gap-2 text-xs text-white/40">
-              <Cpu size={14} /> A unit of Hardvanta Technologies LLP
+              <Cpu size={14} /> A unit of HV KART LLP
             </p>
           </div>
 

@@ -48,7 +48,7 @@ export default function InvestorRelationsPage() {
         </div>
         <h1 style={s.heroH1}>Investor Relations</h1>
         <p style={s.heroSub}>
-          How Hardvanta Technologies LLP is creating long-term value through
+          How HV KART LLP is creating long-term value through
           technology-driven commerce &mdash;{" "}
           <span style={s.heroSpan}>last updated June 2026.</span>
         </p>
@@ -72,7 +72,7 @@ export default function InvestorRelationsPage() {
         <div style={s.sectionLabel}>Section 1 <span style={s.sectionLine}></span></div>
         <h2 style={s.cardH2}>About the Company</h2>
         <p style={s.cardP}>
-          Hardvanta Technologies LLP is a technology-focused e-commerce platform
+          HV KART LLP is a technology-focused e-commerce platform
           specialising in electronics, robotics, IoT, embedded systems, and maker
           products. We serve students, educators, startups, developers, and industry
           professionals across India with a growing portfolio of quality electronic
@@ -130,7 +130,7 @@ export default function InvestorRelationsPage() {
           across industries.
         </p>
         <p style={s.cardPLast}>
-          Hardvanta is strategically positioned within this ecosystem &mdash; serving the
+          HV KART is strategically positioned within this ecosystem &mdash; serving the
           maker and professional segments that are driving grassroots innovation and
           contributing to India&apos;s emergence as a global technology hub.
         </p>
@@ -211,7 +211,7 @@ export default function InvestorRelationsPage() {
       </div>
 
       <div style={s.footer}>
-        Hardvanta Technologies LLP &middot; Investor Relations &middot; Last updated June 2026
+        HV KART LLP &middot; Investor Relations &middot; Last updated June 2026
       </div>
 
     </div>

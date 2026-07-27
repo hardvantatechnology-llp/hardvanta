@@ -417,7 +417,7 @@ export default function TermsPage() {
             </h1>
 
             <p className="tos-hero-intro">
-              These terms govern your use of the Hardvanta website and any
+              These terms govern your use of the HV KART website and any
               purchases you make with us. We have written them to be clear and
               fair — if anything is unclear, our support team is happy to help.
             </p>
@@ -443,7 +443,7 @@ export default function TermsPage() {
                 <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                   <path d="M12 22s-8-4.5-8-11.8A8 8 0 0112 2a8 8 0 018 8.2c0 7.3-8 11.8-8 11.8z" />
                 </svg>
-                Hardvanta Technologies LLP
+                HV KART LLP
               </span>
             </div>
           </div>
@@ -482,9 +482,9 @@ export default function TermsPage() {
 
             <Section id="overview" heading="Overview">
               <p>
-                This website is operated by Hardvanta Technologies LLP.
+                This website is operated by HV KART LLP.
                 Throughout these terms, &quot;we&quot;, &quot;us&quot;, and &quot;our&quot; refer to
-                Hardvanta Technologies LLP. By accessing or using this site —
+                HV KART LLP. By accessing or using this site —
                 whether browsing, creating an account, or placing an order —
                 you agree to be bound by these Terms of Service.
               </p>
@@ -530,12 +530,12 @@ export default function TermsPage() {
               </p>
               <p>
                 You are responsible for maintaining the confidentiality of your
-                account credentials. Hardvanta is not liable for any loss
+                account credentials. HV KART is not liable for any loss
                 arising from unauthorised access to your account due to your
                 failure to keep login details secure.
               </p>
               <p>
-                Hardvanta is not responsible for failed or delayed deliveries
+                HV KART is not responsible for failed or delayed deliveries
                 caused by inaccurate or incomplete shipping information
                 provided at the time of order.
               </p>
@@ -583,7 +583,7 @@ export default function TermsPage() {
                 placement, subject to address verification.
               </p>
               <p>
-                Hardvanta reserves the right to refuse, modify, or cancel any
+                HV KART reserves the right to refuse, modify, or cancel any
                 order at our discretion — for example, if a product is
                 mispriced, if fraudulent activity is suspected, or if an order
                 cannot be fulfilled. We also reserve the right to limit or
@@ -615,7 +615,7 @@ export default function TermsPage() {
                 date.
               </p>
               <p>
-                Hardvanta is not responsible for delays caused by third-party
+                HV KART is not responsible for delays caused by third-party
                 courier partners once the shipment has been dispatched.
               </p>
             </Section>
@@ -657,7 +657,7 @@ export default function TermsPage() {
             <Section id="intended-use" heading="Intended use of products">
               <p>
                 All electronic components, modules, microcontrollers, and
-                development boards sold by Hardvanta are intended strictly for
+                development boards sold by HV KART are intended strictly for
                 prototyping, educational, hobbyist, and research purposes. They
                 are not tested, rated, or certified for use in safety-critical,
                 life-sustaining, medical, aviation, automotive, or industrial
@@ -685,7 +685,7 @@ export default function TermsPage() {
                 </li>
                 <li>
                   Infringe on any intellectual property rights belonging to
-                  Hardvanta or any third party
+                  HV KART or any third party
                 </li>
                 <li>
                   Upload or transmit viruses, malware, or any harmful or
@@ -704,11 +704,11 @@ export default function TermsPage() {
                   information
                 </li>
                 <li>
-                  Resell products purchased from Hardvanta commercially without
+                  Resell products purchased from HV KART commercially without
                   prior written agreement
                 </li>
                 <li>
-                  Spam, phish, or attempt to deceive Hardvanta or other users
+                  Spam, phish, or attempt to deceive HV KART or other users
                 </li>
                 <li>
                   Harass, defame, discriminate against, or intimidate any
@@ -729,7 +729,7 @@ export default function TermsPage() {
             <Section id="third-party" heading="Third-party links and tools">
               <p>
                 Our website may contain links to external websites or services
-                not operated by Hardvanta. These are provided for convenience
+                not operated by HV KART. These are provided for convenience
                 only. We have no control over and accept no responsibility for
                 the content, accuracy, privacy practices, or terms of any
                 third-party site.
@@ -746,7 +746,7 @@ export default function TermsPage() {
             <Section id="submissions" heading="User submissions and feedback">
               <p>
                 If you send us feedback, suggestions, reviews, or other
-                submissions, you grant Hardvanta a non-exclusive right to use,
+                submissions, you grant HV KART a non-exclusive right to use,
                 publish, and incorporate that content into our services without
                 obligation to compensate you or keep it confidential.
               </p>
@@ -787,7 +787,7 @@ export default function TermsPage() {
             <Section id="liability" heading="Limitation of liability">
               <p>
                 To the fullest extent permitted under applicable Indian law,
-                Hardvanta Technologies LLP — including its directors,
+                HV KART LLP — including its directors,
                 employees, agents, and suppliers — shall not be liable for any
                 indirect, incidental, special, punitive, or consequential
                 damages arising from your use of this website or products
@@ -810,7 +810,7 @@ export default function TermsPage() {
 
             <Section id="indemnification" heading="Indemnification">
               <p>
-                You agree to indemnify and hold harmless Hardvanta Technologies
+                You agree to indemnify and hold harmless HV KART
                 LLP and its directors, employees, agents, and partners from any
                 claim, demand, loss, liability, or expense — including
                 reasonable legal fees — arising from your breach of these Terms
@@ -836,7 +836,7 @@ export default function TermsPage() {
                 These Terms of Service remain in effect for as long as you use
                 our website. We may suspend or terminate your access at any
                 time, with or without notice, if we determine you have violated
-                these terms or engaged in conduct that is harmful to Hardvanta,
+                these terms or engaged in conduct that is harmful to HV KART,
                 our customers, or any third party.
               </p>
               <p>
@@ -851,7 +851,7 @@ export default function TermsPage() {
               <p>
                 These Terms of Service, together with our Privacy Policy and
                 any other policies published on this site, constitute the
-                entire agreement between you and Hardvanta Technologies LLP
+                entire agreement between you and HV KART LLP
                 regarding your use of our website and services. They supersede
                 all prior communications, proposals, or agreements between us —
                 whether oral or written.
@@ -905,7 +905,7 @@ export default function TermsPage() {
                 . Our support team typically responds within 1–2 business days.
               </p>
               <div className="tos-contact-box">
-                <strong>Hardvanta Technologies LLP</strong>
+                <strong>HV KART LLP</strong>
                 <p>Plot 046, Knowledge Park 3, Alpha, Greater Noida, Uttar Pradesh - 201310, India</p>
                 <p>
                   <a href="mailto:support@hardvanta.com">

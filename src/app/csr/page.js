@@ -1,4 +1,4 @@
-export const metadata = { title: "CSR — hardvanta" };
+export const metadata = { title: "CSR — HV KART" };
 
 const s = {
   /* ── Hero ── */
@@ -229,7 +229,7 @@ export default function CSRPage() {
             Corporate Social<br />Responsibility
           </h1>
           <p style={s.heroIntro}>
-            How Hardvanta Technologies LLP empowers education, promotes sustainable
+            How HV KART LLP empowers education, promotes sustainable
             practices, and gives back to the maker community — last updated June 2026.
           </p>
         </div>
@@ -290,7 +290,7 @@ export default function CSRPage() {
           <p style={s.sectionNumber}>SECTION 3</p>
           <h2 style={s.sectionHeading}>Community Commitment</h2>
           <p style={s.sectionBody}>
-            By fostering learning, innovation, and sustainable practices, Hardvanta is committed
+            By fostering learning, innovation, and sustainable practices, HV KART is committed
             to creating long-term value for customers, communities, and the environment. We believe
             technology built responsibly is technology that lasts.
           </p>
@@ -336,7 +336,7 @@ export default function CSRPage() {
           <p style={s.sectionNumber}>SECTION 5</p>
           <h2 style={s.sectionHeading}>Our Promise</h2>
           <p style={s.sectionBody}>
-            Hardvanta Technologies LLP pledges to review and strengthen these commitments annually.
+            HV KART LLP pledges to review and strengthen these commitments annually.
             We publish progress updates on this page so our community can hold us accountable.
           </p>
           <div style={s.callout}>

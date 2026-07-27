@@ -29,7 +29,7 @@ export default function Logo({ onBadge = true, showWordmark = true, size = 52, d
       >
         <Image
           src="/images/hvkart-logo.png"
-          alt="Hardvanta Technologies"
+          alt="HV KART"
           fill
           sizes={`${size}px`}
           className="object-cover"
@@ -45,7 +45,7 @@ export default function Logo({ onBadge = true, showWordmark = true, size = 52, d
               dark ? "text-white" : "text-brand-text"
             }`}
           >
-            Hard<span className={dark ? "text-brand-silver" : "text-brand-blue"}>vanta</span>
+            HV <span className={dark ? "text-brand-silver" : "text-brand-blue"}>KART</span>
           </span>
           <span
             className={`text-[9px] font-semibold tracking-[0.18em] uppercase mt-0.6 ${

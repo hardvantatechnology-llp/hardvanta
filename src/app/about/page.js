@@ -1,7 +1,7 @@
 export const metadata = {
-  title: "About Us | Hardvanta Technologies LLP",
+  title: "About Us | HV KART LLP",
   description:
-    "Hardvanta Technologies LLP is a research-driven engineering company specializing in Embedded Systems, IoT Development, PCB Design, Firmware Engineering, Artificial Intelligence, Industrial Automation, and Smart Technology Solutions.",
+    "HV KART LLP is a research-driven engineering company specializing in Embedded Systems, IoT Development, PCB Design, Firmware Engineering, Artificial Intelligence, Industrial Automation, and Smart Technology Solutions.",
 };
 
 const services = [
@@ -67,14 +67,14 @@ export default function AboutPage() {
       {/* ── Hero Section ── */}
       <section className="relative bg-gradient-to-r from-brand-navy via-brand-blue to-brand-navy px-6 py-20 text-center text-white">
         <p className="mb-3 text-xs font-bold uppercase tracking-[0.3em] text-white/50">
-          HARDVANTA TECHNOLOGIES LLP
+          HV KART LLP
         </p>
         <h1 className="text-4xl font-extrabold leading-tight sm:text-5xl">
           Engineering <br />
           <span className="text-brand-steel">Intelligent Systems</span>
         </h1>
         <p className="mx-auto mt-6 max-w-2xl text-base leading-7 text-white/75">
-          Hardvanta Technologies LLP develops scalable intelligent systems,
+          HV KART LLP develops scalable intelligent systems,
           embedded technologies, industrial automation platforms, and AI-powered
           engineering infrastructure for future-ready enterprises.
         </p>
@@ -97,7 +97,7 @@ export default function AboutPage() {
       <section className="relative border-y border-brand-border bg-white">
         <div className="container-page flex flex-wrap items-center justify-center gap-6 py-4 text-center sm:justify-between">
           <span className="text-xs font-bold uppercase tracking-widest text-brand-text">
-            EDGE_NODE // HARDVANTA_SYS_A
+            EDGE_NODE // HVKART_SYS_A
           </span>
           <div className="flex flex-wrap gap-6">
             {stats.map((s) => (
@@ -125,7 +125,7 @@ export default function AboutPage() {
               Innovation Through Engineering
             </h2>
             <p className="mt-4 text-sm leading-7 text-brand-muted">
-              Hardvanta Technologies LLP is a research-driven engineering
+              HV KART LLP is a research-driven engineering
               company specializing in Embedded Systems, IoT Development, PCB
               Design, Firmware Engineering, Artificial Intelligence, Industrial
               Automation, and Smart Technology Solutions.

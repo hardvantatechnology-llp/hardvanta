@@ -51,7 +51,7 @@ export async function POST(request) {
         content,
         coverImage: coverImage || "",
         category: category || "General",
-        author: author || "Hardvanta Team",
+        author: author || "HV KART Team",
         published: published ?? true,
       },
     });

@@ -18,7 +18,7 @@ const geistMono = localFont({
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXTAUTH_URL || "http://localhost:3000";
-const siteTitle = "hardvanta — Electronics & Robotics Store";
+const siteTitle = "HV KART — Electronics & Robotics Store";
 const siteDescription =
   "Shop Arduino, Raspberry Pi, sensors, motors, drone parts and DIY electronics. Fast delivery across India.";
 
@@ -30,7 +30,7 @@ export const metadata = {
 
   title: {
     default: siteTitle,
-    template: "%s | hardvanta",
+    template: "%s | HV KART",
   },
 
   description: siteDescription,
@@ -45,9 +45,9 @@ export const metadata = {
     "DIY electronics store",
   ],
 
-  authors: [{ name: "hardvanta" }],
-  creator: "hardvanta",
-  publisher: "hardvanta",
+  authors: [{ name: "HV KART" }],
+  creator: "HV KART",
+  publisher: "HV KART",
 
   alternates: {
     canonical: siteUrl,
@@ -57,7 +57,7 @@ export const metadata = {
     title: siteTitle,
     description: siteDescription,
     url: siteUrl,
-    siteName: "hardvanta",
+    siteName: "HV KART",
     locale: "en_IN",
     type: "website",
     images: ["/images/hvkart-logo.png"],

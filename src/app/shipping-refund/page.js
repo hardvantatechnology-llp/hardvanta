@@ -159,7 +159,7 @@ export default function ShippingRefundPage() {
             </h1>
 
             <p style={{ fontSize: 15, color: "rgba(170,200,255,0.68)", lineHeight: 1.7, maxWidth: 480, margin: 0 }}>
-              Everything you need to know about delivery, returns, and refunds — Hardvanta Technologies LLP.
+              Everything you need to know about delivery, returns, and refunds — HV KART LLP.
             </p>
           </div>
         </div>

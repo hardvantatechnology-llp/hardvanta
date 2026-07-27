@@ -10,9 +10,9 @@ export async function generateMetadata({ params }) {
   const { slug } = await params;
   const { prisma } = await import("@/lib/prisma");
   const blog = await prisma.blog.findUnique({ where: { slug } });
-  if (!blog || !blog.published) return { title: "Blog — hardvanta" };
+  if (!blog || !blog.published) return { title: "Blog — HV KART" };
 
-  const title = `${blog.title} — hardvanta`;
+  const title = `${blog.title} — HV KART`;
   const description = blog.excerpt;
   const image = imageSrc(blog.coverImage);
 

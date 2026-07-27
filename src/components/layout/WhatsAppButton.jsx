@@ -1,7 +1,7 @@
 // Floating WhatsApp chat button — fixed bottom-right on every page.
 // Opens a WhatsApp chat with the store's support number.
 const WHATSAPP_NUMBER = "919170546395"; // country code + number, no "+" or spaces
-const PREFILL = "Hi Hardvanta! I have a question about a product.";
+const PREFILL = "Hi HV KART! I have a question about a product.";
 
 export default function WhatsAppButton() {
   const href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(PREFILL)}`;

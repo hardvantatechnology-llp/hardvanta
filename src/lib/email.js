@@ -57,11 +57,11 @@ export async function sendOtpEmail(to, code) {
   }
   return send({
     to,
-    subject: `${code} is your hardvanta login code`,
+    subject: `${code} is your HV KART login code`,
     html: `
       <div style="font-family:Arial,sans-serif;max-width:480px;margin:auto">
         <h2 style="color:#0a1f44">Your login code</h2>
-        <p style="color:#444">Use this code to finish signing in to hardvanta. It expires in 10 minutes.</p>
+        <p style="color:#444">Use this code to finish signing in to HV KART. It expires in 10 minutes.</p>
         <p style="font-size:32px;font-weight:bold;letter-spacing:8px;color:#1e4fd8">${code}</p>
         <p style="color:#888;font-size:12px">If you didn't try to log in, you can ignore this email.</p>
       </div>`,
@@ -75,11 +75,11 @@ export async function sendPasswordResetEmail(to, code) {
   }
   return send({
     to,
-    subject: `${code} is your hardvanta password reset code`,
+    subject: `${code} is your HV KART password reset code`,
     html: `
       <div style="font-family:Arial,sans-serif;max-width:480px;margin:auto">
         <h2 style="color:#0a1f44">Reset your password</h2>
-        <p style="color:#444">Use this code to reset your hardvanta password. It expires in 10 minutes.</p>
+        <p style="color:#444">Use this code to reset your HV KART password. It expires in 10 minutes.</p>
         <p style="font-size:32px;font-weight:bold;letter-spacing:8px;color:#1e4fd8">${code}</p>
         <p style="color:#888;font-size:12px">If you didn't request this, you can safely ignore this email.</p>
       </div>`,
@@ -138,7 +138,7 @@ export async function sendEnquiryAdminNotification({
 export async function sendEnquiryConfirmationEmail({ to, name, formType }) {
   return send({
     to,
-    subject: `We've received your ${formType} enquiry — hardvanta`,
+    subject: `We've received your ${formType} enquiry — HV KART`,
     html: `
       <div style="font-family:Arial,sans-serif;max-width:480px;margin:auto">
         <h2 style="color:#0a1f44">Thank you, ${name || "there"}!</h2>
@@ -151,11 +151,11 @@ export async function sendEnquiryConfirmationEmail({ to, name, formType }) {
 export async function sendWelcomeEmail(to, name) {
   return send({
     to,
-    subject: "Welcome to hardvanta!",
+    subject: "Welcome to HV KART!",
     html: `
       <div style="font-family:Arial,sans-serif;max-width:480px;margin:auto">
         <h2 style="color:#0a1f44">Welcome, ${name || "there"}! 👋</h2>
-        <p style="color:#444">Thanks for creating your hardvanta account. You're all set to browse electronics &amp; robotics kits, track orders, and save your favourites.</p>
+        <p style="color:#444">Thanks for creating your HV KART account. You're all set to browse electronics &amp; robotics kits, track orders, and save your favourites.</p>
         <p style="color:#888;font-size:12px">Questions? Just reply to this email — we're happy to help.</p>
       </div>`,
   });
@@ -188,7 +188,7 @@ export async function sendOrderShippedEmail(to, order) {
         <h2 style="color:#0a1f44">Your order is on its way! 📦</h2>
         <p style="color:#444">${greeting} order <strong>#${orderNumber}</strong> has been shipped and is heading to you.</p>
         ${details ? `<table style="width:100%;border-collapse:collapse;margin:16px 0">${details}</table>` : ""}
-        <p style="color:#888;font-size:12px">You can track your order anytime under "My Orders" on hardvanta.</p>
+        <p style="color:#888;font-size:12px">You can track your order anytime under "My Orders" on HV KART.</p>
       </div>`,
   });
 }
@@ -201,7 +201,7 @@ export async function sendOrderOutForDeliveryEmail(to, order) {
       <div style="font-family:Arial,sans-serif;max-width:480px;margin:auto">
         <h2 style="color:#0a1f44">Out for delivery 🚚</h2>
         <p style="color:#444">Order <strong>#${order.id.slice(-8).toUpperCase()}</strong> is out for delivery and should arrive today.</p>
-        <p style="color:#888;font-size:12px">You can track your order anytime under "My Orders" on hardvanta.</p>
+        <p style="color:#888;font-size:12px">You can track your order anytime under "My Orders" on HV KART.</p>
       </div>`,
   });
 }
@@ -248,7 +248,7 @@ export async function sendRefundInitiatedEmail(to, order) {
 export async function sendContactConfirmationEmail({ to, name }) {
   return send({
     to,
-    subject: "We've received your message — hardvanta",
+    subject: "We've received your message — HV KART",
     html: `
       <div style="font-family:Arial,sans-serif;max-width:480px;margin:auto">
         <h2 style="color:#0a1f44">Thank you, ${name || "there"}!</h2>
@@ -261,11 +261,11 @@ export async function sendContactConfirmationEmail({ to, name }) {
 export async function sendNewsletterConfirmationEmail(to) {
   return send({
     to,
-    subject: "You're subscribed to hardvanta updates",
+    subject: "You're subscribed to HV KART updates",
     html: `
       <div style="font-family:Arial,sans-serif;max-width:480px;margin:auto">
         <h2 style="color:#0a1f44">You're in! ✅</h2>
-        <p style="color:#444">Thanks for subscribing to hardvanta's newsletter. We'll email you about new products, restocks, and offers.</p>
+        <p style="color:#444">Thanks for subscribing to HV KART's newsletter. We'll email you about new products, restocks, and offers.</p>
         <p style="color:#888;font-size:12px">Didn't sign up for this? You can safely ignore this email.</p>
       </div>`,
   });
@@ -293,7 +293,7 @@ export async function sendOrderConfirmationEmail(to, order) {
           <td style="padding:10px 0;border-top:1px solid #eee;text-align:right;font-weight:bold;color:#0a1f44">${formatPrice(order.total)}</td></tr>
         </table>
         <p style="color:#444">Payment: ${order.paymentMethod === "ONLINE" ? "Paid online" : "Cash on Delivery"}</p>
-        <p style="color:#888;font-size:12px">You can track your order anytime under "My Orders" on hardvanta.</p>
+        <p style="color:#888;font-size:12px">You can track your order anytime under "My Orders" on HV KART.</p>
       </div>`,
   });
 }

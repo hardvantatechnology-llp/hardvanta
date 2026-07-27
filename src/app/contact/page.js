@@ -114,7 +114,7 @@ export default function ContactPage() {
             {
               icon: "📍",
               title: "Our Office",
-              info: "Hardvanta Technologies LLP",
+              info: "HV KART LLP",
               sub: "Plot 046, Knowledge Park III,Alpha, Greater Noida, UP 201310",
               href: "#",
               label: "Get Directions",

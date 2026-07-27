@@ -146,7 +146,7 @@ export default function CareersPage() {
               color: "rgba(255,255,255,0.88)",
               letterSpacing: "0.09em", textTransform: "uppercase",
             }}>
-              🚀 CAREERS AT HARDVANTA
+              🚀 CAREERS AT HV KART
             </div>
 
             <h1 style={{

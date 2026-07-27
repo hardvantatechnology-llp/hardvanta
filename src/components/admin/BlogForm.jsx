@@ -29,7 +29,7 @@ export default function BlogForm({ initial }) {
     content: initial?.content || "",
     coverImage: initial?.coverImage || "",
     category: initial?.category || "General",
-    author: initial?.author || "Hardvanta Team",
+    author: initial?.author || "HV KART Team",
     published: initial?.published ?? true,
   });
   const [uploading, setUploading] = useState(false);

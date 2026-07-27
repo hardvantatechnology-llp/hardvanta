@@ -143,7 +143,7 @@ export default function CheckoutPage() {
     await new Promise((resolve, reject) => {
       const rzp = new window.Razorpay({
         key: data.keyId, amount: data.amount, currency: data.currency,
-        name: "hardvanta", description: "Order payment", order_id: data.orderId,
+        name: "HV KART", description: "Order payment", order_id: data.orderId,
         prefill: { name: selectedAddress.fullName, contact: selectedAddress.phone },
         theme: { color: "#2545d3" },
         handler: async (response) => {

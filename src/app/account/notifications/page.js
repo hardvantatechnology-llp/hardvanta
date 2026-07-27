@@ -5,7 +5,7 @@ import { Bell } from "lucide-react";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Notifications — Hardvanta" };
+export const metadata = { title: "Notifications — HV KART" };
 
 export default async function NotificationsPage() {
   const authOptions = await getAuthOptions();

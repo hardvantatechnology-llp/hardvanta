@@ -166,7 +166,7 @@ export default function BulkEnquiryPage() {
 
           <div className="flex items-center gap-2 text-brand-steel">
             <Building2 size={18} />
-            <span className="text-xs font-semibold uppercase tracking-wider">Hardvanta B2B</span>
+            <span className="text-xs font-semibold uppercase tracking-wider">HV KART B2B</span>
           </div>
           <h1 className="mt-2 text-3xl font-bold sm:text-4xl">
             Bulk & Educational Orders

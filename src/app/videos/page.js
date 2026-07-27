@@ -1,6 +1,6 @@
 import InfoPage, { Section } from "@/components/layout/InfoPage";
 
-export const metadata = { title: "Videos — hardvanta" };
+export const metadata = { title: "Videos — HV KART" };
 
 export default function VideosPage() {
   return (

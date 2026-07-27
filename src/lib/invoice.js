@@ -11,7 +11,7 @@ export async function generateInvoicePDF(order) {
   const draw = (text, x, size, f = font, color = rgb(0, 0, 0)) =>
     page.drawText(String(text), { x, y, size, font: f, color });
 
-  draw("HARDVANTA", 50, 22, bold);
+  draw("HV KART", 50, 22, bold);
   y -= 15;
   draw("Tax Invoice", 50, 10, font, rgb(0.4, 0.4, 0.4));
 
@@ -58,7 +58,7 @@ export async function generateInvoicePDF(order) {
   draw(`Grand Total: Rs.${order.total}`, 390, 13, bold);
 
   y -= 40;
-  draw("Thank you for shopping with Hardvanta!", 50, 9, font, rgb(0.4, 0.4, 0.4));
+  draw("Thank you for shopping with HV KART!", 50, 9, font, rgb(0.4, 0.4, 0.4));
 
   return pdfDoc.save();
 }

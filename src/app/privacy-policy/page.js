@@ -1,6 +1,6 @@
 import React from "react";
 
-export const metadata = { title: "Privacy Policy — Hardvanta" };
+export const metadata = { title: "Privacy Policy — HV KART" };
 
 const css = `
   .pp-root {
@@ -295,7 +295,7 @@ export default function PrivacyPolicyPage() {
             </div>
             <h1>Privacy Policy</h1>
             <p className="pp-hero-intro">
-              How Hardvanta Technologies LLP collects, uses, and protects your personal information — last updated june 2026.
+              How HV KART LLP collects, uses, and protects your personal information — last updated june 2026.
             </p>
           </div>
         </div>
@@ -458,14 +458,14 @@ export default function PrivacyPolicyPage() {
               <a href="mailto:info@hardvantatechnology.com">info@hardvantatechnology.com</a>
             </p>
             <div className="pp-contact-address">
-              Hardvanta Technologies LLP<br />
+              HV KART LLP<br />
               [Plot 046, Knowledge Park 3, Alpha, Greater Noida, Uttar Pradesh - 201310, India]<br />
               
             </div>
           </div>
 
           <p className="pp-footer-note">
-            This policy is effective as of June 2026 · Hardvanta Technologies LLP
+            This policy is effective as of June 2026 · HV KART LLP
           </p>
 
         </div>

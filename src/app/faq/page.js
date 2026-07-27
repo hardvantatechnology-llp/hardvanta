@@ -29,7 +29,7 @@ const faqs = [
     emoji: "🇮🇳",
     question: "Do you ship across Delhi NCR ?",
     answer:
-      "Yes. Hardvanta currently delivers exclusively across Delhi NCR. Simply enter your PIN code at checkout to confirm delivery availability in your location.",
+      "Yes. HV KART currently delivers exclusively across Delhi NCR. Simply enter your PIN code at checkout to confirm delivery availability in your location.",
     highlight: null,
   },
   
@@ -37,7 +37,7 @@ const faqs = [
     emoji: "🏫",
     question: "Do you offer bulk / institutional pricing?",
     answer:
-      "Absolutely! Schools, colleges, makerspaces, and R&D labs can unlock special pricing and dedicated support through Hardvanta B2B. Reach out to our team with your institution details and requirements.",
+      "Absolutely! Schools, colleges, makerspaces, and R&D labs can unlock special pricing and dedicated support through HV KART B2B. Reach out to our team with your institution details and requirements.",
     highlight: "Contact us at b2b@hardvanta.com for a custom quote.",
   },
 ];
@@ -300,7 +300,7 @@ export default function FAQPage() {
                 maxWidth: "460px",
               }}
             >
-              Answers to the questions we hear most often from Hardvanta
+              Answers to the questions we hear most often from HV KART
               customers — last updated June 2026.
             </p>
           </div>

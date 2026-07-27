@@ -31,7 +31,7 @@ const columns = [
     links: [
       { label: "About Us", href: "/about" },
       { label: "Contact Us", href: "/contact" },
-      { label: "Hardvanta B2B", href: "/b2b" },
+      { label: "HV KART B2B", href: "/b2b" },
       { label: "Bulk Orders", href: "/b2b#bulk" },
       { label: "Prototyping Services", href: "/b2b#prototyping" },
     ],
@@ -140,7 +140,7 @@ export default function Footer() {
             products. Your ideas, our parts!
           </p>
           <p className="mt-1 text-xs text-brand-muted/70">
-            A unit of Hardvanta Technologies
+            A unit of HV KART
           </p>
 
           {/* Contact */}
@@ -203,7 +203,7 @@ export default function Footer() {
       <div className="relative border-t border-brand-border">
         <div className="container-page flex flex-col items-center justify-between gap-4 py-5 sm:flex-row">
           <p className="text-xs text-brand-muted/70">
-            © 2026 Hardvanta — All Rights Reserved.
+            © 2026 HV KART — All Rights Reserved.
           </p>
 
           {/* Social icons */}

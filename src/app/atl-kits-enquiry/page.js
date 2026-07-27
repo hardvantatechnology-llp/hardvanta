@@ -114,7 +114,7 @@ export default function ATLKitsEnquiryPage() {
             <CircuitBoard size={14} /> Atal Tinkering Lab
           </span>
           <h1 className="text-3xl sm:text-4xl font-semibold mb-4 max-w-xl">ATL Kits Enquiry</h1>
-          <p className="text-white/70 max-w-lg text-base leading-relaxed mb-10">Government-approved STEM kits for Atal Tinkering Labs. Get customised bulk quotes for your school or institution directly from Hardvanta Technologies.</p>
+          <p className="text-white/70 max-w-lg text-base leading-relaxed mb-10">Government-approved STEM kits for Atal Tinkering Labs. Get customised bulk quotes for your school or institution directly from HV KART.</p>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 max-w-xl">
             {[{ num: "500+", label: "Schools served" },{ num: "48 hr", label: "Quote turnaround" },{ num: "Rs.0", label: "Consultation fee" }].map(({ num, label }) => (
               <div key={label} className="bg-white/10 border border-white/20 rounded-xl px-5 py-4 text-center">
@@ -237,7 +237,7 @@ export default function ATLKitsEnquiryPage() {
               {status === "loading" ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
               {status === "loading" ? "Submitting..." : "Submit Enquiry"}
             </button>
-            <p className="text-center text-xs text-brand-muted/70 mt-3">By submitting, you agree to be contacted by the Hardvanta sales team.</p>
+            <p className="text-center text-xs text-brand-muted/70 mt-3">By submitting, you agree to be contacted by the HV KART sales team.</p>
           </form>
 
           <aside className="flex flex-col gap-4">
@@ -252,7 +252,7 @@ export default function ATLKitsEnquiryPage() {
             </div>
 
             <div className="rounded-2xl glass-brand-card p-5 text-brand-text">
-              <h3 className="text-sm font-semibold flex items-center gap-2 mb-4"><BadgeCheck size={16} /> Why Hardvanta ATL Kits?</h3>
+              <h3 className="text-sm font-semibold flex items-center gap-2 mb-4"><BadgeCheck size={16} /> Why HV KART ATL Kits?</h3>
               {["AIM / NITI Aayog aligned curriculum","GST compliant billing for schools","Bulk discount on 10+ units","Free teacher training material","Warranty & replacement support","Demo available for institutions"].map((feat) => (
                 <div key={feat} className="flex items-center gap-2 py-1.5 text-sm text-brand-muted">
                   <CheckCircle2 size={14} className="text-brand-blue flex-shrink-0" />{feat}

@@ -4,7 +4,7 @@ import AdminViewReset from "@/components/admin/AdminViewReset";
 import AdminSidebarNav from "@/components/admin/AdminSidebarNav";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Admin — hardvanta" };
+export const metadata = { title: "Admin — HV KART" };
 
 export default async function AdminLayout({ children }) {
   const session = await getAdminSession();

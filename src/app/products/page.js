@@ -13,7 +13,7 @@ import {
   countSearchProducts,
 } from "@/lib/queries";
 
-export const metadata = { title: "All Products — hardvanta" };
+export const metadata = { title: "All Products — HV KART" };
 export const dynamic = "force-dynamic";
 
 const PAGE_SIZE = 24;

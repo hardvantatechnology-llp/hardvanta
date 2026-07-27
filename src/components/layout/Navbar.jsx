@@ -429,7 +429,7 @@ export default function Navbar() {
 
           <Link href="/sell"
             className="flex items-center gap-2 border-l border-brand-border bg-brand-silver/60 px-5 py-3 text-sm font-semibold text-brand-text hover:text-brand-blue hover:bg-brand-silver transition-colors duration-150">
-            <ShoppingBag size={16} /> Sell on Hardvanta
+            <ShoppingBag size={16} /> Sell on HV KART
           </Link>
         </div>
       </div>

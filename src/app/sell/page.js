@@ -10,7 +10,7 @@ const BENEFITS = [
   { icon: TrendingUp, title: "Reach more buyers", desc: "Sell to thousands of makers, students and businesses across India." },
   { icon: Wallet, title: "Fast payouts", desc: "Get paid quickly and securely for every order you fulfil." },
   { icon: Truck, title: "Logistics support", desc: "We help with shipping and delivery so you can focus on products." },
-  { icon: Headphones, title: "Dedicated support", desc: "A seller support team to help you grow on Hardvanta." },
+  { icon: Headphones, title: "Dedicated support", desc: "A seller support team to help you grow on HV KART." },
   { icon: ShieldCheck, title: "Trusted marketplace", desc: "List on a platform buyers already trust for electronics & robotics." },
   { icon: Store, title: "Your own storefront", desc: "Showcase your brand and full catalogue to a targeted audience." },
 ];
@@ -94,10 +94,10 @@ export default function SellPage() {
       {/* Hero */}
       <section className="relative bg-gradient-to-r from-brand-navy via-brand-blue to-brand-navy px-6 py-16 text-center text-white">
         <p className="text-xs font-bold uppercase tracking-widest text-white/50">Become a Partner</p>
-        <h1 className="mt-2 text-4xl font-extrabold">Sell on Hardvanta</h1>
+        <h1 className="mt-2 text-4xl font-extrabold">Sell on HV KART</h1>
         <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-white/75">
           Grow your electronics, robotics or DIY business by reaching thousands of
-          buyers across India. Join Hardvanta as a seller today.
+          buyers across India. Join HV KART as a seller today.
         </p>
         <a href="#apply" className="mt-6 inline-block rounded-lg bg-gradient-to-r from-brand-blue to-brand-navy px-8 py-3 text-sm font-bold text-white shadow-brand-glow hover:brightness-110 transition-all">
           Start Selling
@@ -150,7 +150,7 @@ export default function SellPage() {
             <CheckCircle2 size={52} className="text-green-400" />
             <h3 className="mt-4 text-xl font-bold text-brand-text">Application received!</h3>
             <p className="mt-2 text-sm text-brand-muted">
-              Thanks for your interest in selling on Hardvanta. Our team will
+              Thanks for your interest in selling on HV KART. Our team will
               reach out to <span className="font-semibold text-brand-text">{form.email}</span> soon.
             </p>
           </div>

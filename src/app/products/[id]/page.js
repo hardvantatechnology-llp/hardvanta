@@ -26,9 +26,9 @@ export const revalidate = 60;
 
 export async function generateMetadata({ params }) {
   const product = await getProductById(params.id);
-  if (!product) return { title: "Product — hardvanta" };
+  if (!product) return { title: "Product — HV KART" };
 
-  const title = `${product.name} — hardvanta`;
+  const title = `${product.name} — HV KART`;
   const description = product.shortDescription || product.description?.slice(0, 160) || undefined;
   const image = imageSrc(product.image);
 

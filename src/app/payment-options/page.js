@@ -13,7 +13,7 @@ const sections = [
     title: "Online Payment (Razorpay)",
     body: "Pay instantly and securely using our trusted payment partner, Razorpay. Online payments are the fastest way to confirm your order and get it shipped quickly.",
     extra:
-      "Razorpay is a PCI-DSS Level 1 compliant payment gateway, which means your payment data is handled to the highest security standards in the industry. Hardvanta never sees or stores your card details — all sensitive data is encrypted and managed entirely by Razorpay.",
+      "Razorpay is a PCI-DSS Level 1 compliant payment gateway, which means your payment data is handled to the highest security standards in the industry. HV KART never sees or stores your card details — all sensitive data is encrypted and managed entirely by Razorpay.",
     highlight: null,
     list: null,
     sub: {
@@ -54,13 +54,13 @@ const sections = [
     list: [
       { icon: "🔐", label: "SSL Encryption", desc: "All data is protected using 256-bit SSL (Secure Socket Layer) encryption." },
       { icon: "✅", label: "PCI-DSS Compliance", desc: "Payments processed by Razorpay — a certified PCI-DSS Level 1 provider." },
-      { icon: "🚫", label: "No Card Storage", desc: "Hardvanta never stores your card number, CVV, or any sensitive payment details." },
+      { icon: "🚫", label: "No Card Storage", desc: "HV KART never stores your card number, CVV, or any sensitive payment details." },
       { icon: "🛡️", label: "3D Secure Authentication", desc: "Card transactions are protected by an additional OTP-based authentication layer." },
     ],
     sub: {
       title: "❓ Is Online Payment Safe?",
       paragraph:
-        "Absolutely. All payments on hardvanta are encrypted end-to-end and processed through Razorpay's secure infrastructure. You are protected by Razorpay's fraud detection, your bank's security protocols, and our SSL-secured checkout — all working together.",
+        "Absolutely. All payments on HV KART are encrypted end-to-end and processed through Razorpay's secure infrastructure. You are protected by Razorpay's fraud detection, your bank's security protocols, and our SSL-secured checkout — all working together.",
     },
   },
   {
@@ -380,7 +380,7 @@ export default function PaymentOptionsPage() {
                 lineHeight: 1.65, maxWidth: "500px",
               }}
             >
-              Choose the payment method that works best for you. All transactions on hardvanta
+              Choose the payment method that works best for you. All transactions on HV KART
               are processed securely — your financial information is always protected. 🔐
             </p>
 

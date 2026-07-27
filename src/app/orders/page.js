@@ -9,7 +9,7 @@ import Button from "@/components/ui/Button";
 import { formatDate } from "@/utils/formatDateTime";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "My Orders — Hardvanta" };
+export const metadata = { title: "My Orders — HV KART" };
 
 const STATUS_STYLES = {
   PENDING: "bg-amber-500/10 text-amber-700 border border-amber-500/20",
