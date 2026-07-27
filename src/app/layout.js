@@ -60,14 +60,14 @@ export const metadata = {
     siteName: "hardvanta",
     locale: "en_IN",
     type: "website",
-    images: ["/images/hardvanta.png"],
+    images: ["/images/hvkart-logo.png"],
   },
 
   twitter: {
     card: "summary_large_image",
     title: siteTitle,
     description: siteDescription,
-    images: ["/images/hardvanta.png"],
+    images: ["/images/hvkart-logo.png"],
   },
 
   robots: {

@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 /**
- * Brand logo. Expects the HV monogram saved at /public/images/hardvanta.png
+ * Brand logo. Expects the HV Kart mark saved at /public/images/hvkart-logo.png
  *
  * The source image has extra white padding baked around the mark, which
  * made the badge look "boxed" instead of the logo filling the frame.
@@ -12,7 +12,7 @@ import Link from "next/link";
  *
  * Tweak LOGO_ZOOM below (1.15 - 1.6 range) until the white edge fully
  * disappears for your exact source asset — it depends on how much
- * padding is baked into hardvanta.png.
+ * padding is baked into hvkart-logo.png.
  */
 const LOGO_ZOOM = 1.05;
 
@@ -28,7 +28,7 @@ export default function Logo({ onBadge = true, showWordmark = true, size = 52, d
         style={{ height: size, width: size }}
       >
         <Image
-          src="/images/hardvanta.png"
+          src="/images/hvkart-logo.png"
           alt="Hardvanta Technologies"
           fill
           sizes={`${size}px`}
