@@ -26,7 +26,13 @@ export default async function Home() {
       <section className="bg-brand-silver py-12">
         <div className="container-page">
           <div className="mb-8 flex items-center justify-between">
-            <h2 className="heading-accent">🔥 Hot Deals</h2>
+            {/*
+              FIX: `heading-accent` renders white text, which was invisible
+              on this light `bg-brand-silver` section. Forcing a dark brand
+              color here (with `!`) keeps the underline/accent styling from
+              `heading-accent` intact while making the text legible.
+            */}
+            <h2 className="heading-accent !text-brand-navy">🔥 Hot Deals</h2>
             <Link href="/products" className="text-sm font-semibold text-brand-blue hover:text-brand-steel">
               View all
             </Link>
@@ -38,7 +44,7 @@ export default async function Home() {
       {/* Featured products */}
       <section className="container-page py-12">
         <div className="mb-8 flex items-center justify-between">
-          <h2 className="heading-accent">Featured Products</h2>
+          <h2 className="heading-accent !text-brand-navy">Featured Products</h2>
           <Link href="/products" className="text-sm font-semibold text-brand-blue hover:text-brand-steel">
             Shop all
           </Link>

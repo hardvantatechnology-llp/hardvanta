@@ -26,7 +26,14 @@ export default async function GoogleReviews() {
     <section className="bg-brand-silver py-12">
       <div className="container-page">
         <div className="mb-6 flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="heading-accent">What our customers say</h2>
+          {/*
+            FIX: `heading-accent` renders white text, which was invisible on
+            this light `bg-brand-silver` section (same issue as the "Hot
+            Deals" and "Featured Products" headings on the home page).
+            Forcing a dark brand color here keeps the accent underline while
+            making the heading text legible.
+          */}
+          <h2 className="heading-accent !text-brand-navy">What our customers say</h2>
           <div className="flex items-center gap-2">
             <span className="text-2xl font-bold text-brand-text">
               {rating.toFixed(1)}

@@ -111,28 +111,36 @@ export default function Hero() {
           </motion.div>
         </div>
 
-        {/* Right: stat panel */}
+        {/*
+          Right: stat / deals panel.
+          FIX: previously this was `hidden md:block`, which removed the
+          panel entirely on mobile and tablet. It's now visible on every
+          breakpoint — full-width and stacked below the copy on small
+          screens, side-by-side with the copy from `md` upward — and the
+          mouse-tilt effect is skipped on touch devices since it only
+          triggers from onMouseMove/onMouseLeave.
+        */}
         <motion.div
           variants={reduce ? undefined : item}
-          className="hidden md:block"
+          className="mt-2 w-full md:mt-0"
           ref={panelRef}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
           style={{ perspective: 800 }}
         >
           <div
-            className="grid grid-cols-2 gap-4"
+            className="grid grid-cols-2 gap-3 sm:gap-4"
             style={{
               transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
               transformStyle: "preserve-3d",
               transition: "transform 0.2s ease-out",
             }}
           >
-            <GlassCard strong tilt={false} className="col-span-2 p-6" glow="electric">
+            <GlassCard strong tilt={false} className="col-span-2 p-5 sm:p-6" glow="electric">
               <p className="text-sm font-semibold text-brand-muted">
                 This week&apos;s deals
               </p>
-              <p className="mt-1 text-2xl font-extrabold text-brand-text">
+              <p className="mt-1 text-xl font-extrabold text-brand-text sm:text-2xl">
                 Up to 40% off
               </p>
               <p className="mt-1 text-sm text-brand-muted">
@@ -149,8 +157,8 @@ export default function Hero() {
               ["10,000+", "Products in stock"],
               ["4.7★", "Average rating"],
             ].map(([v, l]) => (
-              <GlassCard key={l} tilt={false} glow="purple" className="p-5">
-                <p className="text-2xl font-extrabold text-brand-text">{v}</p>
+              <GlassCard key={l} tilt={false} glow="purple" className="p-4 sm:p-5">
+                <p className="text-xl font-extrabold text-brand-text sm:text-2xl">{v}</p>
                 <p className="mt-1 text-xs text-brand-muted">{l}</p>
               </GlassCard>
             ))}
