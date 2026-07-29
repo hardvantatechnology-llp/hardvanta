@@ -14,7 +14,7 @@ import Link from "next/link";
  * disappears for your exact source asset — it depends on how much
  * padding is baked into hvkart-logo.png.
  */
-const LOGO_ZOOM = 1.05;
+const LOGO_ZOOM = 1.18;
 
 export default function Logo({ onBadge = true, showWordmark = true, size = 52, dark = false }) {
   return (
