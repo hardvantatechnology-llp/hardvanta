@@ -140,7 +140,7 @@ export default function Footer() {
             products. Your ideas, our parts!
           </p>
           <p className="mt-1 text-xs text-brand-muted/70">
-            A unit of HV KART
+            A unit of HARDVANTA TECHNOLOGIES LLP
           </p>
 
           {/* Contact */}

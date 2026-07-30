@@ -52,7 +52,7 @@ export default function Logo({ onBadge = true, showWordmark = true, size = 52, d
               dark ? "text-white/70" : "text-brand-muted"
             }`}
           >
-            Technologies
+          
           </span>
         </span>
       )}

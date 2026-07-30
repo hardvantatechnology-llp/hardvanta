@@ -50,7 +50,7 @@ export default function AuthShell({ title, subtitle, children }) {
               ))}
             </ul>
             <p className="relative mt-10 flex items-center gap-2 text-xs text-white/40">
-              <Cpu size={14} /> A unit of HV KART LLP
+              <Cpu size={14} /> A unit of HARDVANTA TECHNOLOGIES LLP 
             </p>
           </div>
 
