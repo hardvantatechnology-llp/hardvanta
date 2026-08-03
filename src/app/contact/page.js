@@ -114,7 +114,7 @@ export default function ContactPage() {
             {
               icon: "📍",
               title: "Our Office",
-              info: "HV KART LLP",
+              info: "HV KART",
               sub: "Plot 046, Knowledge Park III,Alpha, Greater Noida, UP 201310",
               href: "#",
               label: "Get Directions",
